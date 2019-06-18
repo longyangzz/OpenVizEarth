@@ -1,0 +1,56 @@
+<RCC>
+    <qresource prefix="/Mainwindow">
+        <file>Resources/tool/64/file_open.png</file>
+        <file>Resources/tool/64/file_save.png</file>
+        <file>Resources/tool/64/Help_Support.png</file>
+        <file>Resources/tool/64/help_about.png</file>
+        <file>Resources/tool/64/view_bgcolor.png</file>
+        <file>Resources/tool/64/view_colorgradient.png</file>
+        <file>Resources/tool/64/view_lightOff.png</file>
+        <file>Resources/tool/64/view_lightOn.png</file>
+        <file>Resources/tool/64/view_fullscreen.png</file>
+        <file>Resources/tool/64/file_splitfiles.png</file>
+        <file>Resources/tool/64/pc_gridFilters.png</file>
+    </qresource>
+    <qresource prefix="/Qss">
+        <file>Resources/qss/stylesheet.qss</file>
+        <file>Resources/qss/toolbar.png</file>
+        <file>Resources/qss/qss1.qss</file>
+        <file>Resources/qss/qss2.qss</file>
+        <file>Resources/qss/qss3.qss</file>
+    </qresource>
+    <qresource prefix="/Logo">
+        <file>Resources/logo/DC.ico</file>
+    </qresource>
+    <qresource prefix="/translate">
+        <file>Resources/languages/zh_cn/qt_zh_CN.lng</file>
+    </qresource>
+    <qresource prefix="/treeView">
+        <file>Resources/treeview/billboard.png</file>
+        <file>Resources/treeview/bone.png</file>
+        <file>Resources/treeview/Compound.png</file>
+        <file>Resources/treeview/Directionallight.png</file>
+        <file>Resources/treeview/Face.png</file>
+        <file>Resources/treeview/filereference.png</file>
+        <file>Resources/treeview/geode.png</file>
+        <file>Resources/treeview/group.png</file>
+        <file>Resources/treeview/lightsource.png</file>
+        <file>Resources/treeview/lod.png</file>
+        <file>Resources/treeview/other.png</file>
+        <file>Resources/treeview/pointlight.png</file>
+        <file>Resources/treeview/sequence.png</file>
+        <file>Resources/treeview/Shell.png</file>
+        <file>Resources/treeview/skeleton.png</file>
+        <file>Resources/treeview/Solid.png</file>
+        <file>Resources/treeview/spotlight.png</file>
+        <file>Resources/treeview/stock_group.png</file>
+        <file>Resources/treeview/switch.png</file>
+        <file>Resources/treeview/transform.png</file>
+        <file>Resources/treeview/tree_disable.png</file>
+        <file>Resources/treeview/tree_disabled.png</file>
+        <file>Resources/treeview/tree_enable.png</file>
+        <file>Resources/treeview/tree_lod.png</file>
+        <file>Resources/treeview/tree_unknown.png</file>
+        <file>Resources/treeview/user group.png</file>
+    </qresource>
+</RCC>
