@@ -213,11 +213,11 @@ QVariant NodeTreeModel::headerData(int section, Qt::Orientation orientation,
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     {
         if ( section == COL_NAME )
-            return QString( "名字" );
+            return QString::fromLocal8Bit( "名字" );
         else if ( section == COL_TYPE )
-            return QString( "类型" );
+            return QString::fromLocal8Bit( "类型" );
         else if ( section == COL_DESCRIPTION )
-            return QString( "描述" );
+            return QString::fromLocal8Bit( "描述" );
     }
 
     return QAbstractItemModel::headerData(section, orientation, role);

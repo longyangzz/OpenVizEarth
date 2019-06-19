@@ -179,7 +179,7 @@ void MainWindow::InitManager()
 {
 	//为manager安装treeWidget和属性widget
 	QDockWidget* dokwObjects = new QDockWidget(this);
-	dokwObjects->setWindowTitle("对象");
+	dokwObjects->setWindowTitle(QString::fromLocal8Bit("对象") );
 	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
 	dokwObjects->setEnabled(true);
 	dokwObjects->setMinimumSize(QSize(200, 315));
@@ -243,7 +243,7 @@ void MainWindow::InitManager()
 	layoutProperty->addWidget(m_propertyWidget, 0, 0, 1, 1);
 	dokwProperties->setWidget(wgtProperty);
 	addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
-	dokwProperties->setWindowTitle("属性");
+	dokwProperties->setWindowTitle(QString::fromLocal8Bit("属性"));
 }
 
 void MainWindow::NodeSelected(const QModelIndex &index)

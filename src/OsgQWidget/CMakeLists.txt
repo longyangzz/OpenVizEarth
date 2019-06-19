@@ -41,7 +41,8 @@ SET(TARGET_LIBRARIES
     ${TARGET_LIBRARIES}
 	Qt5::Core
 	Qt5::Gui 
-	Qt5::Widgets 
+	Qt5::Widgets
+	Qt5::OpenGL 
 	optimized ${OSG_LIBRARY} debug ${OSG_LIBRARY_DEBUG}
     optimized ${OSGUTIL_LIBRARY} debug ${OSGUTIL_LIBRARY_DEBUG}
     optimized ${OSGDB_LIBRARY} debug ${OSGDB_LIBRARY_DEBUG}
