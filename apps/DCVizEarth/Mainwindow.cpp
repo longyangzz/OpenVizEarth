@@ -609,16 +609,16 @@ void MainWindow::on_actionOpen_triggered()
 	DC::SceneView* pNewViewer = CreateNewSceneViewer();
 	if (pNewViewer)
 	{
-		osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
+		/*osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
 		osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(map);
-
 		osgEarth::Drivers::BingOptions bing;
 		osgEarth::Drivers::GDALOptions gdal;
 		osgEarth::Drivers::TMSOptions tms;
 		tms.url() = "D:/data/world/tms.xml";
 		gdal.url() = "H:\\osgearthSDK\\Data\\world.tif";
-		map->addLayer(new osgEarth::ImageLayer("My", gdal));
-
+		map->addLayer(new osgEarth::ImageLayer("My", gdal));*/
+		 osg::ref_ptr < osg::Node > mapNode = osgDB::readNodeFile("H:\\osgearthSDK\\selfdata\\test.earth");
+		 //osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(node.get() );
 		
 		
 		//! 更新场景数据
