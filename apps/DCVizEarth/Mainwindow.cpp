@@ -612,9 +612,12 @@ void MainWindow::on_actionOpen_triggered()
 		osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
 		osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(map);
 
+		osgEarth::Drivers::BingOptions bing;
+		osgEarth::Drivers::GDALOptions gdal;
 		osgEarth::Drivers::TMSOptions tms;
 		tms.url() = "D:/data/world/tms.xml";
-		map->addLayer(new osgEarth::ImageLayer("My", tms));
+		gdal.url() = "H:\\osgearthSDK\\Data\\world.tif";
+		map->addLayer(new osgEarth::ImageLayer("My", gdal));
 
 		
 		

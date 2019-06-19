@@ -52,8 +52,8 @@ SET(TARGET_LIBRARIES
     Qt5::Core
 	Qt5::Gui 
 	Qt5::Widgets 
-    optimized ${OSG_LIBRARY} debug ${OSG_LIBRARY_DEBUG}
-	optimized ${OPENTHREADS_LIBRARY} debug ${OPENTHREADS_LIBRARY_DEBUG}
+    ${OSG_LIBRARY_DEBUG}
+	${OPENTHREADS_LIBRARY_DEBUG}
     Propertybrowser
 )
 
