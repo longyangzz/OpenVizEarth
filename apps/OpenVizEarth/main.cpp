@@ -1,69 +1,42 @@
+#include "Atlas.h"
+#include "AtlasSplashScreen.h"
 
-//Qt
-#include <QtWidgets/QApplication>
-#include "QFile"
-#include "QTextCodec"
-#include "QTranslator"
+#include <QApplication>
+#include <QFile>
+#include <QSurfaceFormat>
 
-//osg
-#include <osgDB/Registry>
-
-#include "Mainwindow.h"
-
-int main(int argc, char *argv[])
+int  main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
+	// A trick to get higher fps than 30
+	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+	format.setSwapInterval(0);
+	QSurfaceFormat::setDefaultFormat(format);
 
-	osgDB::Registry::instance()->getDataFilePathList().push_back( QString(qApp->applicationDirPath() + "/Resources/data/").toStdString () );
+	QApplication  app(argc, argv);
 
-	//QTextCodec::setCodecForCStrings(QTextCodec::codecForName("GB2312"));
-	//QTextCodec::setCodecForTr(QTextCodec::codecForName("GB2312"));
-	QTextCodec::setCodecForLocale(QTextCodec::codecForName("GB2312"));
+	// Load an application style
+	QFile  styleFile("resources/styles/Atlas.qss");
 
-	//创建语言翻译器
-	QTranslator pTranslator;
-	//加载语言文件
-	pTranslator.load(":/translate/Resources/languages/zh_cn/qt_zh_CN.lng");
-	//应用程序安装语言翻译器
-	a.installTranslator(&pTranslator);
-
-	//加载样式表
-	QFile qssFile(":/Qss/Resources/qss/stylesheet.qss");  
-
-	qssFile.open(QFile::ReadOnly);  
-
-	if(qssFile.isOpen())  
-
-	{  
-
-		QString qss = QLatin1String(qssFile.readAll());  
-
-		qApp->setStyleSheet(qss);  
-
-		qssFile.close();  
-	}  
-
-	//! 命令行参数解析
-	int argc_ = argc;
-    QVector<QByteArray> data;
-    QVector<QString > argv_;
-
-    // get the command line arguments as unicode string
-    {
-        QStringList args = a.arguments();
-        for (QStringList::iterator it = args.begin(); it != args.end(); ++it) {
-            argv_.push_back(*it);
-        }
-        //argv_.push_back(0); // 0-terminated string
-    }
-
-	MainWindow w;
-	
-	w.showMaximized();
-	if(argv_.size() > 1)
+	if (styleFile.open(QFile::ReadOnly))
 	{
-		w.PraseArgs(argv_);
+		QString  style(styleFile.readAll());
+		app.setStyleSheet(style);
 	}
-	
-	return a.exec();
+
+	// Show splash screen
+	QPixmap            a("./resources/images/atlas_big.png");
+	AtlasSplashScreen *splash = new AtlasSplashScreen(a);
+	Atlas              w;
+	QObject::connect(&w, SIGNAL(sendTotalInitSteps(int)), splash, SLOT(setTotalInitSteps(int)));
+	QObject::connect(&w, SIGNAL(sendNowInitName(const QString&)), splash, SLOT(setNowInitName(const QString&)));
+
+	splash->show();
+	w.initAll();
+
+	// Begin application
+	w.showMaximized();
+	splash->finish(&w);
+	delete splash;
+
+	return app.exec();
 }

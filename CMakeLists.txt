@@ -96,56 +96,38 @@ IF(WIN32 AND NOT ANDROID)
 ENDIF(WIN32 AND NOT ANDROID)
 
 # ------------------------------------------------------------------------------
-# Qt
+# 加载引入Qt
 # ------------------------------------------------------------------------------
 
 # Add external libraries  Qt
-INCLUDE(CMakeExternalLibs)
+INCLUDE(QtSupport)
 
-
+# ------------------------------------------------------------------------------
+# 加载引入Osg
+# ------------------------------------------------------------------------------
 find_package (osg REQUIRED)
-find_package (osgQt REQUIRED)
-find_package (osgDB REQUIRED)
-find_package (osgGA REQUIRED)
-find_package (osgViewer REQUIRED)
-find_package (osgUtil REQUIRED)
-find_package (osgFX REQUIRED)
-find_package (osgText REQUIRED)
-find_package (osgShadow REQUIRED)
-find_package (OpenThreads REQUIRED)
-find_package (osgAnimation REQUIRED)
-find_package (osgParticle REQUIRED)
 
-IF (NOT WIN32)
-  IF (NOT OSG_LIBRARY_DEBUG)
-    SET(OSG_LIBRARY_DEBUG ${OSG_LIBRARY})
-  ENDIF()
-  IF (NOT OSGDB_LIBRARY_DEBUG)
-    SET(OSGDB_LIBRARY_DEBUG ${OSGDB_LIBRARY})
-  ENDIF()
-  IF (NOT OSGGA_LIBRARY_DEBUG)
-    SET(OSGGA_LIBRARY_DEBUG ${OSGGA_LIBRARY})
-  ENDIF()
-  IF (NOT OSGVIEWER_LIBRARY_DEBUG)
-    SET(OSGVIEWER_LIBRARY_DEBUG ${OSGVIEWER_LIBRARY})
-  ENDIF()
-  IF (NOT OSGUTIL_LIBRARY_DEBUG)
-    SET(OSGUTIL_LIBRARY_DEBUG ${OSGUTIL_LIBRARY})
-  ENDIF()
-  IF (NOT OSGTEXT_LIBRARY_DEBUG)
-    SET(OSGTEXT_LIBRARY_DEBUG ${OSGTEXT_LIBRARY})
-  ENDIF()
-  IF (NOT OPENTHREADS_LIBRARY_DEBUG)
-    SET(OPENTHREADS_LIBRARY_DEBUG ${OPENTHREADS_LIBRARY})
-  ENDIF()
-ENDIF()
-
-# Include macro utilities here
+# 自定义宏函数引入
 INCLUDE(OpenVizMacroUtils)
 
+# 3rd Party第三方依赖包引入
+IF(WIN32 AND NOT ANDROID)
+    INCLUDE(Find3rdPartyDependencies)
+    INCLUDE(LiblasSupport)
+ENDIF()
+
+# glew C++ Libraries support绑定包含目录第三方支持库头文件目录
+INCLUDE_DIRECTORIES(
+	${ACTUAL_3RDPARTY_DIR}
+)
+
+# Boost C++ Libraries support  boost库引入指定1.60版本
+INCLUDE(BoostSupport)
 
 
-################################################################################
+
+
+####################安装属性配置############################################################
 # Installation stuff
 
 SET(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows")
@@ -220,11 +202,6 @@ ELSE()
     ENDIF(VALID_BUILDER_VERSION)
 ENDIF()
 
-#SET(INSTALL_BINDIR OpenViz/bin)
-#SET(INSTALL_INCDIR OpenViz/include)
-#SET(INSTALL_LIBDIR OpenViz/lib)
-#SET(INSTALL_DOCDIR OpenViz/doc)
-
 # Dynamic vs Static Linking
 OPTION(DYNAMIC_OPENVIZ "Set to ON to build OpenSceneGraph for dynamic linking.  Use OFF for static." ON)
 IF   (DYNAMIC_OPENVIZ)
@@ -233,47 +210,7 @@ ELSE ()
     SET(OPENVIZ_USER_DEFINED_DYNAMIC_OR_STATIC "STATIC")
 ENDIF()
 
-################################################################################
-# 3rd Party Dependency Stuff
-IF(WIN32 AND NOT ANDROID)
-    INCLUDE(Find3rdPartyDependencies)
-    INCLUDE(LiblasSupport)
-ENDIF()
-
-
-
-# Boost C++ Libraries support - required
-message(STATUS "Searching for Boost 1.60 - done")
-
-# Default to using static, multithreaded libraries for
-# linking under MSVC.  This is because we show users how to
-# use boostpro.com installer and install those options when linking
-# on windows in the compilation documentation.
-if(WIN32)
-  if (MSVC)
-    set(Boost_USE_STATIC_LIBS   ON)
-    set(Boost_USE_MULTITHREADED ON)
-  endif(MSVC)
-endif(WIN32)
-
-# glew C++ Libraries support - required
-INCLUDE_DIRECTORIES(
-	${ACTUAL_3RDPARTY_DIR}
-)
-
-
-find_package(Threads)
-find_package(Boost 1.60 COMPONENTS program_options thread system REQUIRED)
-
-if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
-# make these available for the user to set.
-mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
-mark_as_advanced(CLEAR Boost_LIBRARY_DIRS)
-link_directories(${Boost_LIBRARY_DIRS})
-
+#！添加子目录
 ADD_SUBDIRECTORY(src)
 
 OPTION(BUILD_OpenVIZ_TESTS "Build experimental components" ON)
@@ -293,11 +230,4 @@ OPTION(BUILD_OpenVIZ_EXAMPLES "Enable to build OPENVIZ Examples" OFF)
 
 # tools
 # ADD_SUBDIRECTORY(tools)
-# tools2
-# ADD_SUBDIRECTORY(tools2)
-################################################################################
-# 3rd Party Dependency Stuff
-IF(WIN32 AND NOT ANDROID)
-    INCLUDE(Find3rdPartyDependencies)
-ENDIF()
 

@@ -1,9 +1,11 @@
 # ------------------------------------------------------------------------------
-# BOOST+CMake support for CloudCompare
+# BOOST+CMake support
 # ------------------------------------------------------------------------------
 
 OPTION( OPTION_USE_BOOST "Build with liblas support" OFF )
+
 if( ${OPTION_USE_BOOST} )
+	message(STATUS "Searching for Boost 1.60 - done")
 	# Boost (using static, multithreaded libraries)
 	if ( WIN32 )
 		if ( MSVC )
@@ -15,9 +17,9 @@ if( ${OPTION_USE_BOOST} )
 		set(Boost_USE_MULTITHREADED ON)
 	endif()
 
-	find_package(Boost ${Boost_VERSION})
-
-	if ( Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND )
+	find_package(Threads)
+	#find_package(Boost 1.60 COMPONENTS program_options thread system REQUIRED)
+	if ( Boost_FOUND )
 		include_directories( ${Boost_INCLUDE_DIRS} )
 		link_directories( ${Boost_LIBRARY_DIRS} ) 
 	endif()

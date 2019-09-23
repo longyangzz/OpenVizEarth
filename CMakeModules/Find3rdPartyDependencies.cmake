@@ -104,8 +104,8 @@ ENDMACRO(SEARCH_3RDPARTY OSG_3RDPARTY_BIN)
 # this is code for handling optional 3RDPARTY usage
 ################################################################################################
 
-OPTION(USE_3RDPARTY_BIN "Set to ON to use Mike prebuilt dependencies situated side of OpenSceneGraph source.  Use OFF for avoiding." ON)
-IF(USE_3RDPARTY_BIN)
+OPTION(OPTION_USE_3RDPARTY_BIN "Set to ON to use Mike prebuilt dependencies situated side of OpenSceneGraph source.  Use OFF for avoiding." ON)
+IF(OPTION_USE_3RDPARTY_BIN)
 
     # Check Architecture
     IF( CMAKE_SIZEOF_VOID_P EQUAL 4 )
@@ -139,4 +139,4 @@ IF(USE_3RDPARTY_BIN)
         SET (3rdPartyRoot ${ACTUAL_3RDPARTY_DIR})
         SEARCH_3RDPARTY(${ACTUAL_3RDPARTY_DIR})
     ENDIF(EXISTS ${ACTUAL_3RDPARTY_DIR})
-ENDIF(USE_3RDPARTY_BIN)
+ENDIF(OPTION_USE_3RDPARTY_BIN)
