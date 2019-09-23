@@ -6,29 +6,29 @@ IF(COMMAND CMAKE_POLICY)
     CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 
-PROJECT(DCViz)
+PROJECT(OpenVizEarth)
 #cmake_policy(SET CMP0071 OLD)
-SET(DCVIZ_MAJOR_VERSION 1)
-SET(DCVIZ_MINOR_VERSION 0)
-SET(DCVIZ_PATCH_VERSION 0)
-SET(DCVIZ_SOVERSION 10)
+SET(OpenVIZ_MAJOR_VERSION 1)
+SET(OpenVIZ_MINOR_VERSION 0)
+SET(OpenVIZ_PATCH_VERSION 0)
+SET(OpenVIZ_SOVERSION 10)
 
-SET(DCVIZ_VERSION ${DCVIZ_MAJOR_VERSION}.${DCVIZ_MINOR_VERSION}.${DCVIZ_PATCH_VERSION})
+SET(OpenVIZ_VERSION ${OpenVIZ_MAJOR_VERSION}.${OpenVIZ_MINOR_VERSION}.${OpenVIZ_PATCH_VERSION})
 
-SET(DCVIZ_PLUGINS osgPlugins-${SOVERSION_VERSION})
+SET(OpenVIZ_PLUGINS osgPlugins-${SOVERSION_VERSION})
 
-SET(DCVIZ_PLUGIN_PREFIX "")
+SET(OpenVIZ_PLUGIN_PREFIX "")
 
 # We want to build SONAMES shared librariess
-SET(DCVIZ_SONAMES TRUE)
+SET(OpenVIZ_SONAMES TRUE)
 
 
 # We have some custom .cmake scripts not in the official distribution.
 # Maybe this can be used override existing behavior if needed?
-SET(CMAKE_MODULE_PATH "${DCViz_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+SET(CMAKE_MODULE_PATH "${OpenVizEarth_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 INCLUDE_DIRECTORIES(
-    ${DCViz_SOURCE_DIR}/src
+    ${OpenVizEarth_SOURCE_DIR}/src
     ${OPENGL_INCLUDE_DIR}
 )
 
@@ -37,9 +37,9 @@ INCLUDE_DIRECTORIES(
 # Set Version Info resource file
 
 IF(MSVC)
-    SET(DCVIZ_VERSIONINFO_RC "${PROJECT_BINARY_DIR}/PlatformSpecifics/Windows/DCVIZVersionInfo.rc")
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/DCVizVersionInfo.rc.in"
-                   "${DCVIZ_VERSIONINFO_RC}")
+    SET(OpenVIZ_VERSIONINFO_RC "${PROJECT_BINARY_DIR}/PlatformSpecifics/Windows/OpenVizVersionInfo.rc")
+    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/OpenVizVersionInfo.rc.in"
+                   "${OpenVIZ_VERSIONINFO_RC}")
 ENDIF()
 
 ################################################################################
@@ -79,18 +79,18 @@ IF(WIN32 AND NOT ANDROID)
     IF(MSVC)
         IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
             MESSAGE("Warning:  disabling versioned options 2.4.6 exibits inconsintencies in .pdb naming, at least under MSVC, suggested upgrading at least to 2.4.7")
-            SET(DCVIZ_MSVC_VERSIONED_DLL OFF)
-            SET(DCVIZ_MSVC_DEBUG_INCREMENTAL_LINK ON)
+            SET(OpenVIZ_MSVC_VERSIONED_DLL OFF)
+            SET(OpenVIZ_MSVC_DEBUG_INCREMENTAL_LINK ON)
         ELSE()
-            OPTION(DCVIZ_MSVC_VERSIONED_DLL "Set to ON to build DCVIZ with versioned dll names" ON)
-            MARK_AS_ADVANCED(DCVIZ_MSVC_VERSIONED_DLL)
-            OPTION(DCVIZ_MSVC_DEBUG_INCREMENTAL_LINK "Set to OFF to build DCVIZ without incremental linking in debug (release is off by default)" ON)
-            MARK_AS_ADVANCED(DCVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
-            IF(NOT DCVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
+            OPTION(OpenVIZ_MSVC_VERSIONED_DLL "Set to ON to build OpenVIZ with versioned dll names" ON)
+            MARK_AS_ADVANCED(OpenVIZ_MSVC_VERSIONED_DLL)
+            OPTION(OpenVIZ_MSVC_DEBUG_INCREMENTAL_LINK "Set to OFF to build OpenVIZ without incremental linking in debug (release is off by default)" ON)
+            MARK_AS_ADVANCED(OpenVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
+            IF(NOT OpenVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
                 SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
                 SET(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
                 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "/debug /INCREMENTAL:NO")
-            ENDIF(NOT DCVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
+            ENDIF(NOT OpenVIZ_MSVC_DEBUG_INCREMENTAL_LINK)
         ENDIF()
     ENDIF(MSVC)
 ENDIF(WIN32 AND NOT ANDROID)
@@ -141,7 +141,7 @@ IF (NOT WIN32)
 ENDIF()
 
 # Include macro utilities here
-INCLUDE(DCVizMacroUtils)
+INCLUDE(OpenVizMacroUtils)
 
 
 
@@ -220,24 +220,27 @@ ELSE()
     ENDIF(VALID_BUILDER_VERSION)
 ENDIF()
 
-#SET(INSTALL_BINDIR DCViz/bin)
-#SET(INSTALL_INCDIR DCViz/include)
-#SET(INSTALL_LIBDIR DCViz/lib)
-#SET(INSTALL_DOCDIR DCViz/doc)
+#SET(INSTALL_BINDIR OpenViz/bin)
+#SET(INSTALL_INCDIR OpenViz/include)
+#SET(INSTALL_LIBDIR OpenViz/lib)
+#SET(INSTALL_DOCDIR OpenViz/doc)
 
 # Dynamic vs Static Linking
-OPTION(DYNAMIC_DCVIZ "Set to ON to build OpenSceneGraph for dynamic linking.  Use OFF for static." ON)
-IF   (DYNAMIC_DCVIZ)
-    SET(DCVIZ_USER_DEFINED_DYNAMIC_OR_STATIC "SHARED")
+OPTION(DYNAMIC_OPENVIZ "Set to ON to build OpenSceneGraph for dynamic linking.  Use OFF for static." ON)
+IF   (DYNAMIC_OPENVIZ)
+    SET(OPENVIZ_USER_DEFINED_DYNAMIC_OR_STATIC "SHARED")
 ELSE ()
-    SET(DCVIZ_USER_DEFINED_DYNAMIC_OR_STATIC "STATIC")
+    SET(OPENVIZ_USER_DEFINED_DYNAMIC_OR_STATIC "STATIC")
 ENDIF()
 
 ################################################################################
 # 3rd Party Dependency Stuff
 IF(WIN32 AND NOT ANDROID)
     INCLUDE(Find3rdPartyDependencies)
+    INCLUDE(LiblasSupport)
 ENDIF()
+
+
 
 # Boost C++ Libraries support - required
 message(STATUS "Searching for Boost 1.60 - done")
@@ -273,20 +276,20 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 ADD_SUBDIRECTORY(src)
 
-OPTION(BUILD_DCVIZ_TESTS "Build experimental components" ON)
-IF(BUILD_DCVIZ_TESTS)
+OPTION(BUILD_OpenVIZ_TESTS "Build experimental components" ON)
+IF(BUILD_OpenVIZ_TESTS)
     # The shader effect compositor in progress
     #ADD_SUBDIRECTORY(test)
-ENDIF(BUILD_DCVIZ_TESTS)
+ENDIF(BUILD_OpenVIZ_TESTS)
 
-# DCVIZ Applications
-OPTION(BUILD_DCVIZ_APPLICATIONS "Enable to build DCVIZ Applications (e.g. DCVIZ)" ON)
-IF(BUILD_DCVIZ_APPLICATIONS)
+# OPENVIZ Applications
+OPTION(BUILD_OpenVIZ_APPLICATIONS "Enable to build OPENVIZ Applications (e.g. OPENVIZ)" ON)
+IF(BUILD_OpenVIZ_APPLICATIONS)
     ADD_SUBDIRECTORY(apps)
-ENDIF(BUILD_DCVIZ_APPLICATIONS)
+ENDIF(BUILD_OpenVIZ_APPLICATIONS)
 
-# DCVIZ Examples
-OPTION(BUILD_DCVIZ_EXAMPLES "Enable to build DCVIZ Examples" OFF)
+# OPENVIZ Examples
+OPTION(BUILD_OpenVIZ_EXAMPLES "Enable to build OPENVIZ Examples" OFF)
 
 # tools
 # ADD_SUBDIRECTORY(tools)

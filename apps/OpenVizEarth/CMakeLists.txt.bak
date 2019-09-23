@@ -18,7 +18,7 @@ SET(TARGET_SRC
     ${source_list}
     ${SOURCES_H_MOC}
 	${generated_qrc_list}
-    ${DCVIZ_VERSIONINFO_RC}
+    ${OpenVIZ_VERSIONINFO_RC}
 )
 SET(TARGET_H
     Mainwindow.h
@@ -26,4 +26,4 @@ SET(TARGET_H
 	${generated_ui_list}
 )
 
-SETUP_APPLICATION(DCVizViewer)
+SETUP_APPLICATION(DCVizEarth)

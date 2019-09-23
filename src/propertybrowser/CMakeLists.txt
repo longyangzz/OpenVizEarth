@@ -1,11 +1,11 @@
 
-IF(DYNAMIC_DCVIZ)
+IF(DYNAMIC_OPENVIZ)
     ADD_DEFINITIONS(-DQT_QTPROPERTYBROWSER_EXPORT)
 	ADD_DEFINITIONS(-DQ_WS_WIN)
 ENDIF()
 
 SET(LIB_NAME Propertybrowser)
-SET(HEADER_PATH ${DCViz_SOURCE_DIR}/src/${LIB_NAME})
+SET(HEADER_PATH ${OpenVizEarth_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(SOURCES_H
     ${HEADER_PATH}/qtbuttonpropertybrowser.h
@@ -44,7 +44,7 @@ SET(TARGET_SRC
     qttreepropertybrowser.cpp
     qtvariantproperty.cpp
     ${SOURCES_H_MOC}
-    ${DCVIZ_VERSIONINFO_RC}
+    ${OpenVIZ_VERSIONINFO_RC}
 )
 
 

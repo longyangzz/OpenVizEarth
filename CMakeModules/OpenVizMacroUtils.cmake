@@ -55,16 +55,16 @@ MACRO(LINK_INTERNAL TRGTNAME)
         TARGET_LINK_LIBRARIES(${TRGTNAME} ${ARGN})
     ELSE(NOT CMAKE24)
         FOREACH(LINKLIB ${ARGN})
-            IF(MSVC AND DCVIZ_MSVC_VERSIONED_DLL)
+            IF(MSVC AND OPENVIZ_MSVC_VERSIONED_DLL)
                 #when using versioned names, the .dll name differ from .lib name, there is a problem with that:
                 #CMake 2.4.7, at least seem to use PREFIX instead of IMPORT_PREFIX  for computing linkage info to use into projects,
                 # so we full path name to specify linkage, this prevent automatic inferencing of dependencies, so we add explicit depemdencies
                 #to library targets used
                 #TARGET_LINK_LIBRARIES(${TRGTNAME} optimized "${OUTPUT_LIBDIR}/${LINKLIB}${CMAKE_RELEASE_POSTFIX}.lib" debug "${OUTPUT_LIBDIR}/${LINKLIB}${CMAKE_DEBUG_POSTFIX}.lib")
                 ADD_DEPENDENCIES(${TRGTNAME} ${LINKLIB})
-            ELSE(MSVC AND DCVIZ_MSVC_VERSIONED_DLL)
+            ELSE(MSVC AND OPENVIZ_MSVC_VERSIONED_DLL)
                 TARGET_LINK_LIBRARIES(${TRGTNAME} optimized "${LINKLIB}${CMAKE_RELEASE_POSTFIX}" debug "${LINKLIB}${CMAKE_DEBUG_POSTFIX}")
-            ENDIF(MSVC AND DCVIZ_MSVC_VERSIONED_DLL)
+            ENDIF(MSVC AND OPENVIZ_MSVC_VERSIONED_DLL)
         ENDFOREACH(LINKLIB)
     ENDIF(NOT CMAKE24)
 ENDMACRO(LINK_INTERNAL TRGTNAME)
@@ -83,15 +83,15 @@ ENDMACRO(LINK_EXTERNAL TRGTNAME)
 MACRO(LINK_CORELIB_DEFAULT CORELIB_NAME)
     #SET(ALL_GL_LIBRARIES ${OPENGL_LIBRARIES})
     SET(ALL_GL_LIBRARIES ${OPENGL_gl_LIBRARY})
-    IF (DCVIZ_GLES1_AVAILABLE OR DCVIZ_GLES2_AVAILABLE)
+    IF (OPENVIZ_GLES1_AVAILABLE OR OPENVIZ_GLES2_AVAILABLE)
         SET(ALL_GL_LIBRARIES ${ALL_GL_LIBRARIES} ${OPENGL_egl_LIBRARY})
     ENDIF()
 
     LINK_EXTERNAL(${CORELIB_NAME} ${ALL_GL_LIBRARIES}) 
     #LINK_WITH_VARIABLES(${CORELIB_NAME} OPENTHREADS_LIBRARY)
-    IF(DCVIZ_SONAMES)
-      SET_TARGET_PROPERTIES(${CORELIB_NAME} PROPERTIES VERSION ${DCVIZ_VERSION} SOVERSION ${DCVIZ_SOVERSION})
-    ENDIF(DCVIZ_SONAMES)
+    IF(OPENVIZ_SONAMES)
+      SET_TARGET_PROPERTIES(${CORELIB_NAME} PROPERTIES VERSION ${OpenVIZ_VERSION} SOVERSION ${OpenVIZ_VERSION})
+    ENDIF(OPENVIZ_SONAMES)
     
 ENDMACRO(LINK_CORELIB_DEFAULT CORELIB_NAME)
 
@@ -135,7 +135,7 @@ MACRO(SETUP_LINK_LIBRARIES)
 
     #SET(ALL_GL_LIBRARIES ${OPENGL_LIBRARIES})
     SET(ALL_GL_LIBRARIES ${OPENGL_gl_LIBRARY})
-    IF (DCVIZ_GLES1_AVAILABLE OR DCVIZ_GLES2_AVAILABLE)
+    IF (OPENVIZ_GLES1_AVAILABLE OR OPENVIZ_GLES2_AVAILABLE)
         SET(ALL_GL_LIBRARIES ${ALL_GL_LIBRARIES} ${OPENGL_egl_LIBRARY})
     ENDIF()
 
@@ -150,10 +150,10 @@ MACRO(SETUP_LINK_LIBRARIES)
         IF(TARGET_LIBRARIES_VARS)
             LINK_WITH_VARIABLES(${TARGET_TARGETNAME} ${TARGET_LIBRARIES_VARS})
         ENDIF(TARGET_LIBRARIES_VARS)
-    IF(MSVC  AND DCVIZ_MSVC_VERSIONED_DLL)
+    IF(MSVC  AND OPENVIZ_MSVC_VERSIONED_DLL)
         #when using full path name to specify linkage, it seems that already linked libs must be specified
             LINK_EXTERNAL(${TARGET_TARGETNAME} ${ALL_GL_LIBRARIES}) 
-    ENDIF(MSVC AND DCVIZ_MSVC_VERSIONED_DLL)
+    ENDIF(MSVC AND OPENVIZ_MSVC_VERSIONED_DLL)
 
 ENDMACRO(SETUP_LINK_LIBRARIES)
 
@@ -219,12 +219,12 @@ MACRO(SETUP_LIBRARY LIB_NAME)
         SET(TARGET_NAME ${LIB_NAME} )
         SET(TARGET_TARGETNAME ${LIB_NAME} )
         ADD_LIBRARY(${LIB_NAME}
-            ${DCVIZ_USER_DEFINED_DYNAMIC_OR_STATIC}
+            ${OPENVIZ_USER_DEFINED_DYNAMIC_OR_STATIC}
             ${TARGET_H}
             ${TARGET_H_NO_MODULE_INSTALL}
             ${TARGET_SRC}
         )
-        SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES FOLDER "DCVIZ Core")
+        SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES FOLDER "OPENVIZ Core")
         IF(TARGET_LABEL)
             SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES PROJECT_LABEL "${TARGET_LABEL}")
         ENDIF(TARGET_LABEL)
@@ -253,7 +253,7 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
 
     #MESSAGE("in -->SETUP_PLUGIN<-- ${TARGET_NAME}-->${TARGET_SRC} <--> ${TARGET_H}<--")
 
-    ## we have set up the target label and targetname by taking into account global prfix (DCVizdb_)
+    ## we have set up the target label and targetname by taking into account global prfix (OPENVizdb_)
 
     IF(NOT TARGET_TARGETNAME)
             SET(TARGET_TARGETNAME "${TARGET_DEFAULT_PREFIX}${TARGET_NAME}")
@@ -262,23 +262,23 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
             SET(TARGET_LABEL "${TARGET_DEFAULT_LABEL_PREFIX} ${TARGET_NAME}")
     ENDIF(NOT TARGET_LABEL)
 
-    ## plugins gets put in libDCVIZ by default
+    ## plugins gets put in libOpenVIZ by default
     IF(${ARGC} GREATER 1)
-      SET(PACKAGE_COMPONENT libDCVIZ-${ARGV1})
+      SET(PACKAGE_COMPONENT libOpenVIZ-${ARGV1})
     ELSE(${ARGC} GREATER 1)
-      SET(PACKAGE_COMPONENT libDCVIZ)
+      SET(PACKAGE_COMPONENT libOpenVIZ)
     ENDIF(${ARGC} GREATER 1)
 
     # Add the VisualStudio versioning info    
-    SET(TARGET_SRC ${TARGET_SRC} ${DCVIZ_VERSIONINFO_RC})
+    SET(TARGET_SRC ${TARGET_SRC} ${OPENVIZ_VERSIONINFO_RC})
     
     # here we use the command to generate the library    
 
-    IF   (DYNAMIC_DCVIZ)
+    IF   (DYNAMIC_OPENVIZ)
         ADD_LIBRARY(${TARGET_TARGETNAME} MODULE ${TARGET_SRC} ${TARGET_H})
-    ELSE (DYNAMIC_DCVIZ)
+    ELSE (DYNAMIC_OPENVIZ)
         ADD_LIBRARY(${TARGET_TARGETNAME} STATIC ${TARGET_SRC} ${TARGET_H})
-    ENDIF(DYNAMIC_DCVIZ)
+    ENDIF(DYNAMIC_OPENVIZ)
     
     #not sure if needed, but for plugins only Msvc need the d suffix
     IF(NOT MSVC)
@@ -290,7 +290,7 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
             SET_OUTPUT_DIR_PROPERTY_260(${TARGET_TARGETNAME} "${OSG_PLUGINS}")        # Sets the ouput to be /osgPlugin-X.X.X ; also ensures the /Debug /Release are removed
         ELSE(NOT CMAKE24)
 
-            IF(DCViz_MSVC_VERSIONED_DLL) 
+            IF(OPENViz_MSVC_VERSIONED_DLL) 
 
                 #this is a hack... the build place is set to lib/<debug or release> by LIBARARY_OUTPUT_PATH equal to OUTPUT_LIBDIR
                 #the .lib will be crated in ../ so going straight in lib by the IMPORT_PREFIX property
@@ -305,13 +305,13 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
                     SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES PREFIX "../../bin/${OSG_PLUGINS}/" IMPORT_PREFIX "../")
                 ENDIF(NOT MSVC_IDE)
 
-            ELSE(DCVIZ_MSVC_VERSIONED_DLL)
+            ELSE(OPENVIZ_MSVC_VERSIONED_DLL)
 
                 #in standard mode (unversioned) the .lib and .dll are placed in lib/<debug or release>/${OSG_PLUGINS}.
                 #here the PREFIX property has been used, the same result would be accomplidhe by prepending ${OSG_PLUGINS}/ to OUTPUT_NAME target property
 
                 SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES PREFIX "${OSG_PLUGINS}/")
-            ENDIF(DCVIZ_MSVC_VERSIONED_DLL)
+            ENDIF(OPENVIZ_MSVC_VERSIONED_DLL)
 
         ENDIF(NOT CMAKE24)
     ENDIF(NOT MSVC)
@@ -325,12 +325,12 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
     IF(WIN32)
         INSTALL(TARGETS ${TARGET_TARGETNAME} 
             RUNTIME DESTINATION bin COMPONENT ${PACKAGE_COMPONENT}
-            ARCHIVE DESTINATION lib/${OSG_PLUGINS} COMPONENT libDCVIZ-dev
+            ARCHIVE DESTINATION lib/${OSG_PLUGINS} COMPONENT libOPENVIZ-dev
             LIBRARY DESTINATION bin/${OSG_PLUGINS} COMPONENT ${PACKAGE_COMPONENT})
     ELSE(WIN32)
         INSTALL(TARGETS ${TARGET_TARGETNAME}
             RUNTIME DESTINATION bin COMPONENT ${PACKAGE_COMPONENT}
-            ARCHIVE DESTINATION lib${LIB_POSTFIX}/${OSG_PLUGINS} COMPONENT libDCVIZ-dev
+            ARCHIVE DESTINATION lib${LIB_POSTFIX}/${OSG_PLUGINS} COMPONENT libOPENVIZ-dev
             LIBRARY DESTINATION lib${LIB_POSTFIX}/${OSG_PLUGINS} COMPONENT ${PACKAGE_COMPONENT})
     ENDIF(WIN32)
     ENDIF()
@@ -357,13 +357,13 @@ MACRO(SETUP_EXE IS_COMMANDLINE_APP)
     ELSE(${IS_COMMANDLINE_APP})
     
         IF(APPLE)
-            # SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${DCVIZ_MAJOR_VERSION}.${DCVIZ_MINOR_VERSION}.${DCVIZ_PATCH_VERSION}")
+            # SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${OpenVIZ_MAJOR_VERSION}.${OpenVIZ_MINOR_VERSION}.${OpenVIZ_PATCH_VERSION}")
             # Short Version is the "marketing version". It is the version
             # the user sees in an information panel.
-            SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DCVIZ_MAJOR_VERSION}.${DCVIZ_MINOR_VERSION}.${DCVIZ_PATCH_VERSION}")
+            SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${OpenVIZ_MAJOR_VERSION}.${OpenVIZ_MINOR_VERSION}.${OpenVIZ_PATCH_VERSION}")
             # Bundle version is the version the OS looks at.
-            SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DCVIZ_MAJOR_VERSION}.${DCVIZ_MINOR_VERSION}.${DCVIZ_PATCH_VERSION}")
-            SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.DCVIZ.${TARGET_TARGETNAME}" )
+            SET(MACOSX_BUNDLE_BUNDLE_VERSION "${OpenVIZ_MAJOR_VERSION}.${OpenVIZ_MINOR_VERSION}.${OpenVIZ_PATCH_VERSION}")
+            SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.OpenVIZ.${TARGET_TARGETNAME}" )
             SET(MACOSX_BUNDLE_BUNDLE_NAME "${TARGET_NAME}" )
             # SET(MACOSX_BUNDLE_ICON_FILE "myicon.icns")
             # SET(MACOSX_BUNDLE_COPYRIGHT "")
@@ -389,9 +389,9 @@ MACRO(SETUP_EXE IS_COMMANDLINE_APP)
     SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES RELWITHDEBINFO_OUTPUT_NAME "${TARGET_NAME}${CMAKE_RELWITHDEBINFO_POSTFIX}")
     SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES MINSIZEREL_OUTPUT_NAME "${TARGET_NAME}${CMAKE_MINSIZEREL_POSTFIX}")
 
-    IF(MSVC_IDE AND DCVIZ_MSVC_VERSIONED_DLL)
+    IF(MSVC_IDE AND OPENVIZ_MSVC_VERSIONED_DLL)
         SET_OUTPUT_DIR_PROPERTY_260(${TARGET_TARGETNAME} "")        # Ensure the /Debug /Release are removed
-    ENDIF(MSVC_IDE AND DCVIZ_MSVC_VERSIONED_DLL)
+    ENDIF(MSVC_IDE AND OPENVIZ_MSVC_VERSIONED_DLL)
 
     SETUP_LINK_LIBRARIES()    
 
@@ -415,7 +415,7 @@ MACRO(SETUP_APPLICATION APPLICATION_NAME)
         IF(APPLE)
             INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin BUNDLE DESTINATION bin)
         ELSE(APPLE)
-            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin COMPONENT DCVIZ  )
+            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin COMPONENT OpenVIZ  )
         ENDIF(APPLE)
 
 ENDMACRO(SETUP_APPLICATION)
@@ -437,7 +437,7 @@ MACRO(SETUP_TOOL TOOL_NAME)
         IF(APPLE)
             INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin BUNDLE DESTINATION bin)
         ELSE(APPLE)
-            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin COMPONENT DCVIZ  )
+            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION bin COMPONENT OpenVIZ  )
         ENDIF(APPLE)
 
 ENDMACRO(SETUP_TOOL)
@@ -464,9 +464,9 @@ MACRO(SETUP_EXAMPLE EXAMPLE_NAME)
         SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES FOLDER "Examples")
         
         IF(APPLE)
-            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION share/DCVIZ/bin BUNDLE DESTINATION share/DCVIZ/bin )            
+            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION share/OpenVIZ/bin BUNDLE DESTINATION share/OpenVIZ/bin )            
         ELSE(APPLE)
-            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION share/DCVIZ/bin COMPONENT DCVIZ-examples )
+            INSTALL(TARGETS ${TARGET_TARGETNAME} RUNTIME DESTINATION share/OpenVIZ/bin COMPONENT OpenVIZ-examples )
         ENDIF(APPLE)
 
 ENDMACRO(SETUP_EXAMPLE)
@@ -478,27 +478,27 @@ MACRO(SETUP_COMMANDLINE_EXAMPLE EXAMPLE_NAME)
 
 ENDMACRO(SETUP_COMMANDLINE_EXAMPLE)
 
-# Takes two optional arguments -- DCViz prefix and osg version
+# Takes two optional arguments -- OpenVIZ prefix and osg version
 MACRO(HANDLE_MSVC_DLL)
         #this is a hack... the build place is set to lib/<debug or release> by LIBARARY_OUTPUT_PATH equal to OUTPUT_LIBDIR
         #the .lib will be crated in ../ so going straight in lib by the IMPORT_PREFIX property
         #because we want dll placed in OUTPUT_BINDIR ie the bin folder sibling of lib, we can use ../../bin to go there,
         #it is hardcoded, we should compute OUTPUT_BINDIR position relative to OUTPUT_LIBDIR ... to be implemented
         #changing bin to something else breaks this hack
-        #the dll are versioned by prefixing the name with DCViz${DCVIZ_SOVERSION}-
+        #the dll are versioned by prefixing the name with OpenVIZ${OpenVIZ_SOVERSION}-
 
-        # LIB_PREFIX: use "DCViz" by default, else whatever we've been given.
+        # LIB_PREFIX: use "OpenVIZ" by default, else whatever we've been given.
         IF(${ARGC} GREATER 0)
                 SET(LIB_PREFIX ${ARGV0})
         ELSE(${ARGC} GREATER 0)
-                SET(LIB_PREFIX DCViz)
+                SET(LIB_PREFIX OpenVIZ)
         ENDIF(${ARGC} GREATER 0)
 
-        # LIB_SOVERSION: use DCVIZ's soversion by default, else whatever we've been given
+        # LIB_SOVERSION: use OpenVIZ's soversion by default, else whatever we've been given
         IF(${ARGC} GREATER 1)
                 SET(LIB_SOVERSION ${ARGV1})
         ELSE(${ARGC} GREATER 1)
-                SET(LIB_SOVERSION ${DCVIZ_SOVERSION})
+                SET(LIB_SOVERSION ${OpenVIZ_SOVERSION})
         ENDIF(${ARGC} GREATER 1)
 
         SET_OUTPUT_DIR_PROPERTY_260(${LIB_NAME} "")        # Ensure the /Debug /Release are removed
@@ -537,6 +537,6 @@ MACRO(HANDLE_MSVC_DLL)
             ENDIF (NOT CMAKE24)
         ENDIF(NOT MSVC_IDE) 
 
-#     SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/DCViz${DCVIZ_SOVERSION}-")
+#     SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/OpenVIZ_SOVERSION${OpenVIZ_SOVERSION_SOVERSION}-")
 #     SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDMACRO(HANDLE_MSVC_DLL)

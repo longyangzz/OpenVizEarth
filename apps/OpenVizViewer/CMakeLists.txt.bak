@@ -26,4 +26,4 @@ SET(TARGET_H
 	${generated_ui_list}
 )
 
-SETUP_APPLICATION(DCVizEarth)
+SETUP_APPLICATION(OpenVizViewer)

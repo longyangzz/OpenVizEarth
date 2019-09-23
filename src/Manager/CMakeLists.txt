@@ -1,5 +1,5 @@
 
-IF(DYNAMIC_DCVIZ)
+IF(DYNAMIC_OPENVIZ)
     ADD_DEFINITIONS(-DMANAGER_LIB)
 	
 	ADD_DEFINITIONS(-DQ_WS_WIN)
@@ -8,7 +8,7 @@ IF(DYNAMIC_DCVIZ)
 ENDIF()
 
 SET(LIB_NAME Manager)
-SET(HEADER_PATH ${DCViz_SOURCE_DIR}/src/${LIB_NAME})
+SET(HEADER_PATH ${OpenVizEarth_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(SOURCES_H
     ${HEADER_PATH}/NodePropertyWidget.h
@@ -36,7 +36,7 @@ file( GLOB source_list *.cpp  )
 SET(TARGET_SRC
     ${source_list}
     ${SOURCES_H_MOC}
-    ${DCVIZ_VERSIONINFO_RC}
+    ${OpenVIZ_VERSIONINFO_RC}
 )
 
 

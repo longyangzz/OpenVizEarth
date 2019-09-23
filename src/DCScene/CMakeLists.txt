@@ -1,10 +1,10 @@
 
-IF(DYNAMIC_DCVIZ)
+IF(DYNAMIC_OPENVIZ)
     ADD_DEFINITIONS(-DDCSCENE_LIB)
 ENDIF()
 
 SET(LIB_NAME DCScene)
-SET(HEADER_PATH ${DCViz_SOURCE_DIR}/src/${LIB_NAME}/scene)
+SET(HEADER_PATH ${OpenVizEarth_SOURCE_DIR}/src/${LIB_NAME}/scene)
 
 SET(SOURCES_H
     ${HEADER_PATH}/PickingHandler.h
@@ -34,7 +34,7 @@ file( GLOB source_list scene/*.cpp  )
 SET(TARGET_SRC
     ${source_list}
     ${SOURCES_H_MOC}
-    ${DCVIZ_VERSIONINFO_RC}
+    ${OpenVIZ_VERSIONINFO_RC}
 )
 
 

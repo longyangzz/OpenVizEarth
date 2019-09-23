@@ -1,10 +1,10 @@
 
-IF(DYNAMIC_DCVIZ)
+IF(DYNAMIC_OPENVIZ)
     ADD_DEFINITIONS(-DDCDB_LIB)
 ENDIF()
 
 SET(LIB_NAME DCDB)
-SET(HEADER_PATH ${DCViz_SOURCE_DIR}/src/${LIB_NAME})
+SET(HEADER_PATH ${OpenVizEarth_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(SOURCES_H
     ${HEADER_PATH}/ObjectLoader.h
@@ -31,7 +31,7 @@ file( GLOB source_list *.cpp  )
 SET(TARGET_SRC
     ${source_list}
     ${SOURCES_H_MOC}
-    ${DCVIZ_VERSIONINFO_RC}
+    ${OpenVIZ_VERSIONINFO_RC}
 )
 
 
