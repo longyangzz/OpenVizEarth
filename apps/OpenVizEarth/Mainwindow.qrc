@@ -20,7 +20,7 @@
         <file>Resources/qss/qss3.qss</file>
     </qresource>
     <qresource prefix="/Logo">
-        <file>Resources/logo/DC.ico</file>
+        <file>Resources/logo/logoSelf.ico</file>
     </qresource>
     <qresource prefix="/translate">
         <file>Resources/languages/zh_cn/qt_zh_CN.lng</file>

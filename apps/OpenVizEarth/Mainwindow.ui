@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Mainwindow.qrc">
-    <normaloff>:/Logo/Resources/logo/DC.ico</normaloff>:/Logo/Resources/logo/DC.ico</iconset>
+    <normaloff>:/Logo/Resources/logo/logoSelf.ico</normaloff>:/Logo/Resources/logo/logoSelf.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
