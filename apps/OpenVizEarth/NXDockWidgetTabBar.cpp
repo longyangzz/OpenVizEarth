@@ -9,7 +9,7 @@ NXDockWidgetTabBar::NXDockWidgetTabBar(Qt::DockWidgetArea area):
   _area(area)
 {
 	setObjectName("DockWidgetBar");
-
+	//setWindowTitle("test");
 	setFloatable(false);
 	setMovable(false);
 

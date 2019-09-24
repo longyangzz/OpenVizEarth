@@ -97,6 +97,12 @@ public:
 	// Turn off the AutoHide option 
 	void dockWidgetUnpinned(NXDockWidget* dockWidget);
 
+	// DockWidget has been docked
+	void dockWidgetDocked(NXDockWidget* dockWidget);
+
+	// DockWidget has been undocked
+	void dockWidgetUndocked(NXDockWidget* dockWidget);
+
 	NXDockWidgetTabBar* getDockWidgetBar(Qt::DockWidgetArea area);
 
 	//UI style

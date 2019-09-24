@@ -119,7 +119,7 @@ void  UIFacade::initAll()
 	initPlugins();
 
 	emit  sendNowInitName(tr("Stylizing UI"));
-	//initUiStyles();
+	initUiStyles();
 }
 
 void  UIFacade::setupUi()

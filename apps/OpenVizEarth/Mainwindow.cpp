@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 	, m_version(PACKAGE_VERSION)
 	, m_pMdiArea( new QMdiArea( this ) )
 	, m_bgLoader(nullptr)
+	, _dockWidget(nullptr)
 {
 	
 }
@@ -512,6 +513,45 @@ static Qt::ToolBarArea  dockAreaToToolBarArea(Qt::DockWidgetArea area)
 	}
 }
 
+void  MainWindow::dockWidgetDocked(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+}
+
+void  MainWindow::dockWidgetUndocked(NXDockWidget *dockWidget)
+{
+	hideDockWidget(_dockWidget);
+
+	NXDockWidgetTabBar *dockWidgetBar = getDockWidgetBar(dockWidget->getArea());
+
+	if (dockWidgetBar == nullptr)
+	{
+		return;
+	}
+
+	dockWidget->clearTabifiedDocks();
+
+	if (dockWidgetBar->removeDockWidget(dockWidget))
+	{
+		if (!dockWidget->isFloating())
+		{
+			QMainWindow::addDockWidget(dockWidget->getArea(), dockWidget);
+		}
+
+		if ((dockWidget->getArea() == Qt::LeftDockWidgetArea)
+			&& dockWidgetBar->isHidden())
+		{
+			getDockWidgetBar(Qt::TopDockWidgetArea)->removeSpacing();
+			getDockWidgetBar(Qt::BottomDockWidgetArea)->removeSpacing();
+		}
+
+		dockWidget->show();
+	}
+}
+
 void  MainWindow::createDockWidgetBar(Qt::DockWidgetArea area)
 {
 	if (_dockWidgetBar.find(area) != _dockWidgetBar.end())
@@ -520,6 +560,7 @@ void  MainWindow::createDockWidgetBar(Qt::DockWidgetArea area)
 	}
 
 	NXDockWidgetTabBar *dockWidgetBar = new NXDockWidgetTabBar(area);
+	dockWidgetBar->setWindowTitle("DockTool");
 	_dockWidgetBar[area] = dockWidgetBar;
 	connect(dockWidgetBar, &NXDockWidgetTabBar::signal_dockWidgetButton_clicked, this, &MainWindow::showDockWidget);
 
