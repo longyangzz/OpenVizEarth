@@ -17,6 +17,10 @@ class ObjectLoader;
 class NodeTreeModel;
 class NodePropertyWidget;
 
+
+class NXDockWidget;
+class NXDockWidgetTabBar;
+
 namespace osg
 {
 	class Node;
@@ -73,6 +77,30 @@ public:
 
 	//! 文件读取成功时候调用，用来记录文件名到当前文件和最近打开列表中
 	void AddRecentlyOpenedFile(const QString &filename, QStringList &filelist);
+
+
+	//! dockWidget
+	void createDockWidgetBar(Qt::DockWidgetArea area);
+
+	void showDockWidget(NXDockWidget* dockWidget);
+	void hideDockWidget(NXDockWidget* dockWidget);
+
+	QRect getDockWidgetsAreaRect();
+
+	QList<NXDockWidget*> getDockWidgetListAtArea(Qt::DockWidgetArea area);
+
+	void adjustDockWidget(NXDockWidget* dockWidget);
+
+	// Turn on the AutoHide option 
+	void dockWidgetPinned(NXDockWidget* dockWidget);
+
+	// Turn off the AutoHide option 
+	void dockWidgetUnpinned(NXDockWidget* dockWidget);
+
+	NXDockWidgetTabBar* getDockWidgetBar(Qt::DockWidgetArea area);
+
+	//UI style
+	void initUiStyles();
 
 signals:
 	void NewFileToLoad(const QString &, QString type);
@@ -165,6 +193,18 @@ private:
 
 	//! 最后打开文件路径
 	QString m_lastDirectory;
+
+	//! docket
+	// Current active(slide out) dockwidget or null
+	NXDockWidget* _dockWidget;
+
+	// List of all created dockwidgets
+	QList<NXDockWidget*> _dockWidgets;
+
+	// List of 4 dock tabbars
+	QMap<Qt::DockWidgetArea, NXDockWidgetTabBar*> _dockWidgetBar;
+
+	QMenu* _treeWidgetMenu;
 };
 
 #endif // MYCLASS_H

@@ -19,6 +19,9 @@
 #include "QMdiArea"
 #include "QDebug"
 #include "QtGui/QColor"
+#include "QTableWidget"
+
+#include <assert.h>
 
 //osg
 #include "osg/Node"
@@ -56,6 +59,10 @@
 //Manager
 #include "Manager/NodeTreeModel.h"
 #include "Manager/NodePropertyWidget.h"
+
+#include "NXDockWidget.h"
+#include "NXDockWidgetTabBar.h"
+#include "NXDockWidgetTabButton.h"
 
 const int maxRecentlyOpenedFileNum = 10;
 
@@ -226,10 +233,381 @@ void MainWindow::InitManager()
 	dokwProperties->setWindowTitle(QString::fromLocal8Bit("ÊôÐÔ"));
 }
 
+void  MainWindow::adjustDockWidget(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	QRect  rect = getDockWidgetsAreaRect();
+
+	switch (dockWidget->getArea())
+	{
+	case Qt::LeftDockWidgetArea:
+		dockWidget->setGeometry(rect.left(), rect.top(), dockWidget->width(), rect.height());
+		break;
+	case Qt::TopDockWidgetArea:
+		dockWidget->setGeometry(rect.left(), rect.top(), rect.width(), dockWidget->height());
+		break;
+	case Qt::RightDockWidgetArea:
+		dockWidget->setGeometry(rect.left() + rect.width() - dockWidget->width(), rect.top(), dockWidget->width(), rect.height());
+		break;
+	case Qt::BottomDockWidgetArea:
+		dockWidget->setGeometry(rect.left(), rect.top() + rect.height() - dockWidget->height(), rect.width(), dockWidget->height());
+		break;
+	}
+}
+
+QList<NXDockWidget *>  MainWindow::getDockWidgetListAtArea(Qt::DockWidgetArea area)
+{
+	QList<NXDockWidget *>  dockWidgetList;
+
+	for (NXDockWidget *dockWidget : _dockWidgets)
+	{
+		if ((dockWidget->getArea() == area) && (dockWidget->isDocked()))
+		{
+			dockWidgetList.push_back(dockWidget);
+		}
+	}
+
+	return dockWidgetList;
+}
+
+void MainWindow::initUiStyles()
+{
+	for (auto child : children())
+	{
+		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
+
+		if (dock)
+		{
+			dockWidgetUnpinned(dock);
+			dock->setFixedWidth(250);
+		}
+	}
+}
+
+void  MainWindow::dockWidgetUnpinned(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	NXDockWidgetTabBar *dockWidgetBar = getDockWidgetBar(dockWidget->getArea());
+
+	if (dockWidgetBar == nullptr)
+	{
+		return;
+	}
+
+	QList<QDockWidget *>  dockWidgetList = tabifiedDockWidgets(dockWidget);
+	dockWidgetList.push_back(dockWidget);
+
+	for (QDockWidget *qDockWidget : dockWidgetList)
+	{
+		NXDockWidget *dockWidget = static_cast<NXDockWidget *>(qDockWidget);
+
+		dockWidget->setState(NXDockWidget::DockWidgetState::Hidden);
+
+		if (!dockWidget->isHidden())
+		{
+			dockWidgetBar->addDockWidget(dockWidget);
+
+			dockWidget->setTabifiedDocks(dockWidgetList);
+
+			QMainWindow::removeDockWidget(dockWidget);
+		}
+	}
+
+	if (dockWidget->getArea() == Qt::LeftDockWidgetArea)
+	{
+		getDockWidgetBar(Qt::TopDockWidgetArea)->insertSpacing();
+		getDockWidgetBar(Qt::BottomDockWidgetArea)->insertSpacing();
+	}
+}
+
+void  MainWindow::dockWidgetPinned(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	NXDockWidgetTabBar *dockWidgetBar = getDockWidgetBar(dockWidget->getArea());
+
+	if (dockWidgetBar == nullptr)
+	{
+		return;
+	}
+
+	_dockWidget = nullptr;
+
+	QList<NXDockWidget *>  dockWidgetList = dockWidget->getTabifiedDocks();
+	dockWidgetList.push_back(dockWidget);
+
+	NXDockWidget *prevDockWidget = nullptr;
+
+	for (NXDockWidget *dockWidget : dockWidgetList)
+	{
+		if (dockWidgetBar->removeDockWidget(dockWidget))
+		{
+			if (prevDockWidget == nullptr)
+			{
+				QMainWindow::addDockWidget(dockWidget->getArea(), dockWidget);
+			}
+			else
+			{
+				tabifyDockWidget(prevDockWidget, dockWidget);
+			}
+
+			prevDockWidget = dockWidget;
+
+			dockWidget->setState(NXDockWidget::DockWidgetState::Docked);
+
+			dockWidget->show();
+		}
+	}
+
+	dockWidget->raise();
+
+	if ((dockWidget->getArea() == Qt::LeftDockWidgetArea)
+		&& dockWidgetBar->isHidden())
+	{
+		getDockWidgetBar(Qt::TopDockWidgetArea)->removeSpacing();
+		getDockWidgetBar(Qt::BottomDockWidgetArea)->removeSpacing();
+	}
+}
+
+NXDockWidgetTabBar * MainWindow::getDockWidgetBar(Qt::DockWidgetArea area)
+{
+	assert(_dockWidgetBar.find(area) != _dockWidgetBar.end());
+
+	auto  it = _dockWidgetBar.find(area);
+
+	if (it != _dockWidgetBar.end())
+	{
+		return *it;
+	}
+
+	return nullptr;
+}
+
+QRect  MainWindow::getDockWidgetsAreaRect()
+{
+	int  left = centralWidget()->x();
+
+	QList<NXDockWidget *>  leftAreaDockWidgets = getDockWidgetListAtArea(Qt::LeftDockWidgetArea);
+
+	for (const NXDockWidget *dockWidget : leftAreaDockWidgets)
+	{
+		if ((dockWidget->x() >= 0) && (dockWidget->width() > 0))
+		{
+			left = std::min(left, dockWidget->x());
+		}
+	}
+
+	int                    top = centralWidget()->y();
+	QList<NXDockWidget *>  topAreaDockWidgets = getDockWidgetListAtArea(Qt::TopDockWidgetArea);
+
+	for (const NXDockWidget *dockWidget : topAreaDockWidgets)
+	{
+		if ((dockWidget->y() >= 0) && (dockWidget->height() > 0))
+		{
+			top = std::min(top, dockWidget->y());
+		}
+	}
+
+	int                    right = centralWidget()->x() + centralWidget()->width();
+	QList<NXDockWidget *>  rightAreaDockWidgets = getDockWidgetListAtArea(Qt::RightDockWidgetArea);
+
+	for (const NXDockWidget *dockWidget : rightAreaDockWidgets)
+	{
+		if ((dockWidget->x() >= 0) && (dockWidget->width() > 0))
+		{
+			right = std::max(right, dockWidget->x() + dockWidget->width());
+		}
+	}
+
+	int                    bottom = centralWidget()->y() + centralWidget()->height();
+	QList<NXDockWidget *>  bottomAreaDockWidgets = getDockWidgetListAtArea(Qt::BottomDockWidgetArea);
+
+	for (const NXDockWidget *dockWidget : bottomAreaDockWidgets)
+	{
+		if ((dockWidget->y() >= 0) && (dockWidget->height() > 0))
+		{
+			bottom = std::max(bottom, dockWidget->y() + dockWidget->height());
+		}
+	}
+
+	return QRect(left, top, right - left, bottom - top);
+}
+
+void  MainWindow::hideDockWidget(NXDockWidget *dockWidget)
+{
+	if ((dockWidget == nullptr) || (dockWidget->isHidden()))
+	{
+		return;
+	}
+
+	_dockWidget = nullptr;
+
+	dockWidget->hide();
+}
+
+void  MainWindow::showDockWidget(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	if (dockWidget->isHidden())
+	{
+		hideDockWidget(_dockWidget);
+
+		if (dockWidget->isFloating())
+		{
+			QMainWindow::addDockWidget(dockWidget->getArea(), dockWidget);
+			dockWidget->setFloating(false);
+
+			QMainWindow::removeDockWidget(dockWidget);
+		}
+
+		adjustDockWidget(dockWidget);
+
+		dockWidget->show();
+		dockWidget->raise();
+
+		dockWidget->setFocus();
+
+		_dockWidget = dockWidget;
+	}
+	else
+	{
+		hideDockWidget(dockWidget);
+	}
+}
+
+static Qt::ToolBarArea  dockAreaToToolBarArea(Qt::DockWidgetArea area)
+{
+	switch (area)
+	{
+	case Qt::LeftDockWidgetArea:
+
+		return Qt::LeftToolBarArea;
+	case Qt::RightDockWidgetArea:
+
+		return Qt::RightToolBarArea;
+	case Qt::TopDockWidgetArea:
+
+		return Qt::TopToolBarArea;
+	case Qt::BottomDockWidgetArea:
+
+		return Qt::BottomToolBarArea;
+	default:
+
+		return Qt::ToolBarArea(0);
+	}
+}
+
+void  MainWindow::createDockWidgetBar(Qt::DockWidgetArea area)
+{
+	if (_dockWidgetBar.find(area) != _dockWidgetBar.end())
+	{
+		return;
+	}
+
+	NXDockWidgetTabBar *dockWidgetBar = new NXDockWidgetTabBar(area);
+	_dockWidgetBar[area] = dockWidgetBar;
+	connect(dockWidgetBar, &NXDockWidgetTabBar::signal_dockWidgetButton_clicked, this, &MainWindow::showDockWidget);
+
+	addToolBar(dockAreaToToolBarArea(area), dockWidgetBar);
+}
 
 void MainWindow::InitDockWidget()
 {
+	createDockWidgetBar(Qt::LeftDockWidgetArea);
+	createDockWidgetBar(Qt::RightDockWidgetArea);
+	createDockWidgetBar(Qt::TopDockWidgetArea);
+	createDockWidgetBar(Qt::BottomDockWidgetArea);
 
+	// Control panel
+	{
+		NXDockWidget *controlPanel = new NXDockWidget(tr("Control Panel"), this);
+		controlPanel->setObjectName(QStringLiteral("controlPanel"));
+		QSizePolicy  sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Minimum);
+		sizePolicy1.setHorizontalStretch(0);
+		sizePolicy1.setVerticalStretch(0);
+		sizePolicy1.setHeightForWidth(controlPanel->sizePolicy().hasHeightForWidth());
+		controlPanel->setSizePolicy(sizePolicy1);
+		controlPanel->setMinimumSize(QSize(311, 0));
+		controlPanel->setMaximumSize(QSize(524287, 100));
+		controlPanel->setFloating(false);
+		controlPanel->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+		QWidget *dockWidgetContent = new QWidget();
+		dockWidgetContent->setObjectName(QStringLiteral("controlPanelContent"));
+		sizePolicy1.setHeightForWidth(dockWidgetContent->sizePolicy().hasHeightForWidth());
+		dockWidgetContent->setSizePolicy(sizePolicy1);
+		dockWidgetContent->setMaximumSize(QSize(16777215, 16777215));
+		QVBoxLayout *verticalLayout = new QVBoxLayout(dockWidgetContent);
+		verticalLayout->setSpacing(6);
+		verticalLayout->setContentsMargins(11, 11, 11, 11);
+		verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+		verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+		verticalLayout->setContentsMargins(0, 0, 0, 0);
+		QTabWidget *tabWidget = new QTabWidget(dockWidgetContent);
+		tabWidget->setObjectName(QStringLiteral("tabWidget"));
+		QSizePolicy  sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Minimum);
+		sizePolicy2.setHorizontalStretch(0);
+		sizePolicy2.setVerticalStretch(0);
+		sizePolicy2.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
+		tabWidget->setSizePolicy(sizePolicy2);
+		tabWidget->setMaximumSize(QSize(16777215, 16777215));
+		tabWidget->setTabPosition(QTabWidget::North);
+
+		verticalLayout->addWidget(tabWidget);
+
+		controlPanel->setWidget(dockWidgetContent);
+		addDockWidget(Qt::RightDockWidgetArea, controlPanel);
+	}
+
+	{
+		NXDockWidget *attributePanel = new NXDockWidget(tr("Attributes"), this);
+		attributePanel->setObjectName(QStringLiteral("attributePanel"));
+		QSizePolicy  sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Expanding);
+		sizePolicy3.setHorizontalStretch(0);
+		sizePolicy3.setVerticalStretch(0);
+		sizePolicy3.setHeightForWidth(attributePanel->sizePolicy().hasHeightForWidth());
+		attributePanel->setSizePolicy(sizePolicy3);
+		attributePanel->setMinimumSize(QSize(100, 0));
+		attributePanel->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+		QWidget *tableDockWidgetContents = new QWidget();
+		tableDockWidgetContents->setObjectName(QStringLiteral("tableDockWidgetContents"));
+		sizePolicy3.setHeightForWidth(tableDockWidgetContents->sizePolicy().hasHeightForWidth());
+		tableDockWidgetContents->setSizePolicy(sizePolicy3);
+		QVBoxLayout *verticalLayout_2 = new QVBoxLayout(tableDockWidgetContents);
+		verticalLayout_2->setSpacing(6);
+		verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+		verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+		verticalLayout_2->setSizeConstraint(QLayout::SetMaximumSize);
+		verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+		QTableWidget *attributeTable = new QTableWidget(tableDockWidgetContents);
+		attributeTable->setObjectName(QStringLiteral("attributeTable"));
+		attributeTable->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
+		attributeTable->setAlternatingRowColors(false);
+		attributeTable->horizontalHeader()->setVisible(false);
+		attributeTable->horizontalHeader()->setMinimumSectionSize(0);
+		attributeTable->horizontalHeader()->setStretchLastSection(true);
+		attributeTable->verticalHeader()->setVisible(false);
+		attributeTable->verticalHeader()->setStretchLastSection(false);
+
+		verticalLayout_2->addWidget(attributeTable);
+
+		attributePanel->setWidget(tableDockWidgetContents);
+		addDockWidget(Qt::RightDockWidgetArea, attributePanel);
+	}
 }
 
 void MainWindow::NodeSelected(const QModelIndex &index)

@@ -53,4 +53,5 @@
         <file>Resources/treeview/tree_unknown.png</file>
         <file>Resources/treeview/user group.png</file>
     </qresource>
+    <qresource prefix="/widgets"/>
 </RCC>
