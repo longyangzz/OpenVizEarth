@@ -45,7 +45,7 @@ public:
 
 	//! 解析外部传入的参数
 	void PraseArgs(QVector<QString > args);
-private:
+
 	void CreateConnection();
 
 	void ResetViews(bool allClear);
@@ -55,8 +55,15 @@ private:
 
 	void Init();
 
+	void SetCentralWidget();
+
 	//! 添加一个dockwidget，用来放置QtreView,用来管理节点
+	//! 老版本
 	void InitManager();
+
+	//! 添加一个dockwidget，用来放置QtreView,用来管理节点
+	//! 新版本
+	void InitDockWidget();
 
 	//! 保存相关设置参数
 	void SaveSettings();

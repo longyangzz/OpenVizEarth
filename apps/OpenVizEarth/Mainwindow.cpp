@@ -66,21 +66,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 	, m_pMdiArea( new QMdiArea( this ) )
 	, m_bgLoader(nullptr)
 {
-	bool initState = ConfigInit(this);
-
-	if (initState)
-	{
-		
-		setCentralWidget( m_pMdiArea );
-
-		Init();
-
-		InitManager();
-
-		LoadSettings();
-	}
-
-	ConfigFinish(this);
+	
 }
 
 MainWindow::~MainWindow()
@@ -93,6 +79,11 @@ MainWindow::~MainWindow()
 		m_bgLoader = nullptr;
 	}
 	
+}
+
+void MainWindow::SetCentralWidget()
+{
+	setCentralWidget(m_pMdiArea);
 }
 
 void MainWindow::PraseArgs(QVector<QString > args)
@@ -233,6 +224,12 @@ void MainWindow::InitManager()
 	dokwProperties->setWidget(wgtProperty);
 	addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
 	dokwProperties->setWindowTitle(QString::fromLocal8Bit(" Ù–‘"));
+}
+
+
+void MainWindow::InitDockWidget()
+{
+
 }
 
 void MainWindow::NodeSelected(const QModelIndex &index)

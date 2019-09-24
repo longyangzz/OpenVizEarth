@@ -78,8 +78,8 @@ UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
 {
 	// Some global environment settings
-	QCoreApplication::setOrganizationName("UIFacade");
-	QCoreApplication::setApplicationName("UIFacade");
+	QCoreApplication::setOrganizationName("DCLW");
+	QCoreApplication::setApplicationName("OpenViz");
 
 	GDALAllRegister();
 	CPLSetConfigOption("GDAL_DATA", ".\\resources\\GDAL_data");
@@ -124,9 +124,24 @@ void  UIFacade::initAll()
 
 void  UIFacade::setupUi()
 {
-	/*AtlasMainWindow::setupUi();
-	connect(_ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-	connect(_ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));*/
+	bool initState = ConfigInit(this);
+
+	if (initState)
+	{
+		//！ 中心三维视窗
+		SetCentralWidget();
+
+		//！信号槽
+		Init();
+
+		//！ 初始化docketwidget
+		//InitManager();
+		InitDockWidget();
+
+		LoadSettings();
+	}
+
+	ConfigFinish(this);
 }
 
 void  UIFacade::initCore()
@@ -346,7 +361,7 @@ void  UIFacade::initLog()
 		osgDB::makeDirectory(logDir);
 	}
 
-	std::string  logPath = logDir + "/AtlasLog.txt";
+	std::string  logPath = logDir + "/OpenVizLog.txt";
 	_log = NULL;
 	_log = new std::ofstream(logPath.c_str());
 
