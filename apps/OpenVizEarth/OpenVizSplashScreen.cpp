@@ -1,6 +1,6 @@
-#include "AtlasSplashScreen.h"
+#include "OpenVizSplashScreen.h"
 
-AtlasSplashScreen::AtlasSplashScreen(QPixmap& pixmap)
+OpenVizSplashScreen::OpenVizSplashScreen(QPixmap& pixmap)
 {
   int imageSize = 350;
   int margin = 20;
@@ -22,16 +22,16 @@ AtlasSplashScreen::AtlasSplashScreen(QPixmap& pixmap)
 
 }
 
-AtlasSplashScreen::~AtlasSplashScreen()
+OpenVizSplashScreen::~OpenVizSplashScreen()
 {
 }
 
-void AtlasSplashScreen::setTotalInitSteps(int num) {
+void OpenVizSplashScreen::setTotalInitSteps(int num) {
   progressBar->setRange(0, num);
   totalSteps = num;
 }
 
-void AtlasSplashScreen::setNowInitName(const QString& name)
+void OpenVizSplashScreen::setNowInitName(const QString& name)
 {
   nowStep++;
   progressBar->setValue(nowStep);

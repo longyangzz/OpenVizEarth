@@ -1,8 +1,9 @@
-#include "Atlas.h"
-#include "AtlasSplashScreen.h"
+#include "UIFacade.h"
+#include "OpenVizSplashScreen.h"
 
 #include <QApplication>
 #include <QFile>
+#include <QTime>
 #include <QSurfaceFormat>
 
 int  main(int argc, char *argv[])
@@ -14,8 +15,12 @@ int  main(int argc, char *argv[])
 
 	QApplication  app(argc, argv);
 
+	QString rootDir = QCoreApplication::applicationDirPath() + "/";
+
 	// Load an application style
-	QFile  styleFile("resources/styles/Atlas.qss");
+	QFile  styleFile(rootDir + "Resources/styles/OpenViz.qss");
+
+	
 
 	if (styleFile.open(QFile::ReadOnly))
 	{
@@ -24,14 +29,25 @@ int  main(int argc, char *argv[])
 	}
 
 	// Show splash screen
-	QPixmap            a("./resources/images/atlas_big.png");
-	AtlasSplashScreen *splash = new AtlasSplashScreen(a);
-	Atlas              w;
+	QPixmap            a(rootDir + "Resources/images/startUpSelf.png");
+	OpenVizSplashScreen *splash = new OpenVizSplashScreen(a);
+
+	//! UI界面组装
+	UIFacade              w;
 	QObject::connect(&w, SIGNAL(sendTotalInitSteps(int)), splash, SLOT(setTotalInitSteps(int)));
 	QObject::connect(&w, SIGNAL(sendNowInitName(const QString&)), splash, SLOT(setNowInitName(const QString&)));
 
+	QTime time;
+	time.start();
+	int start = time.elapsed() / 1000;
 	splash->show();
+	
 	w.initAll();
+
+	while (time.elapsed() / 1000 - start < 3)
+	{
+
+	}
 
 	// Begin application
 	w.showMaximized();

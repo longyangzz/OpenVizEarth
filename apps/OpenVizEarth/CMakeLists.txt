@@ -12,6 +12,7 @@ QT5_WRAP_UI( generated_ui_list ${ui_list})
 file( GLOB header_list *.h  )
 SET(TARGET_H 
 	${header_list}
+	
 	${OpenVizEarth_SOURCE_DIR}/NameSpace.h
 )
 

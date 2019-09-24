@@ -24,7 +24,6 @@
 #include "osg/Node"
 
 //subself
-#include "DlgClassify.h"
 //DC
 #include "DC/AppSettings.h"
 #include "DC/ThreadPool.h"
@@ -60,11 +59,6 @@
 
 const int maxRecentlyOpenedFileNum = 10;
 
-void Test(osg::Node* node)
-{
-	osg::ref_ptr<osg::Node > node2(node);
-}
-
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 	: IWindow(parent, flags)
 	, m_appName(PACKAGE_NAME)
@@ -87,11 +81,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 	}
 
 	ConfigFinish(this);
-
-	osg::ref_ptr<osg::Node > node1(new osg::Node);
-
-	Test(node1.get());
-	node1->getBound();
 }
 
 MainWindow::~MainWindow()
@@ -647,11 +636,6 @@ void MainWindow::on_actionSplitFiles_triggered()
 	
 }
 
-void MainWindow::on_actionGridFilter_triggered()
-{
-	DlgClassify dlg;
-	dlg.exec();
-}
 
 bool MainWindow::LoadFile(const QString &file, QString type)
 {

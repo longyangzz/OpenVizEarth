@@ -115,7 +115,7 @@ bool IWindow::ConfigInit(QMainWindow* pInter)
 	if (cfgState)
 	{
 		//1.添加splash相应
-		ConfigSplash();
+		//ConfigSplash();
 
 		//2.根据配置文件创建UI
 		ConfigUI();

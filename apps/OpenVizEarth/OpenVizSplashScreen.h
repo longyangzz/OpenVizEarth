@@ -2,13 +2,13 @@
 #include <QProgressBar>
 #include <QPixmap>
 
-class AtlasSplashScreen : public QSplashScreen
+class OpenVizSplashScreen : public QSplashScreen
 {
 	Q_OBJECT
 
 public:
-	explicit AtlasSplashScreen(QPixmap& pixmap);
-	~AtlasSplashScreen();
+	explicit OpenVizSplashScreen(QPixmap& pixmap);
+	~OpenVizSplashScreen();
 
 private:
 	QFont splashFont;

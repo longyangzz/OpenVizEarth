@@ -36,14 +36,14 @@ class Map;
 class MapNode;
 }
 
-class Atlas: public MainWindow
+class UIFacade: public MainWindow
 {
 	Q_OBJECT
 
 public:
-	Atlas(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
+	UIFacade(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
 
-	~Atlas();
+	~UIFacade();
 
   void  initAll();
 
@@ -61,7 +61,6 @@ private:
   void  collectInitInfo();
 
 public slots:
-  void  about();
 
 	// View related slots
   void  resetCamera();

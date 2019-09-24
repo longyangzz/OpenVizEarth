@@ -1,4 +1,4 @@
-﻿#include "Atlas.h"
+﻿#include "UIFacade.h"
 
 #include <iostream>
 #include <string>
@@ -35,26 +35,60 @@ using namespace std;
 #include <osgEarthUtil/LogarithmicDepthBuffer>
 #include <osgEarthUtil/ExampleResources>
 
-//#include <gdal_priv.h>
-
-#include <./SettingsManager.h>
+#include <gdal_priv.h>
 
 
-Atlas::Atlas(QWidget *parent, Qt::WindowFlags flags):
+class LogFileHandler : public osg::NotifyHandler
+{
+	const std::string  severityTag[osg::DEBUG_FP + 1] = {
+		"ALWAYS",
+		"FATAL",
+		"WARN",
+		"NOTICE",
+		"INFO",
+		"DEBUG_INFO",
+		"DEBUG_FP"
+	};
+
+public:
+
+	LogFileHandler(std::ofstream *outStream) :
+		_log(outStream)
+	{
+	}
+
+	virtual void  notify(osg::NotifySeverity severity, const char *msg)
+	{
+		if (_log)
+		{
+			(*_log) << "[osg]    " << "[" << severityTag[severity] << "]    " << msg;
+			_log->flush();
+		}
+	}
+
+	~LogFileHandler()
+	{
+	}
+
+protected:
+	std::ofstream *_log = NULL;
+};
+
+UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
 {
 	// Some global environment settings
-	QCoreApplication::setOrganizationName("Atlas");
-	QCoreApplication::setApplicationName("Atlas");
+	QCoreApplication::setOrganizationName("UIFacade");
+	QCoreApplication::setApplicationName("UIFacade");
 
-	//GDALAllRegister();
-	//CPLSetConfigOption("GDAL_DATA", ".\\resources\\GDAL_data");
+	GDALAllRegister();
+	CPLSetConfigOption("GDAL_DATA", ".\\resources\\GDAL_data");
 
 	osg::DisplaySettings::instance()->setNumOfHttpDatabaseThreadsHint(8);
 	osg::DisplaySettings::instance()->setNumOfDatabaseThreadsHint(2);
 }
 
-Atlas::~Atlas()
+UIFacade::~UIFacade()
 {
 	osg::setNotifyLevel(osg::FATAL);
 	osg::setNotifyHandler(nullptr);
@@ -65,7 +99,7 @@ Atlas::~Atlas()
 	delete _log;
 }
 
-void  Atlas::initAll()
+void  UIFacade::initAll()
 {
 	collectInitInfo();
 
@@ -88,7 +122,14 @@ void  Atlas::initAll()
 	//initUiStyles();
 }
 
-void  Atlas::initCore()
+void  UIFacade::setupUi()
+{
+	/*AtlasMainWindow::setupUi();
+	connect(_ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+	connect(_ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));*/
+}
+
+void  UIFacade::initCore()
 {
 	emit  sendNowInitName(tr("Initializing DataManager"));
 
@@ -102,7 +143,7 @@ void  Atlas::initCore()
 
 	//connect(_dataManager, &DataManager::loadingProgress, this, &AtlasMainWindow::loadingProgress);
 	//connect(_dataManager, &DataManager::loadingDone, this, &AtlasMainWindow::loadingDone);
-	//connect(_dataManager, &DataManager::resetCamera, this, &Atlas::resetCamera);*/
+	//connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);*/
 
 	//emit  sendNowInitName(tr("Initializing viewer"));
 	///*_mainViewerWidget = new ViewerWidget(_root, 0, 0, 1280, 1024, osgViewer::ViewerBase::SingleThreaded);
@@ -126,10 +167,10 @@ void  Atlas::initCore()
 	//_pluginManager->registerPluginGroup("Edit", _ui->editToolBar, _ui->editMenu);
 
 	//connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &PluginManager::loadContextMenu);
-	//connect(_pluginManager, &PluginManager::sendNowInitName, this, &Atlas::sendNowInitName);
+	//connect(_pluginManager, &PluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 }
 
-void  Atlas::initPlugins()
+void  UIFacade::initPlugins()
 {
 	// MousePicker is the shared core of all plugins
 	/*_mousePicker = new MousePicker();
@@ -141,7 +182,7 @@ void  Atlas::initPlugins()
 	_pluginManager->loadPlugins();*/
 }
 
-void  Atlas::initDataStructure()
+void  UIFacade::initDataStructure()
 {
 	_mapRoot = new osg::Group;
 	_mapRoot->setName("Map Root");
@@ -217,7 +258,7 @@ void  Atlas::initDataStructure()
 	//_dataManager->registerDataRoots(_root);
 }
 
-void  Atlas::resetCamera()
+void  UIFacade::resetCamera()
 {
 	//if (_mainMap[0]->isGeocentric())
 	//{
@@ -285,43 +326,7 @@ void  qtLogToFile(QtMsgType type, const QMessageLogContext &context, const QStri
 	cout << endl;
 }
 
-class LogFileHandler: public osg::NotifyHandler
-{
-	const std::string  severityTag[osg::DEBUG_FP + 1] = {
-		"ALWAYS",
-		"FATAL",
-		"WARN",
-		"NOTICE",
-		"INFO",
-		"DEBUG_INFO",
-		"DEBUG_FP"
-	};
-
-public:
-
-	LogFileHandler(std::ofstream *outStream):
-		_log(outStream)
-	{
-	}
-
-	virtual void  notify(osg::NotifySeverity severity, const char *msg)
-	{
-		if (_log)
-		{
-			(*_log) << "[osg]    " << "[" << severityTag[severity] << "]    " << msg;
-			_log->flush();
-		}
-	}
-
-	~LogFileHandler()
-	{
-	}
-
-protected:
-	std::ofstream *_log = NULL;
-};
-
-void  Atlas::initLog()
+void  UIFacade::initLog()
 {
 	// Open log file
 #ifdef _WIN32
@@ -368,14 +373,7 @@ void  Atlas::initLog()
 	cout << "Program started: " << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString().c_str() << endl;
 }
 
-void  Atlas::setupUi()
-{
-	/*AtlasMainWindow::setupUi();
-	connect(_ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-	connect(_ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));*/
-}
-
-void  Atlas::collectInitInfo()
+void  UIFacade::collectInitInfo()
 {
 	// TODO: find a better way to collect initialization info
 	int   initSteps = 7;
@@ -396,9 +394,5 @@ void  Atlas::collectInitInfo()
 	emit  sendTotalInitSteps(initSteps);
 }
 
-void  Atlas::about()
-{
-	QString  versionInfo(tr("Atlas v0.0.1 by tqjxlm"));
 
-	QMessageBox::information(this, tr("version"), versionInfo);
-}
+
