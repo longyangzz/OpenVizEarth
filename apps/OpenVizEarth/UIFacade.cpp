@@ -146,6 +146,12 @@ void  UIFacade::setupUi()
 
 void  UIFacade::initCore()
 {
+	//! 初始化viewWidget
+	emit  sendNowInitName(tr("Initializing ViewWidget"));
+
+	initViewWidget();
+	
+
 	emit  sendNowInitName(tr("Initializing DataManager"));
 
 	//_root = new osg::Group;

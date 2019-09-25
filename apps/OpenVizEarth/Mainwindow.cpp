@@ -55,6 +55,7 @@
 #include<osgEarthDrivers/gdal/GDALOptions>
 
 #include<osgEarthDrivers/bing/BingOptions>
+#include <osgEarth/Registry>
 
 //Manager
 #include "Manager/NodeTreeModel.h"
@@ -161,6 +162,58 @@ void MainWindow::CreateConnection()
 	//connect(ui.actionOnline_Update, SIGNAL(triggered()), this, SLOT(DoOnlineUpdate()));
 	
 	//connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(DoAbout()));
+}
+
+void MainWindow::initViewWidget()
+{
+	DC::SceneView* pNewViewer = CreateNewSceneViewer();
+	if (pNewViewer)
+	{
+		/*osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
+		osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(map);
+		osgEarth::Drivers::BingOptions bing;
+		osgEarth::Drivers::GDALOptions gdal;
+		osgEarth::Drivers::TMSOptions tms;
+		tms.url() = "D:/data/world/tms.xml";
+		gdal.url() = "H:\\osgearthSDK\\Data\\world.tif";
+		map->addLayer(new osgEarth::ImageLayer("My", gdal));*/
+		//osg::ref_ptr < osg::Node > mapNode = osgDB::readNodeFile("Resources\earth_files\geocentric.earth");
+		//osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(node.get() );
+
+
+		QString  baseMapPath;
+		QString mode = "projected";
+		if (mode == "projected")
+		{
+			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
+		}
+		else if (mode == "geocentric")
+		{
+			baseMapPath = QStringLiteral("Resources/earth_files/geocentric.earth");
+		}
+		else
+		{
+			QMessageBox::warning(nullptr, "Warning", "Base map settings corrupted, reset to projected");
+			//_settingsManager->setOrAddSetting("Base mode", "projected");
+			baseMapPath = QStringLiteral("resources/earth_files/projected.earth");
+		}
+		osg::ref_ptr<osgDB::Options>  myReadOptions = osgEarth::Registry::cloneOrCreateOptions(0);
+		osgEarth::Config              c;
+		c.add("elevation_smoothing", false);
+		osgEarth::TerrainOptions  to(c);
+		osgEarth::MapNodeOptions  defMNO;
+		defMNO.setTerrainOptions(to);
+
+		myReadOptions->setPluginStringData("osgEarth.defaultOptions", defMNO.getConfig().toJSON());
+
+		osg::Node *baseMap = osgDB::readNodeFile(baseMapPath.toStdString(), myReadOptions);
+
+
+	   //! 更新场景数据
+		pNewViewer->getModel()->setData(baseMap);
+
+		pNewViewer->resetHome();
+	}
 }
 
 void MainWindow::InitManager()
@@ -1001,7 +1054,7 @@ void MainWindow::DoStyleSheet(QString qssFilename)
 
 void MainWindow::on_actionOpen_triggered()
 {
-	/*QString filters = "Files All files (*.*);;(*.ply *.osg *.obj *.txt *.3ds *.stl *.s3c *.osgb)";
+	QString filters = "Files All files (*.*);;(*.ply *.osg *.obj *.txt *.3ds *.stl *.s3c *.osgb)";
 
 	QString file = QFileDialog::getOpenFileName(
 		this,
@@ -1009,28 +1062,9 @@ void MainWindow::on_actionOpen_triggered()
 		m_lastDirectory,
 		filters);
 
-	LoadFile(file, "LOAD");*/
+	LoadFile(file, "LOAD");
 
-	DC::SceneView* pNewViewer = CreateNewSceneViewer();
-	if (pNewViewer)
-	{
-		/*osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
-		osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(map);
-		osgEarth::Drivers::BingOptions bing;
-		osgEarth::Drivers::GDALOptions gdal;
-		osgEarth::Drivers::TMSOptions tms;
-		tms.url() = "D:/data/world/tms.xml";
-		gdal.url() = "H:\\osgearthSDK\\Data\\world.tif";
-		map->addLayer(new osgEarth::ImageLayer("My", gdal));*/
-		 osg::ref_ptr < osg::Node > mapNode = osgDB::readNodeFile("H:\\osgearthSDK\\selfdata\\test.earth");
-		 //osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(node.get() );
-		
-		
-		//! 更新场景数据
-		pNewViewer->getModel()->setData(mapNode);
-
-		pNewViewer->resetHome();
-	}
+	
 
 }
 

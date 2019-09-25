@@ -59,6 +59,8 @@ public:
 
 	void Init();
 
+	void initViewWidget();
+
 	void SetCentralWidget();
 
 	//! 添加一个dockwidget，用来放置QtreView,用来管理节点
