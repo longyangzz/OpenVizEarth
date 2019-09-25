@@ -75,7 +75,7 @@ protected:
 };
 
 UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
-	MainWindow(parent, flags)
+	MainWindowAction(parent, flags)
 {
 	// Some global environment settings
 	QCoreApplication::setOrganizationName("DCLW");

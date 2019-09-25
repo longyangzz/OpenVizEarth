@@ -2,6 +2,7 @@
 #define ATLAS_H
 
 #include <MainWindow.h>
+#include <MainWindowAction.h>
 
 #include "../NameSpace.h"
 
@@ -36,7 +37,7 @@ class Map;
 class MapNode;
 }
 
-class UIFacade: public MainWindow
+class UIFacade: public MainWindowAction
 {
 	Q_OBJECT
 
