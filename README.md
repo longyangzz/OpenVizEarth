@@ -16,15 +16,13 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
 1. 主结构
 
-   ![编译选项](./screenshot/structure.png)
+   ![主结构](./screenshot/structure.png)
 
 2. UIFacade 界面初始化
 
-   ![编译选项](./screenshot/UIFacade.png)
+   ![界面初始化](./screenshot/UIFacade.png)
 
-3. 节点树管理
-
-   ![编译选项](./screenshot/tree-manager.png)
+3. ![节点树管理](./screenshot/tree-manager.png)
 
 4. 节点选中隐藏显示逻辑，通过node的mask属性控制![编译选项](./screenshot/itemshowhide.png)
 
