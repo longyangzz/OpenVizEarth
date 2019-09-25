@@ -32,6 +32,16 @@ QWidget(parent),
 	m_timer.start( m_refreshPeriod );
 }
 
+osgViewer::View * OsgQWidget::getMainView()
+{
+	return m_view;
+}
+
+void OsgQWidget::paintEvent(QPaintEvent *event)
+{
+	frame();
+}
+
 QWidget* OsgQWidget::addViewWidget( )
 {
 	m_view = new osgViewer::View;

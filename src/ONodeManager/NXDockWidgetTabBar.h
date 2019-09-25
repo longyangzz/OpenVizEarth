@@ -1,13 +1,13 @@
 #pragma once
 
 #include <QToolBar>
-
+#include "DataManager_global.h"
 class NXDockWidgetTabButton;
 class NXDockWidget;
 
 /*!
 */
-class NXDockWidgetTabBar : public QToolBar
+class DATAMANAGER_EXPORT NXDockWidgetTabBar : public QToolBar
 {
 	Q_OBJECT
 

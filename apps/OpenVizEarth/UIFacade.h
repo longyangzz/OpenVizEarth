@@ -49,9 +49,11 @@ public:
   void  initAll();
 
 private:
-  void  initCore();
+  void  initView();
 
-  void  initDataStructure();
+  void initDCUIVar();
+
+  void  initDataManagerAndScene();
 
   void  initPlugins();
 
@@ -75,11 +77,10 @@ signals:
 private:
   std::ofstream *_log;
 
-  //DataManager     *_dataManager;
+  DataManager     *_dataManager;
   SettingsManager *_settingsManager;
-  //PluginManager   *_pluginManager;
-  //osg::ref_ptr<ViewerWidget>    _mainViewerWidget;
-  //osg::ref_ptr<MousePicker>     _mousePicker;
+  PluginManager   *_pluginManager;
+  osg::ref_ptr<MousePicker>     _mousePicker;
 
 	// Root for all
   osg::ref_ptr<osg::Group>                      _root;

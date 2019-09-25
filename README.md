@@ -22,7 +22,11 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
    ![编译选项](./screenshot/Uifacade.png)
 
-3. 
+3. 节点树管理
+
+   ![编译选项](./screenshot/tree-manager.png)
+
+4. 节点选中隐藏显示逻辑，通过node的mask属性控制![编译选项](./screenshot/itemshowhide.png)
 
 
 
@@ -30,5 +34,6 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
 ## 使用osgearth结合qt制作demo工程
 
-![主界面](./screenshot/mainwindow.png)
+1. 主界面![主界面](./screenshot/mainwindow.png)
+2. 节点隐藏显示控制![主界面](./screenshot/treeShowhideVideo.gif)
 

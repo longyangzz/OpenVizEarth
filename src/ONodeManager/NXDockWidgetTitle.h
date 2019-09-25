@@ -2,10 +2,10 @@
 
 #include <QFrame>
 #include <QLabel>
-
+#include "DataManager_global.h"
 class QPushButton;
 
-class NXDockWidgetTitle : public QFrame
+class DATAMANAGER_EXPORT NXDockWidgetTitle : public QFrame
 {
 	Q_OBJECT
 public:

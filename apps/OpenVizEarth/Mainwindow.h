@@ -21,9 +21,16 @@ class NodePropertyWidget;
 class NXDockWidget;
 class NXDockWidgetTabBar;
 
+class DataManager;
+
 namespace osg
 {
 	class Node;
+}
+
+namespace DC
+{
+	class SceneView;
 }
 
 class MainWindow : public IWindow
@@ -159,6 +166,8 @@ public:
 
 	//setting
 	QSettings m_globalSettings;
+
+	DC::SceneView* m_pCurrentNewViewer;
 };
 
 #endif // MYCLASS_H

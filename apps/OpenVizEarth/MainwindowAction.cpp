@@ -61,9 +61,9 @@
 #include "Manager/NodeTreeModel.h"
 #include "Manager/NodePropertyWidget.h"
 
-#include "NXDockWidget.h"
-#include "NXDockWidgetTabBar.h"
-#include "NXDockWidgetTabButton.h"
+#include "ONodeManager/NXDockWidget.h"
+#include "ONodeManager/NXDockWidgetTabBar.h"
+#include "ONodeManager/NXDockWidgetTabButton.h"
 
 const int maxRecentlyOpenedFileNum = 10;
 

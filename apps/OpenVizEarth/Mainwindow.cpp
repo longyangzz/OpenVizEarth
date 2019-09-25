@@ -61,9 +61,10 @@
 #include "Manager/NodeTreeModel.h"
 #include "Manager/NodePropertyWidget.h"
 
-#include "NXDockWidget.h"
-#include "NXDockWidgetTabBar.h"
-#include "NXDockWidgetTabButton.h"
+#include "ONodeManager/NXDockWidget.h"
+#include "ONodeManager/NXDockWidgetTabBar.h"
+#include "ONodeManager/NXDockWidgetTabButton.h"
+#include "ONodeManager/DataManager.h"
 
 const int maxRecentlyOpenedFileNum = 10;
 
@@ -74,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 	, m_pMdiArea( new QMdiArea( this ) )
 	, m_bgLoader(nullptr)
 	, _dockWidget(nullptr)
+	, m_pCurrentNewViewer(nullptr)
 {
 	
 }
@@ -141,6 +143,8 @@ DC::SceneView* MainWindow::CurrentSceneView()
 {
 	DC::SceneView* pViewer = static_cast<DC::SceneView* >(ActiveMdiChild());
 
+	m_pCurrentNewViewer = pViewer;
+
 	return pViewer;
 }
 
@@ -194,54 +198,7 @@ QVariant MainWindow::getOrAddSetting(const QString& key, const QVariant & defaul
 
 void MainWindow::initViewWidget()
 {
-	DC::SceneView* pNewViewer = CreateNewSceneViewer();
-	if (pNewViewer)
-	{
-		/*osg::ref_ptr<osgEarth::Map> map = new osgEarth::Map;
-		osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(map);
-		osgEarth::Drivers::BingOptions bing;
-		osgEarth::Drivers::GDALOptions gdal;
-		osgEarth::Drivers::TMSOptions tms;
-		tms.url() = "D:/data/world/tms.xml";
-		gdal.url() = "H:\\osgearthSDK\\Data\\world.tif";
-		map->addLayer(new osgEarth::ImageLayer("My", gdal));*/
-		//osg::ref_ptr < osg::Node > mapNode = osgDB::readNodeFile("Resources\earth_files\geocentric.earth");
-		//osg::ref_ptr<osgEarth::MapNode> mapNode = new osgEarth::MapNode(node.get() );
-
-
-		QString  baseMapPath;
-		QString  mode = getOrAddSetting("Base mode", "geocentric").toString();
-		if (mode == "projected")
-		{
-			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
-		}
-		else if (mode == "geocentric")
-		{
-			baseMapPath = QStringLiteral("Resources/earth_files/geocentric.earth");
-		}
-		else
-		{
-			QMessageBox::warning(nullptr, "Warning", "Base map settings corrupted, reset to projected");
-			//_settingsManager->setOrAddSetting("Base mode", "projected");
-			baseMapPath = QStringLiteral("resources/earth_files/projected.earth");
-		}
-		osg::ref_ptr<osgDB::Options>  myReadOptions = osgEarth::Registry::cloneOrCreateOptions(0);
-		osgEarth::Config              c;
-		c.add("elevation_smoothing", false);
-		osgEarth::TerrainOptions  to(c);
-		osgEarth::MapNodeOptions  defMNO;
-		defMNO.setTerrainOptions(to);
-
-		myReadOptions->setPluginStringData("osgEarth.defaultOptions", defMNO.getConfig().toJSON());
-
-		osg::Node *baseMap = osgDB::readNodeFile(baseMapPath.toStdString(), myReadOptions);
-
-
-	   //! 更新场景数据
-		pNewViewer->getModel()->setData(baseMap);
-
-		pNewViewer->resetHome();
-	}
+	m_pCurrentNewViewer = CreateNewSceneViewer();
 }
 
 void MainWindow::InitManager()

@@ -14,6 +14,7 @@ using namespace std;
 #include <QMessageBox>
 #include <QDateTime>
 #include <QProcess>
+#include <QMenu>
 #include <QTreeWidgetItem>
 
 #include <osg/Notify>
@@ -36,6 +37,16 @@ using namespace std;
 #include <osgEarthUtil/ExampleResources>
 
 #include <gdal_priv.h>
+
+#include <ONodeManager/DataManager.h>
+
+//DCScene
+#include "DCScene/scene/SceneView.h"
+#include "DCScene/scene/SceneModel.h"
+
+#include <DC/MousePicker.h>
+#include <DC/SettingsManager.h>
+#include <ONodeManager/PluginManager.h>
 
 
 class LogFileHandler : public osg::NotifyHandler
@@ -99,6 +110,29 @@ UIFacade::~UIFacade()
 	delete _log;
 }
 
+void UIFacade::initDCUIVar()
+{
+	emit  sendNowInitName(tr("Initializing DCCore"));
+
+	_root = new osg::Group;
+	_root->setName("Root");
+
+	_settingsManager = new SettingsManager(this);
+
+	_dataManager = new DataManager(this);
+
+
+	// thread-safe initialization of the OSG wrapper manager. Calling this here
+	// prevents the "unsupported wrapper" messages from OSG
+	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
+
+	_pluginManager = new PluginManager(this, _dataManager, m_pCurrentNewViewer);
+	_pluginManager->registerPluginGroup("Data", nullptr,  nullptr);
+
+	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &PluginManager::loadContextMenu);
+	connect(_pluginManager, &PluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
+}
+
 void  UIFacade::initAll()
 {
 	collectInitInfo();
@@ -107,11 +141,20 @@ void  UIFacade::initAll()
 	initLog();
 
 	emit  sendNowInitName(tr("Initializing UI"));
+
+	//! 生成界面，创建datamanager
 	setupUi();
 
-	initCore();
+	//初始化一个 view,绑定空node，必须在initDCUIVar前
+	initView();
 
-	initDataStructure();
+	//! 初始化dc库中的基础base变量
+	initDCUIVar();
+
+	
+
+	//！ 初始化加载一个场景数据，作为根节点，传递给dataManager
+	initDataManagerAndScene();
 
 	emit  sendNowInitName(tr("Initializing camera"));
 	resetCamera();
@@ -144,67 +187,40 @@ void  UIFacade::setupUi()
 	ConfigFinish(this);
 }
 
-void  UIFacade::initCore()
+void  UIFacade::initView()
 {
 	//! 初始化viewWidget
 	emit  sendNowInitName(tr("Initializing ViewWidget"));
 
 	initViewWidget();
+
+	if (m_pCurrentNewViewer)
+	{
+		m_pCurrentNewViewer->getMainView()->getCamera()->setCullMask(SHOW_IN_WINDOW_1);
+	}
 	
-
-	emit  sendNowInitName(tr("Initializing DataManager"));
-
-	//_root = new osg::Group;
-	//_root->setName("Root");
-
-	///*_settingsManager = new SettingsManager(this);
-	//_settingsManager->setupUi(_ui->projectMenu);
-
-	//_dataManager = new DataManager(_settingsManager, this);
-
-	//connect(_dataManager, &DataManager::loadingProgress, this, &AtlasMainWindow::loadingProgress);
-	//connect(_dataManager, &DataManager::loadingDone, this, &AtlasMainWindow::loadingDone);
-	//connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);*/
-
-	//emit  sendNowInitName(tr("Initializing viewer"));
-	///*_mainViewerWidget = new ViewerWidget(_root, 0, 0, 1280, 1024, osgViewer::ViewerBase::SingleThreaded);
-	//_mainViewerWidget->getMainView()->getCamera()->setCullMask(SHOW_IN_WINDOW_1);
-	//emit  sendNowInitName(tr("Initializing viewer"));
-	//setCentralWidget(_mainViewerWidget);*/
-
-	//// thread-safe initialization of the OSG wrapper manager. Calling this here
-	//// prevents the "unsupported wrapper" messages from OSG
-	//osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
-
-	//connect(_dataManager, SIGNAL(startRendering()), _mainViewerWidget, SLOT(startRendering()));
-	//connect(_dataManager, SIGNAL(stopRendering()), _mainViewerWidget, SLOT(stopRendering()));
-
-	//_pluginManager = new PluginManager(this, _dataManager, _mainViewerWidget);
-	//_pluginManager->registerPluginGroup("Data", _ui->dataToolBar, _ui->dataMenu);
-	//_pluginManager->registerPluginGroup("Measure", _ui->measToolBar, _ui->measMenu);
-	//_pluginManager->registerPluginGroup("Draw", _ui->drawToolBar, _ui->drawMenu);
-	//_pluginManager->registerPluginGroup("Effect", _ui->effectToolBar, _ui->effectMenu);
-	//_pluginManager->registerPluginGroup("Analysis", _ui->analysisToolBar, _ui->analysisMenu);
-	//_pluginManager->registerPluginGroup("Edit", _ui->editToolBar, _ui->editMenu);
-
-	//connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &PluginManager::loadContextMenu);
-	//connect(_pluginManager, &PluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 }
 
 void  UIFacade::initPlugins()
 {
 	// MousePicker is the shared core of all plugins
-	/*_mousePicker = new MousePicker();
-	_mousePicker->registerData(this, _dataManager, _mainViewerWidget, _root, _settingsManager->getGlobalSRS());
+	_mousePicker = new MousePicker();
+	_mousePicker->registerData(this, _dataManager, m_pCurrentNewViewer, _root, _settingsManager->getGlobalSRS());
 	_mousePicker->registerSetting(_settingsManager);
 	_mousePicker->setupUi(statusBar());
-	_mainViewerWidget->getMainView()->addEventHandler(_mousePicker);
+	m_pCurrentNewViewer->getMainView()->addEventHandler(_mousePicker);
 
-	_pluginManager->loadPlugins();*/
+	_pluginManager->loadPlugins();
 }
 
-void  UIFacade::initDataStructure()
+void  UIFacade::initDataManagerAndScene()
 {
+	emit  sendNowInitName(tr("Initializing DataScene"));
+
+	//! 初始化node管理面板
+	_dataManager->initDataTree(this);
+	_dataManager->setupUi(this);
+
 	_mapRoot = new osg::Group;
 	_mapRoot->setName("Map Root");
 
@@ -217,66 +233,76 @@ void  UIFacade::initDataStructure()
 	_dataRoot->setName("Data Root");
 
 	// Init osgEarth node using the predefined .earth file
-	//for (int i = 0; i < MAX_SUBVIEW; i++)
-	//{
-	//	QString  mode = _settingsManager->getOrAddSetting("Base mode", "projected").toString();
-	//	QString  baseMapPath;
+	for (int i = 0; i < MAX_SUBVIEW; i++)
+	{
+		QString  mode = getOrAddSetting("Base mode", "geocentric").toString();
+		QString  baseMapPath;
 
-	//	if (mode == "projected")
-	//	{
-	//		baseMapPath = QStringLiteral("resources/earth_files/projected.earth");
-	//	}
-	//	else if (mode == "geocentric")
-	//	{
-	//		baseMapPath = QStringLiteral("resources/earth_files/geocentric.earth");
-	//	}
-	//	else
-	//	{
-	//		QMessageBox::warning(nullptr, "Warning", "Base map settings corrupted, reset to projected");
-	//		_settingsManager->setOrAddSetting("Base mode", "projected");
-	//		baseMapPath = QStringLiteral("resources/earth_files/projected.earth");
-	//	}
+		if (mode == "projected")
+		{
+			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
+		}
+		else if (mode == "geocentric")
+		{
+			baseMapPath = QStringLiteral("Resources/earth_files/geocentric.earth");
+		}
+		else
+		{
+			QMessageBox::warning(nullptr, "Warning", "Base map settings corrupted, reset to projected");
+			setOrAddSetting("Base mode", "projected");
+			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
+		}
 
-	//	osg::ref_ptr<osgDB::Options>  myReadOptions = osgEarth::Registry::cloneOrCreateOptions(0);
-	//	osgEarth::Config              c;
-	//	c.add("elevation_smoothing", false);
-	//	osgEarth::TerrainOptions  to(c);
-	//	osgEarth::MapNodeOptions  defMNO;
-	//	defMNO.setTerrainOptions(to);
+		osg::ref_ptr<osgDB::Options>  myReadOptions = osgEarth::Registry::cloneOrCreateOptions(0);
+		osgEarth::Config              c;
+		c.add("elevation_smoothing", false);
+		osgEarth::TerrainOptions  to(c);
+		osgEarth::MapNodeOptions  defMNO;
+		defMNO.setTerrainOptions(to);
 
-	//	myReadOptions->setPluginStringData("osgEarth.defaultOptions", defMNO.getConfig().toJSON());
+		myReadOptions->setPluginStringData("osgEarth.defaultOptions", defMNO.getConfig().toJSON());
 
-	//	osg::Node *baseMap = osgDB::readNodeFile(baseMapPath.toStdString(), myReadOptions);
-	//	_mapNode[i] = osgEarth::MapNode::get(baseMap);
-	//	_mapNode[i]->setName(QString("Map%1").arg(i).toStdString());
-	//	_mapNode[i]->setNodeMask((SHOW_IN_WINDOW_1 << i) | SHOW_IN_NO_WINDOW);
-	//	_mapNode[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	//	_mainMap[i] = _mapNode[i]->getMap();
+		osg::Node *baseMap = osgDB::readNodeFile(baseMapPath.toStdString(), myReadOptions);
+		_mapNode[i] = osgEarth::MapNode::get(baseMap);
+		_mapNode[i]->setName(QString("Map%1").arg(i).toStdString());
+		_mapNode[i]->setNodeMask((SHOW_IN_WINDOW_1 << i) | SHOW_IN_NO_WINDOW);
+		_mapNode[i]->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		_mainMap[i] = _mapNode[i]->getMap();
 
-	//	_mapRoot->addChild(_mapNode[i]);
-	//}
+		_mapRoot->addChild(_mapNode[i]);
+	}
 
-	//_settingsManager->setGlobalSRS(_mainMap[0]->getSRS());
+	_settingsManager->setGlobalSRS(_mainMap[0]->getSRS());
 
-	//// Init overlayNode with overlayerSubgraph
-	//// Everything in overlaySubgraph will be projected to its children
-	//_dataOverlay = new osgSim::OverlayNode(osgSim::OverlayNode::OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY);
-	//_dataOverlay->setName("Data Overlay");
-	//_dataOverlay->getOrCreateStateSet()->setAttributeAndModes(
-	//	new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA));
-	//_dataOverlay->setOverlayBaseHeight(-1);
-	//_dataOverlay->setOverlayTextureSizeHint(2048);
-	//_dataOverlay->setOverlayTextureUnit(3);
+	// Init overlayNode with overlayerSubgraph
+	// Everything in overlaySubgraph will be projected to its children
+	_dataOverlay = new osgSim::OverlayNode(osgSim::OverlayNode::OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY);
+	_dataOverlay->setName("Data Overlay");
+	_dataOverlay->getOrCreateStateSet()->setAttributeAndModes(
+		new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA));
+	_dataOverlay->setOverlayBaseHeight(-1);
+	_dataOverlay->setOverlayTextureSizeHint(2048);
+	_dataOverlay->setOverlayTextureUnit(3);
 
-	//_overlaySubgraph = new osg::Group;
-	//_dataOverlay->setOverlaySubgraph(_overlaySubgraph);
-	//_dataOverlay->addChild(_dataRoot);
+	_overlaySubgraph = new osg::Group;
+	_dataOverlay->setOverlaySubgraph(_overlaySubgraph);
+	_dataOverlay->addChild(_dataRoot);
 
-	//_root->addChild(_dataOverlay);
-	//_root->addChild(_drawRoot);
-	//_root->addChild(_mapRoot);
+	_root->addChild(_dataOverlay);
+	_root->addChild(_drawRoot);
+	_root->addChild(_mapRoot);
 
-	//_dataManager->registerDataRoots(_root);
+	
+	//! 更新场景数据
+	if (m_pCurrentNewViewer)
+	{
+		_dataManager->registerDataRoots(_root);
+
+		m_pCurrentNewViewer->getModel()->setData(_root);
+
+		m_pCurrentNewViewer->resetHome();
+	}
+	
 }
 
 void  UIFacade::resetCamera()

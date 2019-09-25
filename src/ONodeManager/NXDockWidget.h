@@ -2,6 +2,7 @@
 
 
 #include <QDockWidget>
+#include "DataManager_global.h"
 
 class QPushButton;
 
@@ -14,7 +15,7 @@ class QVBoxLayout;
 
 /*! Auto Hide dockwidget
 */
-class  NXDockWidget : public QDockWidget
+class  DATAMANAGER_EXPORT NXDockWidget : public QDockWidget
 {
 	Q_OBJECT
 

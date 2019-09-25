@@ -16,6 +16,7 @@ FOREACH( mylibfolder
         Pyramid
         Filters
       	plugins
+      	ONodeManager
     )
 
     ADD_SUBDIRECTORY(${mylibfolder})

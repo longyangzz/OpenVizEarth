@@ -1,10 +1,10 @@
 #pragma once
 
 #include <QPushButton>
-
+#include "DataManager_global.h"
 /*! Button on dockwidget tab to open up dockwidget
 */
-class NXDockWidgetTabButton : public QPushButton
+class DATAMANAGER_EXPORT NXDockWidgetTabButton : public QPushButton
 {
 	Q_OBJECT
 public:

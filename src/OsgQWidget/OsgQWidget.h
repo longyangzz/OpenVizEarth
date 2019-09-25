@@ -16,6 +16,9 @@ public:
 	OsgQWidget(QWidget *parent = NULL);
 	virtual ~OsgQWidget(void) {}
 
+	// Get the main view of the viewer, by default the viewer at position (0, 0)
+	osgViewer::View* getMainView();
+
 	void setRefreshPeriod(unsigned int period);
 	void setIdle(bool val);
 
@@ -27,7 +30,7 @@ protected:
 
 	QWidget* addViewWidget();
 	osg::Camera* createCamera( int x, int y, int w, int h );
-	virtual void paintEvent( QPaintEvent* /* event */ )  { frame(); }
+	virtual void paintEvent(QPaintEvent* /* event */);
 
 	QTimer m_timer;
 	unsigned int m_refreshPeriod;
