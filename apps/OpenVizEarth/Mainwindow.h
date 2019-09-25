@@ -2,7 +2,7 @@
 #define MYCLASS_H
 
 #include "QModelIndex"
-
+#include <QSettings>
 #include "DCGui/iwindow.h"
 
 namespace DC
@@ -103,6 +103,8 @@ public:
 	//UI style
 	void initUiStyles();
 
+	void setOrAddSetting(const QString& key, const QVariant& value);
+	QVariant getOrAddSetting(const QString& key, const QVariant& defaultValue);
 protected:
 	virtual bool event(QEvent* event) override;
 
@@ -134,6 +136,8 @@ public slots:
 	/*void on_actionAdd_triggered();*/
 
 	void on_actionSplitFiles_triggered();
+
+	void SwitchMode();
 
 
 	///////////////////////////////////////view///////////////////////////////////
@@ -230,6 +234,9 @@ private:
 	QMap<Qt::DockWidgetArea, NXDockWidgetTabBar*> _dockWidgetBar;
 
 	QMenu* _treeWidgetMenu;
+
+	//setting
+	QSettings m_globalSettings;
 };
 
 #endif // MYCLASS_H

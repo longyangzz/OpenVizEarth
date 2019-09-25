@@ -182,7 +182,7 @@ void MainWindow::initViewWidget()
 
 
 		QString  baseMapPath;
-		QString mode = "geocentric";
+		QString  mode = getOrAddSetting("Base mode", "projected").toString();
 		if (mode == "projected")
 		{
 			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
@@ -1010,6 +1010,33 @@ void MainWindow::on_actionBGColor_triggered()
 		CurrentSceneView()->setBgColor(c);
 }
 
+void MainWindow::setOrAddSetting(const QString& key, const QVariant & value)
+{
+	if (value.isValid())
+	{
+		m_globalSettings.setValue(key, value);
+		m_globalSettings.sync();
+	}
+}
+
+QVariant MainWindow::getOrAddSetting(const QString& key, const QVariant & defaultValue)
+{
+	auto  found = m_globalSettings.value(key);
+
+	if (!found.isValid())
+	{
+		if (defaultValue.isValid())
+		{
+			m_globalSettings.setValue(key, defaultValue);
+			m_globalSettings.sync();
+		}
+
+		return defaultValue;
+	}
+
+	return found;
+}
+
 void MainWindow::on_actionOnline_Update_triggered()
 {
 	//执行软件安装路径下的维护工具exe即可
@@ -1017,6 +1044,17 @@ void MainWindow::on_actionOnline_Update_triggered()
 
 	//启动tool
 	QProcess::startDetached(toolFileName, QStringList(toolFileName));
+}
+
+void MainWindow::SwitchMode()
+{
+	QString mode = getOrAddSetting("Base mode", "projected").toString();
+	if (mode == "geocentric")
+		setOrAddSetting("Base mode", "projected");
+	else
+		setOrAddSetting("Base mode", "geocentric");
+	qApp->quit();
+	QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
 
 void MainWindow::on_actionAbout_triggered()

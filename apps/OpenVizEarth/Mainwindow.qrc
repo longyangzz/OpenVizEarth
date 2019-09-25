@@ -11,6 +11,7 @@
         <file>Resources/tool/64/view_fullscreen.png</file>
         <file>Resources/tool/64/file_splitfiles.png</file>
         <file>Resources/tool/64/pc_gridFilters.png</file>
+        <file>Resources/tool/64/file_switch.png</file>
     </qresource>
     <qresource prefix="/Qss">
         <file>Resources/qss/stylesheet.qss</file>
