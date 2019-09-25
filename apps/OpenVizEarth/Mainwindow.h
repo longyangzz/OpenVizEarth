@@ -81,34 +81,30 @@ public:
 	void AddRecentlyOpenedFile(const QString &filename, QStringList &filelist);
 
 
-	//! dockWidget
-	void createDockWidgetBar(Qt::DockWidgetArea area);
+	//! dockWidgetÐü¸¡´°¿Ú==========================================================
+	// Add an auto-hide dock widget
+	void AddDockWidget(Qt::DockWidgetArea area, NXDockWidget* dockWidget);
 
-	void showDockWidget(NXDockWidget* dockWidget);
-	void hideDockWidget(NXDockWidget* dockWidget);
+	// Add an auto-hide dock widget
+	void AddDockWidget(Qt::DockWidgetArea area, NXDockWidget* dockWidget, Qt::Orientation orientation);
 
-	QRect getDockWidgetsAreaRect();
+	void removeDockWidget(NXDockWidget* dockWidget);
+
+	
 
 	QList<NXDockWidget*> getDockWidgetListAtArea(Qt::DockWidgetArea area);
 
-	void adjustDockWidget(NXDockWidget* dockWidget);
+	
 
-	// Turn on the AutoHide option 
-	void dockWidgetPinned(NXDockWidget* dockWidget);
-
-	// Turn off the AutoHide option 
-	void dockWidgetUnpinned(NXDockWidget* dockWidget);
-
-	// DockWidget has been docked
-	void dockWidgetDocked(NXDockWidget* dockWidget);
-
-	// DockWidget has been undocked
-	void dockWidgetUndocked(NXDockWidget* dockWidget);
+	
 
 	NXDockWidgetTabBar* getDockWidgetBar(Qt::DockWidgetArea area);
 
 	//UI style
 	void initUiStyles();
+
+protected:
+	virtual bool event(QEvent* event) override;
 
 signals:
 	void NewFileToLoad(const QString &, QString type);
@@ -164,6 +160,27 @@ public slots:
 	void on_actionOnline_Update_triggered();
 	void on_actionAbout_triggered();
 
+	//£¡ docket
+	// Turn on the AutoHide option 
+	void dockWidgetPinned(NXDockWidget* dockWidget);
+
+	// Turn off the AutoHide option 
+	void dockWidgetUnpinned(NXDockWidget* dockWidget);
+
+	// DockWidget has been docked
+	void dockWidgetDocked(NXDockWidget* dockWidget);
+
+	// DockWidget has been undocked
+	void dockWidgetUndocked(NXDockWidget* dockWidget);
+
+	void createDockWidgetBar(Qt::DockWidgetArea area);
+
+	void showDockWidget(NXDockWidget* dockWidget);
+	void hideDockWidget(NXDockWidget* dockWidget);
+
+	QRect getDockWidgetsAreaRect();
+
+	void adjustDockWidget(NXDockWidget* dockWidget);
 private slots:
 	void NodeSelected(const QModelIndex &index);
 	

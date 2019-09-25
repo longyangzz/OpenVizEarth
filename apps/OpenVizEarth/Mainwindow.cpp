@@ -182,7 +182,7 @@ void MainWindow::initViewWidget()
 
 
 		QString  baseMapPath;
-		QString mode = "projected";
+		QString mode = "geocentric";
 		if (mode == "projected")
 		{
 			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
@@ -330,6 +330,7 @@ QList<NXDockWidget *>  MainWindow::getDockWidgetListAtArea(Qt::DockWidgetArea ar
 
 void MainWindow::initUiStyles()
 {
+	auto a  = children();
 	for (auto child : children())
 	{
 		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
@@ -566,6 +567,30 @@ static Qt::ToolBarArea  dockAreaToToolBarArea(Qt::DockWidgetArea area)
 	}
 }
 
+void  MainWindow::removeDockWidget(NXDockWidget *dockWidget)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	if (_dockWidgets.indexOf(dockWidget) < 0)
+	{
+		return;
+	}
+
+	_dockWidgets.removeOne(dockWidget);
+
+	if (dockWidget->isMinimized())
+	{
+		dockWidgetPinned(dockWidget);
+	}
+
+	QMainWindow::removeDockWidget(dockWidget);
+
+	dockWidget->setParent(nullptr);
+}
+
 void  MainWindow::dockWidgetDocked(NXDockWidget *dockWidget)
 {
 	if (dockWidget == nullptr)
@@ -603,6 +628,28 @@ void  MainWindow::dockWidgetUndocked(NXDockWidget *dockWidget)
 
 		dockWidget->show();
 	}
+}
+
+void  MainWindow::AddDockWidget(Qt::DockWidgetArea area, NXDockWidget *dockWidget)
+{
+	AddDockWidget(area, dockWidget, Qt::Vertical);
+}
+
+void  MainWindow::AddDockWidget(Qt::DockWidgetArea area, NXDockWidget *dockWidget, Qt::Orientation orientation)
+{
+	if (dockWidget == nullptr)
+	{
+		return;
+	}
+
+	connect(dockWidget, &NXDockWidget::signal_pinned, this, &MainWindow::dockWidgetPinned);
+	connect(dockWidget, &NXDockWidget::signal_unpinned, this, &MainWindow::dockWidgetUnpinned);
+	connect(dockWidget, &NXDockWidget::signal_docked, this, &MainWindow::dockWidgetDocked);
+	connect(dockWidget, &NXDockWidget::signal_undocked, this, &MainWindow::dockWidgetUndocked);
+
+	_dockWidgets.push_back(dockWidget);
+
+	QMainWindow::addDockWidget(area, dockWidget, orientation);
 }
 
 void  MainWindow::createDockWidgetBar(Qt::DockWidgetArea area)
@@ -664,7 +711,7 @@ void MainWindow::InitDockWidget()
 		verticalLayout->addWidget(tabWidget);
 
 		controlPanel->setWidget(dockWidgetContent);
-		addDockWidget(Qt::RightDockWidgetArea, controlPanel);
+		AddDockWidget(Qt::RightDockWidgetArea, controlPanel);
 	}
 
 	{
@@ -700,7 +747,7 @@ void MainWindow::InitDockWidget()
 		verticalLayout_2->addWidget(attributeTable);
 
 		attributePanel->setWidget(tableDockWidgetContents);
-		addDockWidget(Qt::RightDockWidgetArea, attributePanel);
+		AddDockWidget(Qt::RightDockWidgetArea, attributePanel);
 	}
 }
 
@@ -728,7 +775,7 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::LoadSettings()
 {
 	AppSettings settings;
-
+	settings.clear();
 	//! 主窗口参数
 	settings.beginGroup("MainWindow");
 
@@ -1170,4 +1217,15 @@ void MainWindow::ResetViews(bool allClear)
 	{
 		//m_sceneModel->setData(NULL);
 	}
+}
+
+bool  MainWindow::event(QEvent *event)
+{
+	if (event->type() == QEvent::Resize)
+	{
+		hideDockWidget(_dockWidget);
+	}
+
+	// Make sure the rest of events are handled
+	return QMainWindow::event(event);
 }
