@@ -20,7 +20,7 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
 2. UIFacade 界面初始化
 
-   ![编译选项](./screenshot/UiFacade.png)
+   ![编译选项](./screenshot/UIFacade.png)
 
 3. 节点树管理
 
