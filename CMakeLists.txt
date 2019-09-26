@@ -98,6 +98,9 @@ IF(WIN32 AND NOT ANDROID)
     ENDIF(MSVC)
 ENDIF(WIN32 AND NOT ANDROID)
 
+
+
+
 # ------------------------------------------------------------------------------
 # 加载引入Qt
 # ------------------------------------------------------------------------------
@@ -109,6 +112,8 @@ INCLUDE(QtSupport)
 # 加载引入Osg
 # ------------------------------------------------------------------------------
 find_package (osg REQUIRED)
+link_directories( ${OSG_ROOT}/lib ) 
+message("444444444444444444","${OSG_ROOT}/lib")
 
 # 自定义宏函数引入
 INCLUDE(OpenVizMacroUtils)

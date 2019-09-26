@@ -41,21 +41,22 @@ SET(TARGET_LIBRARIES
     Qt5::Core
 	Qt5::Gui 
 	Qt5::Widgets 
-	${OSGEARTH_LIBRARY}
-	  ${OSGEARTHANNOTATION_LIBRARY}
-	  ${OSGEARTHFEATURES_LIBRARY}
-	  ${OSGEARTHUTIL_LIBRARY}
-	  ${OSGEARTHSYMBOLOGY_LIBRARY}
-	  ${OSGSSIM_LIBRARY_DEBUG}
-	  ${OSG_LIBRARY_DEBUG}
-    ${OSGUTIL_LIBRARY_DEBUG}
-    ${OSGDB_LIBRARY_DEBUG}
-     ${OSGGA_LIBRARY_DEBUG}
-    ${OPENTHREADS_LIBRARY_DEBUG}
-	${OSGSHADOW_LIBRARY_DEBUG}
-    ${OSGQT_LIBRARY_DEBUG}
-    ${OSGTEXT_LIBRARY_DEBUG}
-	${OSGVIEWER_LIBRARY_DEBUG}
+	debug osgEarth${CMAKE_DEBUG_POSTFIX}						optimized osgEarth
+    debug osgEarthAnnotation${CMAKE_DEBUG_POSTFIX}			optimized osgEarthAnnotation
+	debug osgEarthFeatures${CMAKE_DEBUG_POSTFIX}				optimized osgEarthFeatures
+    debug osgEarthUtil${CMAKE_DEBUG_POSTFIX}					optimized osgEarthUtil
+	debug osgEarthSymbology${CMAKE_DEBUG_POSTFIX}			optimized osgEarthSymbology
+    debug osgSim${CMAKE_DEBUG_POSTFIX}						optimized osgSim
+
+	debug ${OSG_LIBRARY_DEBUG} optimized ${OSG_LIBRARY}
+	debug ${OSGUTIL_LIBRARY_DEBUG} optimized ${OSGUTIL_LIBRARY}
+	debug ${OSGDB_LIBRARY_DEBUG} optimized ${OSGDB_LIBRARY}
+	debug ${OSGGA_LIBRARY_DEBUG} optimized ${OSGGA_LIBRARY}
+	debug ${OPENTHREADS_LIBRARY_DEBUG} optimized ${OPENTHREADS_LIBRARY}
+	debug ${OSGSHADOW_LIBRARY_DEBUG} optimized ${OSGSHADOW_LIBRARY}
+	debug ${OSGQT_LIBRARY_DEBUG} optimized ${OSGQT_LIBRARY_RELEASE}
+	debug ${OSGTEXT_LIBRARY_DEBUG} optimized ${OSGTEXT_LIBRARY}
+	debug ${OSGVIEWER_LIBRARY_DEBUG} optimized ${OSGVIEWER_LIBRARY}
 )
 
 # FIXME: This should work but something with the LINK_WITH_VARIABLES macro is not working
