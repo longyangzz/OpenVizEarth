@@ -4,6 +4,7 @@
 #include "DataManager_global.h"
 #include "../../NameSpace.h"
 #include "DataFormats.h"
+#include "DataManagerAction.h"
 
 #include <QObject>
 
@@ -51,7 +52,11 @@ class IconSymbolVisitor;
 
 class QMainWindow;
 
-class DATAMANAGER_EXPORT DataManager : public QObject
+class NXDockWidget;
+class NXDockWidgetTabBar;
+
+
+class DATAMANAGER_EXPORT DataManager : public DataManagerAction
 {
 	Q_OBJECT
 
@@ -76,6 +81,8 @@ public:
 	QMap<QString, QVector<feature>>& getFreatureTables();
 	QMap<QString, QStringList>& getFreatureFieldList();
 
+	
+	void setupUi(QMainWindow* mw);
 public slots:
 	// Data management
 	void newProject();
@@ -114,9 +121,9 @@ signals:
 	void resetCamera();
 	void showDataAttributes(const QString&);
 
-public:
-	void setupUi(QMainWindow* mw);
-	void initDataTree(QMainWindow* mainWindow);
+private:
+	void InitDockWidget();
+	void initDataTree();
 
 private:
 	// Program structure reference
@@ -153,7 +160,9 @@ private:
 	//FontVisitor* _fontvisitor;
 	//IconSymbolVisitor* _iconsymbolvisitor;
 	//FeatureStyleSettingDlg *_featureStyleDlg;
-	QMainWindow* m_mainWindow;
+	
+
+
 };
 
 #endif

@@ -86,7 +86,7 @@ protected:
 };
 
 UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
-	MainWindowAction(parent, flags)
+	MainWindow(parent, flags)
 {
 	// Some global environment settings
 	QCoreApplication::setOrganizationName("DCLW");
@@ -118,7 +118,7 @@ void UIFacade::initDCUIVar()
 	_root->setName("Root");
 
 	_settingsManager = new SettingsManager(this);
-
+	SetSettingManager(_settingsManager);
 	_dataManager = new DataManager(this);
 
 
@@ -140,6 +140,9 @@ void  UIFacade::initAll()
 	emit  sendNowInitName(tr("Initializing log"));
 	initLog();
 
+	//! 初始化dc库中的基础base变量
+	initDCUIVar();
+
 	emit  sendNowInitName(tr("Initializing UI"));
 
 	//! 生成界面，创建datamanager
@@ -147,10 +150,6 @@ void  UIFacade::initAll()
 
 	//初始化一个 view,绑定空node，必须在initDCUIVar前
 	initView();
-
-	//! 初始化dc库中的基础base变量
-	initDCUIVar();
-
 	
 
 	//！ 初始化加载一个场景数据，作为根节点，传递给dataManager
@@ -179,7 +178,11 @@ void  UIFacade::setupUi()
 
 		//！ 初始化docketwidget
 		//InitManager();
-		InitDockWidget();
+		if (_dataManager)
+		{
+			//! 初始化node管理面板
+			_dataManager->setupUi(this);
+		}
 
 		LoadSettings();
 	}
@@ -216,10 +219,6 @@ void  UIFacade::initPlugins()
 void  UIFacade::initDataManagerAndScene()
 {
 	emit  sendNowInitName(tr("Initializing DataScene"));
-
-	//! 初始化node管理面板
-	_dataManager->initDataTree(this);
-	_dataManager->setupUi(this);
 
 	_mapRoot = new osg::Group;
 	_mapRoot->setName("Map Root");

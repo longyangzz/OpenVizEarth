@@ -27,9 +27,9 @@
 //#include "ModelManipulator.h"
 
 DataManager::DataManager(QObject* parent /*= NULL*/)
-	: QObject(parent)
+	: DataManagerAction()
 	, _countLoadingData(0)
-	, m_mainWindow(nullptr)
+	
 	//, _featureStyleDlg(NULL)
 {
 	//initDataTree();
@@ -47,10 +47,24 @@ void DataManager::reset()
 	_nodeTree->clear();
 }
 
+void DataManager::InitDockWidget()
+{
+	//！ 创建tree dock节点管理面板
+	initDataTree();
+
+	DataManagerAction::InitOrtherDockWidget();
+}
+
+//！ 建立成员变量存放所有的菜单action，并初始化
 void DataManager::setupUi(QMainWindow* mainWindow)
 {
+	//! 记录主窗口
 	m_mainWindow = mainWindow;
 
+	//!3. 创建docket组件
+	InitDockWidget();
+
+	//！ 初始化信号槽及action
 	// Context menu actions
 	//showAttributeTableAction = new QAction(mainWindow);
 	//showAttributeTableAction->setObjectName(QStringLiteral("showAttributeTableAction"));
@@ -136,19 +150,21 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	//connect(openPrjAction, SIGNAL(triggered()), this, SLOT(openPrj()));
 	//connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 	//connect(saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+	
 }
 
-void DataManager::initDataTree(QMainWindow* mainWindow)
+void DataManager::initDataTree()
 {
-	m_mainWindow = mainWindow;
+	if (!m_mainWindow)
+	{
+		return;
+	}
 
-	_treeWidgetMenu = new QMenu(mainWindow);
+	_treeWidgetMenu = new QMenu(m_mainWindow);
 
 	// Init dock
-	NXDockWidget *dataPanel = new NXDockWidget(tr("Data Panel"), mainWindow);
-	QWidget *treeDockWidgetContents;
-	QVBoxLayout *verticalLayout;
-
+	NXDockWidget *dataPanel = new NXDockWidget(tr("Data Panel"), m_mainWindow);
 	dataPanel->setObjectName(QStringLiteral("dataPanel"));
 	QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	sizePolicy.setHorizontalStretch(0);
@@ -156,6 +172,9 @@ void DataManager::initDataTree(QMainWindow* mainWindow)
 	sizePolicy.setHeightForWidth(dataPanel->sizePolicy().hasHeightForWidth());
 	dataPanel->setSizePolicy(sizePolicy);
 	dataPanel->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	QWidget *treeDockWidgetContents;
+	QVBoxLayout *verticalLayout;
 	treeDockWidgetContents = new QWidget();
 	treeDockWidgetContents->setObjectName(QStringLiteral("treeDockWidgetContents"));
 	sizePolicy.setHeightForWidth(treeDockWidgetContents->sizePolicy().hasHeightForWidth());
@@ -166,7 +185,7 @@ void DataManager::initDataTree(QMainWindow* mainWindow)
 	verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
 	verticalLayout->setContentsMargins(0, 0, 0, 0);
 	
-	// Init tree
+	// Init tree，树结构uiQTreeWidget
 	_nodeTree = new DataTree(treeDockWidgetContents);
 	_nodeTree->setObjectName(QStringLiteral("nodeTree"));
 	_nodeTree->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -179,7 +198,7 @@ void DataManager::initDataTree(QMainWindow* mainWindow)
 
 	verticalLayout->addWidget(_nodeTree);
 	dataPanel->setWidget(treeDockWidgetContents);
-	mainWindow->addDockWidget(Qt::RightDockWidgetArea, dataPanel);
+	AddDockWidget(Qt::RightDockWidgetArea, dataPanel);
 
 	// Tree slots
 	connect(_nodeTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), _nodeTree, SLOT(switchDataSlot(QTreeWidgetItem*, int)));
@@ -365,6 +384,7 @@ void DataManager::doubleClickTreeSlot(QTreeWidgetItem* item, int column)
 
 }
 
+//！ 节点条目点击的右键菜单事件
 void DataManager::showDataTreeContextMenu(const QPoint &pos)
 {
 	QModelIndex index = _nodeTree->indexAt(pos);

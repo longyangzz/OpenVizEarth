@@ -5,8 +5,6 @@
 #include <QSettings>
 #include "DCGui/iwindow.h"
 
-#include "Mainwindow.h"
-
 namespace DC
 {
 	class SceneView;
@@ -22,22 +20,41 @@ class NodePropertyWidget;
 
 class NXDockWidget;
 class NXDockWidgetTabBar;
+class SettingsManager;
 
 namespace osg
 {
 	class Node;
 }
 
-class MainWindowAction : public MainWindow
+class MainWindowAction : public IWindow
 {
 	Q_OBJECT
 
 public:
-	MainWindowAction(QWidget *parent = nullptr, Qt::WindowFlags flags = 0);
+	MainWindowAction(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MainWindowAction();
 
+	void SetSettingManager(SettingsManager* sManager);
 public:
+	bool LoadFile(const QString &file, QString type);
 
+	//! 获取当前激活窗口
+	DC::SceneView* CurrentSceneView();
+
+	//! 返回当前激活的窗口
+	QWidget* ActiveMdiChild();
+
+	//! 创建一个窗口
+	DC::SceneView* CreateNewSceneViewer();
+
+
+
+	///设置动作的可用状态
+	void EnableActions(const bool isEnable);
+
+	//! 文件读取成功时候调用，用来记录文件名到当前文件和最近打开列表中
+	void AddRecentlyOpenedFile(const QString &filename, QStringList &filelist);
 public slots:
 
 	/////////////////////////////////////File/////////////////////////////////////
@@ -91,42 +108,54 @@ public slots:
 	void on_actionOnline_Update_triggered();
 	void on_actionAbout_triggered();
 
-	//！ docket
-	// Turn on the AutoHide option 
-	void dockWidgetPinned(NXDockWidget* dockWidget);
-
-	// Turn off the AutoHide option 
-	void dockWidgetUnpinned(NXDockWidget* dockWidget);
-
-	// DockWidget has been docked
-	void dockWidgetDocked(NXDockWidget* dockWidget);
-
-	// DockWidget has been undocked
-	void dockWidgetUndocked(NXDockWidget* dockWidget);
-
-	void createDockWidgetBar(Qt::DockWidgetArea area);
-
-	void showDockWidget(NXDockWidget* dockWidget);
-	void hideDockWidget(NXDockWidget* dockWidget);
-
-	QRect getDockWidgetsAreaRect();
-
-	void adjustDockWidget(NXDockWidget* dockWidget);
-
-	void removeDockWidget(NXDockWidget* dockWidget);
-
-	// Add an auto-hide dock widget
-	void AddDockWidget(Qt::DockWidgetArea area, NXDockWidget* dockWidget, Qt::Orientation orientation);
-
-	// Add an auto-hide dock widget
-	void AddDockWidget(Qt::DockWidgetArea area, NXDockWidget* dockWidget);
-
-	void InitDockWidget();
 private slots:
 	void NodeSelected(const QModelIndex &index);
 	
+signals:
+	void NewFileToLoad(const QString &, QString type);
+
 private:
 
+public:
+	//! 浏览器场景相关模型视图
+	ObjectLoader *m_bgLoader;
+
+	//! 节点管理模型视图
+	NodeTreeModel* m_nodeTreeModel;
+	NodePropertyWidget* m_propertyWidget;
+
+	//! 软件系统基本信息
+	QString m_lastDirectorySnapshot;
+	QString m_lastSnapshotName;
+	int m_currentSnapshotNum;
+
+	QString m_appName;
+	QString m_version;
+
+	QString m_currentLanguage;
+
+	QMdiArea* m_pMdiArea;
+
+
+	////////////////////////////////设备相关//////////////////////////////////////////
+	bool m_inverseMouseWheel;
+
+	////////////////////////////////文件相关//////////////////////////////////////////
+	///最近打开的文件
+	QStringList m_recentFiles;
+
+	//! 当前文件
+	QString m_currentFile;
+
+	//! 最后打开文件路径
+	QString m_lastDirectory;
+
+	//setting
+	QSettings m_globalSettings;
+
+	DC::SceneView* m_pCurrentNewViewer;
+
+	SettingsManager* m_SettingsManager;
 };
 
 #endif // MainWindowAction

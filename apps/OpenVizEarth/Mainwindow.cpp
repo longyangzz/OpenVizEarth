@@ -69,13 +69,8 @@
 const int maxRecentlyOpenedFileNum = 10;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-	: IWindow(parent, flags)
-	, m_appName(PACKAGE_NAME)
-	, m_version(PACKAGE_VERSION)
-	, m_pMdiArea( new QMdiArea( this ) )
-	, m_bgLoader(nullptr)
-	, _dockWidget(nullptr)
-	, m_pCurrentNewViewer(nullptr)
+	: MainWindowAction(parent, flags)
+	
 {
 	
 }
@@ -117,35 +112,6 @@ void MainWindow::PraseArgs(QVector<QString > args)
 		pNewViewer->resetHome();
 	}
 	
-}
-
-DC::SceneView* MainWindow::CreateNewSceneViewer()
-{
-	DC::SceneView* sceneView = new DC::SceneView(this);
-	sceneView->setModel(new SceneModel(this));
-	QMdiSubWindow* subWindow = m_pMdiArea->addSubWindow( sceneView );
-
-	subWindow->showMaximized();
-
-	return sceneView;
-}
-
-//! 返回当前激活的窗口
-QWidget* MainWindow::ActiveMdiChild()
-{
-	if (QMdiSubWindow *activeSubWindow = m_pMdiArea->activeSubWindow())
-		return qobject_cast<QWidget *>(activeSubWindow->widget());
-
-	return 0;
-}
-
-DC::SceneView* MainWindow::CurrentSceneView()
-{
-	DC::SceneView* pViewer = static_cast<DC::SceneView* >(ActiveMdiChild());
-
-	m_pCurrentNewViewer = pViewer;
-
-	return pViewer;
 }
 
 void MainWindow::CreateConnection()
@@ -272,25 +238,9 @@ void MainWindow::InitManager()
 	dokwProperties->setWindowTitle(QString::fromLocal8Bit("属性"));
 }
 
-
-QList<NXDockWidget *>  MainWindow::getDockWidgetListAtArea(Qt::DockWidgetArea area)
-{
-	QList<NXDockWidget *>  dockWidgetList;
-
-	for (NXDockWidget *dockWidget : _dockWidgets)
-	{
-		if ((dockWidget->getArea() == area) && (dockWidget->isDocked()))
-		{
-			dockWidgetList.push_back(dockWidget);
-		}
-	}
-
-	return dockWidgetList;
-}
-
 void MainWindow::initUiStyles()
 {
-	auto a  = children();
+	auto a = children();
 	for (auto child : children())
 	{
 		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
@@ -304,42 +254,6 @@ void MainWindow::initUiStyles()
 }
 
 
-static Qt::ToolBarArea  dockAreaToToolBarArea(Qt::DockWidgetArea area)
-{
-	switch (area)
-	{
-	case Qt::LeftDockWidgetArea:
-
-		return Qt::LeftToolBarArea;
-	case Qt::RightDockWidgetArea:
-
-		return Qt::RightToolBarArea;
-	case Qt::TopDockWidgetArea:
-
-		return Qt::TopToolBarArea;
-	case Qt::BottomDockWidgetArea:
-
-		return Qt::BottomToolBarArea;
-	default:
-
-		return Qt::ToolBarArea(0);
-	}
-}
-
-
-NXDockWidgetTabBar * MainWindow::getDockWidgetBar(Qt::DockWidgetArea area)
-{
-	assert(_dockWidgetBar.find(area) != _dockWidgetBar.end());
-
-	auto  it = _dockWidgetBar.find(area);
-
-	if (it != _dockWidgetBar.end())
-	{
-		return *it;
-	}
-
-	return nullptr;
-}
 
 void MainWindow::LoadSettings()
 {
@@ -453,61 +367,7 @@ void MainWindow::Init()
 	EnableActions(false);
 }
 
-void MainWindow::AddRecentlyOpenedFile(const QString &filename, QStringList &filelist)
-{
-	QFileInfo fi(filename);
 
-	if ( filelist.contains( fi.absoluteFilePath() ) )
-		return;
-
-	if ( filelist.count() >= maxRecentlyOpenedFileNum )
-		filelist.removeLast();
-
-	filelist.prepend( fi.absoluteFilePath() );
-}
-
-
-void MainWindow::EnableActions(const bool isEnable)
-{
-	QAction* actionLight = GetMenuBar()->findChild<QAction* >("actionLight");
-	if (!actionLight)
-	{
-		return;
-	}
-	actionLight->setEnabled(isEnable);
-	if (isEnable)
-	{
-		//actionLight->setCheckable(isEnable);
-		actionLight->setIcon(QIcon(":/Mainwindow/Resources/tool/64/view_lightOn.png"));
-	}
-	else
-	{
-		actionLight->setIcon(QIcon(":/Mainwindow/Resources/tool/64/view_lightOff.png"));
-	}
-}
-
-
-
-
-
-bool MainWindow::LoadFile(const QString &file, QString type)
-{
-	if ( file.isEmpty() || !QFileInfo(file).exists() )
-		return false;
-
-	//saveIfNeeded();
-	QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-
-	m_currentFile = file;
-	m_lastDirectory = QFileInfo(file).absolutePath();
-
-	// enable actions
-	//enableActions(false);
-
-	emit NewFileToLoad(file, type);
-
-	return true;
-}
 
 void MainWindow::ResetViews(bool allClear)
 {
