@@ -12,8 +12,8 @@
 class DataManager;
 class SettingsManager;
 class ViewerWidget;
-class PluginManager;
-class MousePicker;
+class MPluginManager;
+class MouseEventHandler;
 
 namespace osg
 {
@@ -79,8 +79,8 @@ private:
 
   DataManager     *_dataManager;
   SettingsManager *_settingsManager;
-  PluginManager   *_pluginManager;
-  osg::ref_ptr<MousePicker>     _mousePicker;
+  MPluginManager   *_pluginManager;
+  osg::ref_ptr<MouseEventHandler>     _mousePicker;
 
 	// Root for all
   osg::ref_ptr<osg::Group>                      _root;

@@ -1,10 +1,10 @@
 PROJECT(OpenViz_PLUGINS)
 
 
-SET(CMAKE_SHARED_MODULE_PREFIX ${OSG_PLUGIN_PREFIX})
+SET(CMAKE_SHARED_MODULE_PREFIX "")
 
-SET(TARGET_DEFAULT_PREFIX "osgdb_")
-SET(TARGET_DEFAULT_LABEL_PREFIX "Plugins")
+SET(TARGET_DEFAULT_PREFIX "M_")
+SET(TARGET_DEFAULT_LABEL_PREFIX "MPlugins")
 
 FOREACH(CONF ${CMAKE_CONFIGURATION_TYPES})        # For each configuration (Debug, Release, MinSizeRel... and/or anything the user chooses)
     STRING(TOUPPER "${CONF}" CONF)                # Go uppercase (DEBUG, RELEASE...)
@@ -21,7 +21,7 @@ ENDFOREACH()
 #
 #  selfdefine loader plugins
 #
-ADD_SUBDIRECTORY(OsgIOPluginDemo)
+ADD_SUBDIRECTORY(EarthDataInterface)
 
 
 

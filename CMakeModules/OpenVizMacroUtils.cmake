@@ -337,6 +337,57 @@ MACRO(SETUP_PLUGIN PLUGIN_NAME)
 ENDMACRO(SETUP_PLUGIN)
 
 
+MACRO(SETUP_MPLUGIN PLUGIN_NAME)
+   
+
+    SET(TARGET_NAME ${PLUGIN_NAME} )
+
+    IF(NOT TARGET_TARGETNAME)
+            SET(TARGET_TARGETNAME "${TARGET_DEFAULT_PREFIX}${TARGET_NAME}")
+    ENDIF(NOT TARGET_TARGETNAME)
+    IF(NOT TARGET_LABEL)
+            SET(TARGET_LABEL "${TARGET_DEFAULT_LABEL_PREFIX}-${TARGET_NAME}")
+    ENDIF(NOT TARGET_LABEL)
+
+    ## plugins gets put in libOpenVIZ by default
+    IF(${ARGC} GREATER 1)
+      SET(PACKAGE_COMPONENT libOpenVIZ-${ARGV1})
+    ELSE(${ARGC} GREATER 1)
+      SET(PACKAGE_COMPONENT libOpenVIZ)
+    ENDIF(${ARGC} GREATER 1)
+
+    # Add the VisualStudio versioning info    
+    SET(TARGET_SRC ${TARGET_SRC} ${OPENVIZ_VERSIONINFO_RC})
+    
+    # here we use the command to generate the library    
+
+    IF   (DYNAMIC_OPENVIZ)
+        ADD_LIBRARY(${TARGET_TARGETNAME} MODULE ${TARGET_SRC} ${TARGET_H})
+    ELSE (DYNAMIC_OPENVIZ)
+        ADD_LIBRARY(${TARGET_TARGETNAME} STATIC ${TARGET_SRC} ${TARGET_H})
+    ENDIF(DYNAMIC_OPENVIZ)
+    
+
+    SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES PROJECT_LABEL "${TARGET_LABEL}")
+    SET_TARGET_PROPERTIES(${TARGET_TARGETNAME} PROPERTIES FOLDER "MPlugins")
+
+    SETUP_LINK_LIBRARIES()
+
+#the installation path are differentiated for win32 that install in bib versus other architecture that install in lib${LIB_POSTFIX}/${OSG_PLUGINS}
+    IF(WIN32)
+        INSTALL(TARGETS ${TARGET_TARGETNAME} 
+            RUNTIME DESTINATION bin COMPONENT ${PACKAGE_COMPONENT}
+            ARCHIVE DESTINATION lib/${OSG_PLUGINS} COMPONENT libOPENVIZ-dev
+            LIBRARY DESTINATION bin/${OSG_PLUGINS} COMPONENT ${PACKAGE_COMPONENT})
+    ELSE(WIN32)
+        INSTALL(TARGETS ${TARGET_TARGETNAME}
+            RUNTIME DESTINATION bin COMPONENT ${PACKAGE_COMPONENT}
+            ARCHIVE DESTINATION lib${LIB_POSTFIX}/${OSG_PLUGINS} COMPONENT libOPENVIZ-dev
+            LIBRARY DESTINATION lib${LIB_POSTFIX}/${OSG_PLUGINS} COMPONENT ${PACKAGE_COMPONENT})
+    ENDIF(WIN32)
+ENDMACRO(SETUP_MPLUGIN)
+
+
 #################################################################################################################
 # this is the macro for example and application setup
 ###########################################################

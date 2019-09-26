@@ -6,17 +6,19 @@ ENDIF()
 
 #the old construct SUBDIRS( was substituded by ADD_SUBDIRECTORY that is to be preferred according on CMake docs.
 FOREACH( mylibfolder 
-        propertybrowser
-        DC
-        DCDB
-        DCGui
-      	DCScene
-      	OsgQWidget
-      	Manager
-        Pyramid
-        Filters
+        Core/propertybrowser
+        Core/DC
+        Core/DCDB
+        Core/DCGui
+      	Core/DCScene
+      	Core/OsgQWidget
+      	Core/Manager
+      	Core/ONodeManager
+        #Pyramid
+        #Filters
       	plugins
-      	ONodeManager
+      	Mplugins
+      	
     )
 
     ADD_SUBDIRECTORY(${mylibfolder})

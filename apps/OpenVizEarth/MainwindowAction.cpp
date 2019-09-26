@@ -28,7 +28,6 @@
 
 //subself
 //DC
-#include "DC/AppSettings.h"
 #include "DC/ThreadPool.h"
 
 //DCDB

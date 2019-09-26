@@ -30,6 +30,9 @@ SET(CMAKE_MODULE_PATH "${OpenVizEarth_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PA
 INCLUDE_DIRECTORIES(
     ${OpenVizEarth_SOURCE_DIR}/src
     ${OPENGL_INCLUDE_DIR}
+    ${OpenVizEarth_SOURCE_DIR}/src/Core
+    ${OpenVizEarth_SOURCE_DIR}/src/plugins
+    ${OpenVizEarth_SOURCE_DIR}/src/Mplugins
 )
 
 
@@ -191,12 +194,13 @@ ELSE()
     IF(VALID_BUILDER_VERSION)  # If CMake >= 2.8.1
         FOREACH(CONF ${CMAKE_CONFIGURATION_TYPES})        # For each configuration (Debug, Release, MinSizeRel... and/or anything the user chooses)
             STRING(TOUPPER "${CONF}" CONF)                # Go uppercase (DEBUG, RELEASE...)
-            SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
-            SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
+            SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}/${CONF}")
+            SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}/${CONF}")
+            message("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF}" )
             IF(WIN32)
-                SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}")
+                SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_BINDIR}/${CONF}")
             ELSE()
-                SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}")
+                SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF}" "${OUTPUT_LIBDIR}/${CONF}")
             ENDIF()
         ENDFOREACH()
     ENDIF(VALID_BUILDER_VERSION)

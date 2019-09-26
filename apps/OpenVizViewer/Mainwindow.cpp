@@ -26,8 +26,8 @@
 //subself
 #include "DlgClassify.h"
 //DC
-#include "DC/AppSettings.h"
 #include "DC/ThreadPool.h"
+#include "DC/SettingsManager.h"
 
 //DCDB
 #include "DCDb/ObjectLoader.h"
@@ -252,7 +252,7 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::LoadSettings()
 {
-	AppSettings settings;
+	SettingsManager settings;
 
 	//! 主窗口参数
 	settings.beginGroup("MainWindow");
@@ -306,7 +306,7 @@ void MainWindow::LoadSettings()
 
 void MainWindow::SaveSettings()
 {
-	AppSettings settings;
+	SettingsManager settings;
 
 	settings.beginGroup("MainWindow");
 

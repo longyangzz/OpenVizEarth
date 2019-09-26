@@ -44,9 +44,9 @@ using namespace std;
 #include "DCScene/scene/SceneView.h"
 #include "DCScene/scene/SceneModel.h"
 
-#include <DC/MousePicker.h>
+#include <DC/MouseEventHandler.h>
 #include <DC/SettingsManager.h>
-#include <ONodeManager/PluginManager.h>
+#include <ONodeManager/MPluginManager.h>
 
 
 class LogFileHandler : public osg::NotifyHandler
@@ -126,11 +126,11 @@ void UIFacade::initDCUIVar()
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
-	_pluginManager = new PluginManager(this, _dataManager, m_pCurrentNewViewer);
+	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
 	_pluginManager->registerPluginGroup("Data", nullptr,  nullptr);
 
-	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &PluginManager::loadContextMenu);
-	connect(_pluginManager, &PluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
+	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
+	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 }
 
 void  UIFacade::initAll()
@@ -203,8 +203,8 @@ void  UIFacade::initView()
 
 void  UIFacade::initPlugins()
 {
-	// MousePicker is the shared core of all plugins
-	_mousePicker = new MousePicker();
+	// MouseEventHandler is the shared core of all plugins
+	_mousePicker = new MouseEventHandler();
 	_mousePicker->registerData(this, _dataManager, m_pCurrentNewViewer, _root, _settingsManager->getGlobalSRS());
 	_mousePicker->registerSetting(_settingsManager);
 	_mousePicker->setupUi(statusBar());

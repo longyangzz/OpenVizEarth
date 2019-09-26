@@ -28,7 +28,6 @@
 
 //subself
 //DC
-#include "DC/AppSettings.h"
 #include "DC/ThreadPool.h"
 
 //DCDB
@@ -65,6 +64,7 @@
 #include "ONodeManager/NXDockWidgetTabBar.h"
 #include "ONodeManager/NXDockWidgetTabButton.h"
 #include "ONodeManager/DataManager.h"
+#include "DC/SettingsManager.h"
 
 const int maxRecentlyOpenedFileNum = 10;
 
@@ -343,7 +343,7 @@ NXDockWidgetTabBar * MainWindow::getDockWidgetBar(Qt::DockWidgetArea area)
 
 void MainWindow::LoadSettings()
 {
-	AppSettings settings;
+	SettingsManager settings;
 	settings.clear();
 	//! 主窗口参数
 	settings.beginGroup("MainWindow");
@@ -397,7 +397,7 @@ void MainWindow::LoadSettings()
 
 void MainWindow::SaveSettings()
 {
-	AppSettings settings;
+	SettingsManager settings;
 
 	settings.beginGroup("MainWindow");
 
