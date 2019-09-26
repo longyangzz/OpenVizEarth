@@ -216,6 +216,20 @@ void DataManager::recordData(osgEarth::Layer* layer, const QString& name, const 
 	_nodeTree->addRecord(layer, name, parent, extent, hidden);
 }
 
+void DataManager::CreateLayerContainerNode(QString layerNodeName)
+{
+	DataRecord *parent = _nodeTree->getRecord(layerNodeName);
+
+	if (!parent)
+	{
+		parent = new DataRecord(layerNodeName, _nodeTree->GetRootTree());
+		_nodeTree->GetRootTree()->addChild(parent);
+		_nodeTree->GetDataRecords().insert(layerNodeName, parent);
+		parent->setExpanded(true);
+	}
+	
+}
+
 void DataManager::removeData(const QString& nodeName)
 {
 	_nodeTree->removeRecord(nodeName);

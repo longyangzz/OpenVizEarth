@@ -75,6 +75,8 @@ private:
 	DataRecord* getParent(const QString& parentName);
 	void switchAll(DataRecord *item, bool isVisible);
 
+	DataRecord* GetRootTree();
+	RecordDict& GetDataRecords();
 private:
 	RecordDict _dataRecords;
 	DataRecord* _rootTreeItem;

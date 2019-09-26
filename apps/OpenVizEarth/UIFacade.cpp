@@ -16,6 +16,8 @@ using namespace std;
 #include <QProcess>
 #include <QMenu>
 #include <QTreeWidgetItem>
+#include <QToolBar>
+
 
 #include <osg/Notify>
 #include <osg/ShapeDrawable>
@@ -127,7 +129,12 @@ void UIFacade::initDCUIVar()
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
 	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
-	_pluginManager->registerPluginGroup("Data", nullptr,  nullptr);
+
+	//! 通过外部传入插件组、插件根toolbar、插件根menu
+	QToolBar* dataToolBar = new QToolBar(this);
+	dataToolBar->setWindowTitle("Data Manager");
+	addToolBar(dataToolBar);
+	_pluginManager->registerPluginGroup("Data", dataToolBar,  nullptr);
 
 	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
 	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);

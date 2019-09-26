@@ -53,6 +53,10 @@ void  MPluginManager::registerPlugin(MPluginInterface *plugin)
 	connect(plugin, &MPluginInterface::loadingProgress, _dataManager, &DataManager::loadingProgress);
 	connect(plugin, &MPluginInterface::loadingDone, _dataManager, &DataManager::loadingDone);
 
+	//! 为插件类创建一个图层容器节点
+	connect(plugin, SIGNAL(addLayersNode(QString)),
+		_dataManager, SLOT(CreateLayerContainerNode(QString)));
+
     //osg::ref_ptr<MapController> controller = 
     //    dynamic_cast<MapController*>(_viewerWidget->getMainView()->getCameraManipulator());
     //if (controller.valid())

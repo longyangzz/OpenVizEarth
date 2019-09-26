@@ -90,6 +90,9 @@ public:
 
   virtual void  setupUi(QToolBar *toolBar, QMenu *menu) = 0;
 
+  //！ 初始化插件中的图层组节点
+  virtual void CreateLayerContainerNode(QString layerNodeName) {};
+
 	// Load a custom context menu when right click on the related tree node from DataTree
   virtual void  loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selectedItem);
 
@@ -201,6 +204,8 @@ signals:
 	void loadingProgress(int);
 	void loadingDone();
   void setViewPoint(const osgEarth::Viewpoint &);
+
+  void addLayersNode(QString );
 
 public slots:
 	// Default function to toggle the plugin on or off

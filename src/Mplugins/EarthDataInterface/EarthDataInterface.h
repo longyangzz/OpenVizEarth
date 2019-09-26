@@ -38,6 +38,7 @@ public:
 	virtual void setupUi(QToolBar *toolBar, QMenu *menu) override;
 	virtual void init() override;
 
+	virtual void CreateLayerContainerNode(QString layerNodeName) override;
 public slots:
 	void showDataAttributes(const QString& nodeName);
 

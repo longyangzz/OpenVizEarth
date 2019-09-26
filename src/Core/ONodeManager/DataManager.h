@@ -110,6 +110,8 @@ public slots:
 	void showMetaDataSlot();
 	//void showAttributeTableSlot();
 
+	//! nodeLayers图层节点管理
+	void CreateLayerContainerNode(QString layersName);
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);

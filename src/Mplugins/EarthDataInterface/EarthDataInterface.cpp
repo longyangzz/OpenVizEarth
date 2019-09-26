@@ -37,28 +37,28 @@ EarthDataInterface::EarthDataInterface()
     _dataGroups[IMAGE_LAYER] = {
         tr("Image Layers"),
         QStringLiteral("addImage"),
-        QStringLiteral("resources/icons/image.png"),
+        QStringLiteral("Resources/icons/image.png"),
         tr("Image"),
         tr("Add image maps")
     };
     _dataGroups[TERRAIN_LAYER] = {
         tr("Terrain Layers"),
         QStringLiteral("addTerrain"),
-        QStringLiteral("resources/icons/terrain.png"),
+        QStringLiteral("Resources/icons/terrain.png"),
         tr("Terrain"),
         tr("Add terrain maps")
     };
     _dataGroups[FEATURE_LAYER] = {
         tr("Feature Layers"),
         QStringLiteral("addFeature"),
-        QStringLiteral("resources/icons/addshp.png"),
+        QStringLiteral("Resources/icons/addshp.png"),
         tr("Feature"),
         tr("Add feature maps")
     };
     _dataGroups[MODEL_LAYER] = {
       tr("Models"),
       QStringLiteral("addModel"),
-      QStringLiteral("resources/icons/model.png"),
+      QStringLiteral("Resources/icons/model.png"),
       tr("Model"),
       tr("Add models")
     };
@@ -68,13 +68,23 @@ EarthDataInterface::~EarthDataInterface()
 {
 }
 
+void EarthDataInterface::CreateLayerContainerNode(QString layerNodeName)
+{
+	//dataManager->CreateLayerContainerNode(layerNodeName);
+}
+
 void  EarthDataInterface::setupUi(QToolBar *toolBar, QMenu *menu)
 {
     dataMenu = menu;
     dataToolBar = toolBar;
+	
+	
 
     for (unsigned i = 0; i < ALL_TYPE; i++)
     {
+		//! 添加注册生成根节点，根据传入的图层名称
+		emit   addLayersNode(_dataGroups[i].dataTreeTitle);
+
         QMenu *menu = getOrAddMenu((LayerType)i);
         getOrAddToolButton((LayerType)i, menu);
     }
@@ -163,7 +173,7 @@ QToolButton * EarthDataInterface::getOrAddToolButton(LayerType dataType, QMenu *
     button->setPopupMode(QToolButton::InstantPopup);
     button->setCheckable(true);
     button->setMenu(menu);
-    //dataToolBar->addWidget(button);
+    dataToolBar->addWidget(button);
 
     return button;
 }

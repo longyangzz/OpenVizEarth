@@ -28,6 +28,11 @@ DataTree::~DataTree()
 {
 }
 
+DataRecord* DataTree::GetRootTree()
+{
+	return _rootTreeItem;
+}
+
 void  DataTree::clear()
 {
 	for (unsigned i = 0; i < _rootTreeItem->childCount(); i++)
@@ -447,6 +452,11 @@ void  DataTree::setWindowMask(const QString &name, int mask)
 	}
 
 	record->setMask((record->mask() & SHOW_IN_NO_WINDOW) | windowMask);
+}
+
+RecordDict& DataTree::GetDataRecords()
+{
+	return _dataRecords;
 }
 
 DataRecord * DataTree::getRecord(const QString &name)
