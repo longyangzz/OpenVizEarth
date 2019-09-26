@@ -151,6 +151,7 @@ void UIFacade::initDCUIVar()
 	QAction* actionBefore = GetAction(2);
 	mBar->addMenu(dataMenu);
 	dataMenu->setTitle("Data");
+
 	_pluginManager->registerPluginGroup("Data", dataToolBar, dataMenu);
 
 	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
