@@ -5,7 +5,7 @@
 #include <QSettings>
 #include "DCGui/iwindow.h"
 
-
+#include "DataManager_global.h"
 namespace DC
 {
 	class SceneView;
@@ -27,7 +27,7 @@ namespace osg
 	class Node;
 }
 
-class DataManagerAction : public QObject
+class DATAMANAGER_EXPORT DataManagerAction : public QObject
 {
 	Q_OBJECT
 

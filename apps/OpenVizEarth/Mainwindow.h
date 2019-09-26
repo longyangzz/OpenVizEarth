@@ -75,10 +75,6 @@ public:
 
 	//! 加载记录的设置
 	void LoadSettings();
-
-	
-	//UI style
-	void initUiStyles();
 protected:
 	//virtual bool event(QEvent* event) override;
 

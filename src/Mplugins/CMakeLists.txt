@@ -22,6 +22,8 @@ ENDFOREACH()
 #  selfdefine loader plugins
 #
 ADD_SUBDIRECTORY(EarthDataInterface)
+ADD_SUBDIRECTORY(AddArcGISData)
+
 
 
 

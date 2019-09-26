@@ -238,20 +238,7 @@ void MainWindow::InitManager()
 	dokwProperties->setWindowTitle(QString::fromLocal8Bit(" Ù–‘"));
 }
 
-void MainWindow::initUiStyles()
-{
-	auto a = children();
-	for (auto child : children())
-	{
-		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
 
-		if (dock)
-		{
-			//dockWidgetUnpinned(dock);
-			dock->setFixedWidth(250);
-		}
-	}
-}
 
 
 

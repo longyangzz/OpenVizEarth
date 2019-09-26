@@ -143,7 +143,7 @@ QMenu * EarthDataInterface::getOrAddMenu(LayerType dataType)
     menu->setTitle(dataGroup.title);
     menu->setToolTip(dataGroup.toolTip);
 
-    //dataMenu->addMenu(menu);
+    dataMenu->addMenu(menu);
 
     return menu;
 }

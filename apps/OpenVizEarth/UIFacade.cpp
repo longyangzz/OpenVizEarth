@@ -15,6 +15,7 @@ using namespace std;
 #include <QDateTime>
 #include <QProcess>
 #include <QMenu>
+#include <QMenuBar>
 #include <QTreeWidgetItem>
 #include <QToolBar>
 
@@ -45,6 +46,11 @@ using namespace std;
 //DCScene
 #include "DCScene/scene/SceneView.h"
 #include "DCScene/scene/SceneModel.h"
+
+
+#include "ONodeManager/NXDockWidget.h"
+#include "ONodeManager/NXDockWidgetTabBar.h"
+#include "ONodeManager/NXDockWidgetTabButton.h"
 
 #include <DC/MouseEventHandler.h>
 #include <DC/SettingsManager.h>
@@ -132,9 +138,20 @@ void UIFacade::initDCUIVar()
 
 	//! 通过外部传入插件组、插件根toolbar、插件根menu
 	QToolBar* dataToolBar = new QToolBar(this);
-	dataToolBar->setWindowTitle("Data Manager");
-	addToolBar(dataToolBar);
-	_pluginManager->registerPluginGroup("Data", dataToolBar,  nullptr);
+	dataToolBar->setObjectName(QStringLiteral("dataToolBar"));
+	dataToolBar->setIconSize(QSize(24, 24));
+	dataToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	addToolBar(Qt::TopToolBarArea, dataToolBar);
+
+	QMenuBar* mBar = menuBar();
+	QMenu* dataMenu = new QMenu;
+	dataMenu->setObjectName(QStringLiteral("dataMenu"));
+
+	//获取倒数第二个菜单
+	QAction* actionBefore = GetAction(2);
+	mBar->addMenu(dataMenu);
+	dataMenu->setTitle("Data");
+	_pluginManager->registerPluginGroup("Data", dataToolBar, dataMenu);
 
 	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
 	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
@@ -169,6 +186,20 @@ void  UIFacade::initAll()
 
 	emit  sendNowInitName(tr("Stylizing UI"));
 	initUiStyles();
+}
+
+void UIFacade::initUiStyles()
+{
+	for (auto child : children())
+	{
+		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
+
+		if (dock)
+		{
+			//_dataManager->dockWidgetUnpinned(dock);
+			dock->setFixedWidth(250);
+		}
+	}
 }
 
 void  UIFacade::setupUi()

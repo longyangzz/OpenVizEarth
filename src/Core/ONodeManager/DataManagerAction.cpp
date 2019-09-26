@@ -309,14 +309,17 @@ QRect  DataManagerAction::getDockWidgetsAreaRect()
 
 void DataManagerAction::InitOrtherDockWidget()
 {
+	//! 创建dockwidger的工具栏容器
 	createDockWidgetBar(Qt::LeftDockWidgetArea);
 	createDockWidgetBar(Qt::RightDockWidgetArea);
 	createDockWidgetBar(Qt::TopDockWidgetArea);
 	createDockWidgetBar(Qt::BottomDockWidgetArea);
 
+
 	// Control panel
 	{
 		NXDockWidget *controlPanel = new NXDockWidget(tr("Control Panel"), m_mainWindow);
+		
 		controlPanel->setObjectName(QStringLiteral("controlPanel"));
 		QSizePolicy  sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Minimum);
 		sizePolicy1.setHorizontalStretch(0);
@@ -356,6 +359,7 @@ void DataManagerAction::InitOrtherDockWidget()
 
 	{
 		NXDockWidget *attributePanel = new NXDockWidget(tr("Attributes"), m_mainWindow);
+		
 		attributePanel->setObjectName(QStringLiteral("attributePanel"));
 		QSizePolicy  sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Expanding);
 		sizePolicy3.setHorizontalStretch(0);

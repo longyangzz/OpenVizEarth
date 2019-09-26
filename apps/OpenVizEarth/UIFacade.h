@@ -62,6 +62,9 @@ private:
 
   void  collectInitInfo();
 
+  //UI style
+  void initUiStyles();
+
 public slots:
 
 	// View related slots

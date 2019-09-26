@@ -49,6 +49,7 @@ void DataManager::reset()
 
 void DataManager::InitDockWidget()
 {
+	
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
@@ -165,6 +166,7 @@ void DataManager::initDataTree()
 
 	// Init dock
 	NXDockWidget *dataPanel = new NXDockWidget(tr("Data Panel"), m_mainWindow);
+	
 	dataPanel->setObjectName(QStringLiteral("dataPanel"));
 	QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	sizePolicy.setHorizontalStretch(0);
