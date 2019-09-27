@@ -275,8 +275,19 @@ void  MPluginManager::registerPluginGroup(const QString& name)
 	curToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	static_cast<QMainWindow*>(parent())->addToolBar(Qt::TopToolBarArea, curToolBar);
 
+	//! ²Ëµ¥¸öÊý
+	QRegExp re("^menu");
+	
 	QMenuBar* mBar = static_cast<QMainWindow*>(parent())->menuBar();
-	QMenu* dataMenu = mBar->addMenu(name);
-	dataMenu->setObjectName(QStringLiteral("dataMenu"));
-	registerPluginGroup(name, curToolBar, dataMenu);
+	int num = mBar->findChildren<QMenu* >(re).size();
+	QMenu* menu = mBar->findChildren<QMenu* >(re)[num-1];
+	QAction* actionBefore = menu->menuAction();
+
+
+	QMenu* moduleMenu = new QMenu;
+	moduleMenu->setObjectName(name + QStringLiteral("Menu"));
+	moduleMenu->setTitle(name);
+	mBar->insertMenu(actionBefore, moduleMenu);
+
+	registerPluginGroup(name, curToolBar, moduleMenu);
 }
