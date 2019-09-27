@@ -34,6 +34,9 @@ public:
 	// Create a legend that's rendered above the whole view
 	static osg::ref_ptr<osg::Camera> createLegendHud(const QString& titleString, QVector<osg::Vec4> colorVec, QVector<QString> txtVec);
 
+	// An indicator at the center of the scene
+	osg::ref_ptr<osg::PositionAttitudeTransform> createCameraIndicator();
+
 	void setRefreshPeriod(unsigned int period);
 	void setIdle(bool val);
 

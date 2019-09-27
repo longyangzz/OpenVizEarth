@@ -28,9 +28,11 @@ protected:
 	virtual void toggle(bool checked) override;
 	void initSubView();
 
+
+
 public slots:
 	void moveToWindow();
-
+	
 protected:
 	QWidget* _subViewWidget;
 	osg::ref_ptr<osgViewer::View> _subView;

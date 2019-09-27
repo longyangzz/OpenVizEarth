@@ -203,10 +203,11 @@ signals:
 	void switchData(QString, bool);
 	void loadingProgress(int);
 	void loadingDone();
-  void setViewPoint(const osgEarth::Viewpoint &);
+	void setViewPoint(const osgEarth::Viewpoint &);
 
-  void addLayersNode(QString );
+	void addLayersNode(QString );
 
+	void resetCamera();
 public slots:
 	// Default function to toggle the plugin on or off
   virtual void  toggle(bool checked = true);

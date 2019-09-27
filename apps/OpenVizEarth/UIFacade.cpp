@@ -54,6 +54,7 @@ using namespace std;
 
 #include <DC/MouseEventHandler.h>
 #include <DC/SettingsManager.h>
+#include <DC/MapController.h>
 #include <ONodeManager/MPluginManager.h>
 
 
@@ -135,6 +136,7 @@ void UIFacade::initDCUIVar()
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
 
+	connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);
 }
 
 void  UIFacade::initAll()
@@ -329,59 +331,59 @@ void  UIFacade::initDataManagerAndScene()
 
 void  UIFacade::resetCamera()
 {
-	//if (_mainMap[0]->isGeocentric())
-	//{
-	//	osg::ref_ptr<osgEarth::Util::EarthManipulator>  manipulator =
-	//		dynamic_cast<osgEarth::Util::EarthManipulator *>(_mainViewerWidget->getMainView()->getCameraManipulator());
+	if (_mainMap[0]->isGeocentric())
+	{
+		osg::ref_ptr<osgEarth::Util::EarthManipulator>  manipulator =
+			dynamic_cast<osgEarth::Util::EarthManipulator *>(m_pCurrentNewViewer->getMainView()->getCameraManipulator());
 
-	//	if (!manipulator.valid())
-	//	{
-	//		manipulator = new osgEarth::Util::EarthManipulator;
-	//		_mainViewerWidget->getMainView()->setCameraManipulator(manipulator);
-	//	}
-	//	else
-	//	{
-	//		manipulator->home(0);
-	//	}
+		if (!manipulator.valid())
+		{
+			manipulator = new osgEarth::Util::EarthManipulator;
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
+		}
+		else
+		{
+			manipulator->home(0);
+		}
 
-	//	auto  settings = manipulator->getSettings();
-	//	settings->setSingleAxisRotation(true);
-	//	settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
-	//	settings->setMaxOffset(5000.0, 5000.0);
-	//	settings->setMinMaxPitch(-90, 90);
-	//	settings->setTerrainAvoidanceEnabled(true);
-	//	settings->setThrowingEnabled(false);
-	//}
-	//else
-	//{
-	//	MapController *manipulator = dynamic_cast<MapController *>(_mainViewerWidget->getMainView()->getCameraManipulator());
+		auto  settings = manipulator->getSettings();
+		settings->setSingleAxisRotation(true);
+		settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
+		settings->setMaxOffset(5000.0, 5000.0);
+		settings->setMinMaxPitch(-90, 90);
+		settings->setTerrainAvoidanceEnabled(true);
+		settings->setThrowingEnabled(false);
+	}
+	else
+	{
+		MapController *manipulator = dynamic_cast<MapController *>(m_pCurrentNewViewer->getMainView()->getCameraManipulator());
 
-	//	if (!manipulator)
-	//	{
-	//		// Init a manipulator if not inited yet
-	//		manipulator = new MapController(_dataRoot, _mapRoot, _mainMap[0]->getSRS());
-	//		manipulator->setAutoComputeHomePosition(false);
+		if (!manipulator)
+		{
+			// Init a manipulator if not inited yet
+			manipulator = new MapController(_dataRoot, _mapRoot, _mainMap[0]->getSRS());
+			manipulator->setAutoComputeHomePosition(false);
 
-	//		if (_settingsManager->getOrAddSetting("Camera indicator", false).toBool())
-	//		{
-	//			manipulator->setCenterIndicator(_mainViewerWidget->createCameraIndicator());
-	//		}
+			if (_settingsManager->getOrAddSetting("Camera indicator", false).toBool())
+			{
+				manipulator->setCenterIndicator(m_pCurrentNewViewer->createCameraIndicator());
+			}
 
-	//		// Nearfar mode and ratio affect scene clipping
-	//		auto  camera = _mainViewerWidget->getMainView()->getCamera();
-	//		camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
+			// Nearfar mode and ratio affect scene clipping
+			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
+			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
 
-	//		connect(_dataManager, &DataManager::moveToNode,
-	//		        manipulator, &MapController::fitViewOnNode);
-	//		connect(_dataManager, &DataManager::moveToBounding,
-	//		        manipulator, &MapController::fitViewOnBounding);
+			connect(_dataManager, &DataManager::moveToNode,
+			        manipulator, &MapController::fitViewOnNode);
+			connect(_dataManager, &DataManager::moveToBounding,
+			        manipulator, &MapController::fitViewOnBounding);
 
-	//		_mainViewerWidget->getMainView()->setCameraManipulator(manipulator);
-	//		manipulator->registerWithView(_mainViewerWidget->getMainView(), 0);
-	//	}
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
+			manipulator->registerWithView(m_pCurrentNewViewer->getMainView(), 0);
+		}
 
-	//	manipulator->fitViewOnNode(_mapNode[0]);
-	//}
+		manipulator->fitViewOnNode(_mapNode[0]);
+	}
 }
 
 void  qtLogToFile(QtMsgType type, const QMessageLogContext &context, const QString &msg)

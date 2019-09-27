@@ -1,6 +1,10 @@
 #include "OsgQWidget.h"
 #include <QtWidgets/QGridLayout>
 
+#include <osgDB/ReadFile>
+#include <osg/BlendFunc>
+#include <osg/AutoTransform>
+#include <osg/PositionAttitudeTransform>
 #include <osgDB/WriteFile>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
@@ -42,6 +46,44 @@ osgViewer::View * OsgQWidget::getMainView()
 void OsgQWidget::paintEvent(QPaintEvent *event)
 {
 	frame();
+}
+
+
+osg::ref_ptr<osg::PositionAttitudeTransform>  OsgQWidget::createCameraIndicator()
+{
+	// Init a transform that always faces camera
+	osg::ref_ptr<osg::PositionAttitudeTransform>  cameraIndicator = new osg::PositionAttitudeTransform();
+	osg::ref_ptr<osg::AutoTransform>              cameraCenter = new osg::AutoTransform();
+
+	cameraCenter->setAutoScaleToScreen(true);
+	cameraCenter->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+	osg::StateSet *state = cameraCenter->getOrCreateStateSet();
+	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
+	state->setRenderBinDetails(99, "RenderBin");
+
+	// Render the image
+	osg::ref_ptr<osg::Geode>      geode = new osg::Geode;
+	osg::ref_ptr<osg::Geometry>   geom = createTexturedQuadGeometry(osg::Vec3(-20, -20, 0), osg::Vec3(40, 0, 0), osg::Vec3(0, 40, 0));
+	osg::ref_ptr<osg::Image>      image = osgDB::readImageFile("resources/icons/center.png");
+	osg::ref_ptr<osg::Texture2D>  texture = new osg::Texture2D;
+	texture->setTextureSize(100, 100);
+	texture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
+	texture->setImage(image);
+	geom->getOrCreateStateSet()->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+	geom->getOrCreateStateSet()->setAttributeAndModes(
+		new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA));
+
+	// Attach to the main camera
+	geode->addDrawable(geom);
+	cameraCenter->addChild(geode);
+	cameraIndicator->addChild(cameraCenter);
+	cameraIndicator->setNodeMask(0);
+
+	m_view->getCamera()->addChild(cameraIndicator);
+
+	return cameraIndicator;
 }
 
 void  OsgQWidget::stopRendering()
@@ -87,7 +129,8 @@ QWidget * OsgQWidget::createViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *s
 
 	// Connect and align the camera with the given graphics window
 	camera->setGraphicsContext(gw);
-	camera->setClearColor(osg::Vec4(0.95, 0.95, 0.95, 1.0));
+	//camera->setClearColor(osg::Vec4(0.95, 0.95, 0.95, 1.0));
+	camera->setClearColor(osg::Vec4(1, 0.1, 0.2, 1.0));
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setSmallFeatureCullingPixelSize(-1.0f);
 

@@ -39,6 +39,17 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
 	_action->setToolTip(tr("Open a Second View"));
 	connect(_action, SIGNAL(toggled(bool)), this, SLOT(toggle(bool)));
 
+	QAction* resetViewAction = new QAction(_mainWindow);
+	resetViewAction->setObjectName(QStringLiteral("resetViewAction"));
+	QIcon icon6;
+	icon6.addFile(QStringLiteral("resources/icons/show_all.png"), QSize(), QIcon::Normal, QIcon::Off);
+	resetViewAction->setIcon(icon6);
+	resetViewAction->setText(tr("View"));
+	resetViewAction->setToolTip(tr("Reset to full view"));
+
+	toolBar->addAction(resetViewAction);
+	menu->addAction(resetViewAction);
+
 	toolBar->addAction(_action);
 	menu->addAction(_action);
 
@@ -54,6 +65,8 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
 	showInWindow2Action->setText(tr("Window 2"));
 	showInWindow2Action->setToolTip(tr("Show in window 2"));
 
+	connect(resetViewAction, SIGNAL(triggered()), this, SIGNAL(resetCamera()));
+
 	connect(showInWindow1Action, SIGNAL(triggered()), this, SLOT(moveToWindow()));
 	connect(showInWindow2Action, SIGNAL(triggered()), this, SLOT(moveToWindow()));
 }
@@ -67,6 +80,7 @@ void  MultiView::loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selectedIt
 	contextMenu->addAction(showInWindow1Action);
 	contextMenu->addAction(showInWindow2Action);
 }
+
 
 void  MultiView::toggle(bool checked)
 {
