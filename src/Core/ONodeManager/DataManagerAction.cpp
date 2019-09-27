@@ -191,7 +191,7 @@ void  DataManagerAction::dockWidgetUnpinned(NXDockWidget *dockWidget)
 
 			dockWidget->setTabifiedDocks(dockWidgetList);
 
-			removeDockWidget(dockWidget);
+			m_mainWindow->removeDockWidget(dockWidget);
 		}
 	}
 
@@ -522,7 +522,7 @@ void  DataManagerAction::AddDockWidget(Qt::DockWidgetArea area, NXDockWidget *do
 }
 
 
-void  DataManagerAction::removeDockWidget(NXDockWidget *dockWidget)
+void  DataManagerAction::RemoveDock(NXDockWidget *dockWidget)
 {
 	if (dockWidget == nullptr)
 	{
@@ -541,7 +541,7 @@ void  DataManagerAction::removeDockWidget(NXDockWidget *dockWidget)
 		dockWidgetPinned(dockWidget);
 	}
 
-	//QMainWindow::removeDockWidget(dockWidget);
+	m_mainWindow->removeDockWidget(dockWidget);
 
 	dockWidget->setParent(nullptr);
 }

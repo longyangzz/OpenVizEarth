@@ -176,7 +176,7 @@ void UIFacade::initUiStyles()
 
 		if (dock)
 		{
-			//_dataManager->dockWidgetUnpinned(dock);
+			_dataManager->dockWidgetUnpinned(dock);
 			dock->setFixedWidth(250);
 		}
 	}

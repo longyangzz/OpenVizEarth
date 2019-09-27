@@ -63,7 +63,7 @@ public slots:
 
 	void adjustDockWidget(NXDockWidget* dockWidget);
 
-	void removeDockWidget(NXDockWidget* dockWidget);
+	void RemoveDock(NXDockWidget* dockWidget);
 
 	// Add an auto-hide dock widget
 	void AddDockWidget(Qt::DockWidgetArea area, NXDockWidget* dockWidget, Qt::Orientation orientation);
