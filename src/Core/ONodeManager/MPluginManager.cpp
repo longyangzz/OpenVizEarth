@@ -269,13 +269,6 @@ void  MPluginManager::registerPluginGroup(const QString& name)
 		return;
 	}
 
-	QToolBar* curToolBar = new QToolBar();
-	curToolBar->setObjectName(name + QStringLiteral("ToolBar"));
-	curToolBar->setIconSize(QSize(24, 24));
-	curToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-	curToolBar->setWindowTitle(name);
-	static_cast<QMainWindow*>(parent())->addToolBar(Qt::TopToolBarArea, curToolBar);
-
 	//! ²Ëµ¥¸öÊý
 	QRegExp re("^menu");
 	
@@ -289,6 +282,13 @@ void  MPluginManager::registerPluginGroup(const QString& name)
 	moduleMenu->setObjectName(name + QStringLiteral("Menu"));
 	moduleMenu->setTitle(name);
 	mBar->insertMenu(actionBefore, moduleMenu);
+
+	QToolBar* curToolBar = new QToolBar();
+	curToolBar->setObjectName(name + QStringLiteral("ToolBar"));
+	curToolBar->setIconSize(QSize(24, 24));
+	curToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	curToolBar->setWindowTitle(name);
+	static_cast<QMainWindow*>(parent())->addToolBar(Qt::TopToolBarArea, curToolBar);
 
 	registerPluginGroup(name, curToolBar, moduleMenu);
 }
