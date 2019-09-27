@@ -134,28 +134,7 @@ void UIFacade::initDCUIVar()
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
-	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
 
-	//! 通过外部传入插件组、插件根toolbar、插件根menu
-	QToolBar* dataToolBar = new QToolBar(this);
-	dataToolBar->setObjectName(QStringLiteral("dataToolBar"));
-	dataToolBar->setIconSize(QSize(24, 24));
-	dataToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-	addToolBar(Qt::TopToolBarArea, dataToolBar);
-
-	QMenuBar* mBar = menuBar();
-	QMenu* dataMenu = new QMenu;
-	dataMenu->setObjectName(QStringLiteral("dataMenu"));
-
-	//获取倒数第二个菜单
-	QAction* actionBefore = GetAction(2);
-	mBar->addMenu(dataMenu);
-	dataMenu->setTitle("Data");
-
-	_pluginManager->registerPluginGroup("Data", dataToolBar, dataMenu);
-
-	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
-	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 }
 
 void  UIFacade::initAll()
@@ -251,6 +230,11 @@ void  UIFacade::initPlugins()
 	_mousePicker->registerSetting(_settingsManager);
 	_mousePicker->setupUi(statusBar());
 	m_pCurrentNewViewer->getMainView()->addEventHandler(_mousePicker);
+
+	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
+
+	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
+	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 
 	_pluginManager->loadPlugins();
 }

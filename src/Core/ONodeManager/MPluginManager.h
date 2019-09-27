@@ -41,6 +41,7 @@ public:
 	MPluginManager(QObject *parent, DataManager* dataManager, DC::SceneView* viewer);
 	~MPluginManager();
 	void registerPluginGroup(const QString& name, QToolBar* toolBar, QMenu* menu);
+	void registerPluginGroup(const QString& name);
 	void loadPlugins();
 
 public slots:

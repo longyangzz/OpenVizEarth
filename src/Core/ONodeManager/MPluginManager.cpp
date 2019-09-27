@@ -7,6 +7,10 @@
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMainWindow>
+
 
 #include <osgViewer/View>
 
@@ -111,6 +115,9 @@ MPluginInterface * MPluginManager::instantiate(QObject *instance)
 
 	if (plugin)
 	{
+		//! 根据插件的名称，生成菜单和工具栏组
+		registerPluginGroup(plugin->getPluginGroup());
+
 		if (_pluginGroups.contains(plugin->getPluginGroup()))
 		{
 			registerPlugin(plugin);
@@ -202,42 +209,42 @@ void  MPluginManager::parseDependency(const QString& fileName, const QDir &plugi
 
 void  MPluginManager::loadPlugin(PluginEntry *pluginEntry)
 {
-  emit  sendNowInitName(tr("Init plugin: ") + pluginEntry->name);
+	emit  sendNowInitName(tr("Init plugin: ") + pluginEntry->name);
 
 	// Mark the plugin as parsed
 	_pluginEntries.remove(pluginEntry->name);
 
 	// Try load plugin
-  QPluginLoader  pluginLoader(pluginEntry->path);
-  QObject       *instance = pluginLoader.instance();
+	QPluginLoader  pluginLoader(pluginEntry->path);
+	QObject       *instance = pluginLoader.instance();
 
 	if (instance)
 	{
 		// Try init plugin
-    MPluginInterface *plugin = instantiate(instance);
+		MPluginInterface *plugin = instantiate(instance);
 
-		if (!plugin)
-    {
-      return;
-    }
-
-		// Resolve related dependencies
-    for (auto childName : pluginEntry->children)
+			if (!plugin)
 		{
-      auto  childPlugin = _pluginEntries[childName];
-			childPlugin->dependsToResolve--;
+		  return;
+		}
 
-			if (childPlugin->dependsToResolve == 0)
+			// Resolve related dependencies
+		for (auto childName : pluginEntry->children)
 			{
-				_readyToLoad.push_back(childPlugin);
+		  auto  childPlugin = _pluginEntries[childName];
+				childPlugin->dependsToResolve--;
+
+				if (childPlugin->dependsToResolve == 0)
+				{
+					_readyToLoad.push_back(childPlugin);
+				}
 			}
 		}
-	}
-	else
-	{
-		qWarning() << "Plugin loading failed: [" << pluginEntry->path
-               << "] " << pluginLoader.errorString();
-	}
+		else
+		{
+			qWarning() << "Plugin loading failed: [" << pluginEntry->path
+				   << "] " << pluginLoader.errorString();
+		}
 }
 
 void  MPluginManager::loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selectedItem)
@@ -251,4 +258,25 @@ void  MPluginManager::loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selec
 void  MPluginManager::registerPluginGroup(const QString& name, QToolBar *toolBar, QMenu *menu)
 {
 	_pluginGroups[name] = { name, toolBar, menu };
+}
+
+void  MPluginManager::registerPluginGroup(const QString& name)
+{
+	//! 判断当前名字的插件组是否创建，没有则创建，并绑定工具栏及菜单栏，创建过则会共享给子类
+	//! 通过外部传入插件组、插件根toolbar、插件根menu
+	if (_pluginGroups.contains(name))
+	{
+		return;
+	}
+
+	QToolBar* curToolBar = new QToolBar();
+	curToolBar->setObjectName(name + QStringLiteral("ToolBar"));
+	curToolBar->setIconSize(QSize(24, 24));
+	curToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	static_cast<QMainWindow*>(parent())->addToolBar(Qt::TopToolBarArea, curToolBar);
+
+	QMenuBar* mBar = static_cast<QMainWindow*>(parent())->menuBar();
+	QMenu* dataMenu = mBar->addMenu(name);
+	dataMenu->setObjectName(QStringLiteral("dataMenu"));
+	registerPluginGroup(name, curToolBar, dataMenu);
 }
