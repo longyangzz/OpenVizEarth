@@ -35,7 +35,7 @@ QWidget(parent),
 	// Playback controlling
 	m_frameRate = DEFAULT_FRAME_RATE;
 	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( update() ) );
-	m_timer.start( m_refreshPeriod );
+	startRendering();
 }
 
 osgViewer::View * OsgQWidget::getMainView()

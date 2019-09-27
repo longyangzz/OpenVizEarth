@@ -111,6 +111,10 @@ UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 
 UIFacade::~UIFacade()
 {
+	delete _pluginManager;
+	delete _dataManager;
+	delete _settingsManager;
+
 	osg::setNotifyLevel(osg::FATAL);
 	osg::setNotifyHandler(nullptr);
 	osgEarth::setNotifyHandler(nullptr);

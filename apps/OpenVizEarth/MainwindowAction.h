@@ -4,7 +4,7 @@
 #include "QModelIndex"
 #include <QSettings>
 #include "DCGui/iwindow.h"
-
+#include <osg/Object>
 namespace DC
 {
 	class SceneView;
@@ -153,7 +153,7 @@ public:
 	//setting
 	QSettings m_globalSettings;
 
-	DC::SceneView* m_pCurrentNewViewer;
+	osg::ref_ptr<DC::SceneView>  m_pCurrentNewViewer;
 
 	SettingsManager* m_SettingsManager;
 };
