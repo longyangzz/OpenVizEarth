@@ -27,6 +27,7 @@ using namespace std;
 #include <osg/BlendFunc>
 #include <osg/TexGen>
 #include <osg/TexEnv>
+#include <osg/CullFace>
 
 #include <osgSim/OverlayNode>
 #include <osgDB/FileUtils>
@@ -125,6 +126,16 @@ void UIFacade::initDCUIVar()
 
 	_root = new osg::Group;
 	_root->setName("Root");
+
+	// Turn off all lights by default
+	osg::StateSet *state = _root->getOrCreateStateSet();
+	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
+	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+	osg::ref_ptr<osg::CullFace>  cf = new osg::CullFace;
+	cf->setMode(osg::CullFace::BACK);
+	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
 
 	_settingsManager = new SettingsManager(this);
 	SetSettingManager(_settingsManager);

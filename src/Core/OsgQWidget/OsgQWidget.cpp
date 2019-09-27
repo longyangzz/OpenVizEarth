@@ -129,8 +129,8 @@ QWidget * OsgQWidget::createViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *s
 
 	// Connect and align the camera with the given graphics window
 	camera->setGraphicsContext(gw);
-	//camera->setClearColor(osg::Vec4(0.95, 0.95, 0.95, 1.0));
-	camera->setClearColor(osg::Vec4(1, 0.1, 0.2, 1.0));
+	camera->setClearColor(osg::Vec4(0.95, 0.95, 0.95, 1.0));
+	//camera->setClearColor(osg::Vec4(1, 0.1, 0.2, 1.0));
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setSmallFeatureCullingPixelSize(-1.0f);
 
