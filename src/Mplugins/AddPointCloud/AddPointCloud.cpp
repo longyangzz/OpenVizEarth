@@ -42,7 +42,7 @@ void  AddPointCloud::setupUi(QToolBar *toolBar, QMenu *menu)
   QIcon  icon5;
 	icon5.addFile(QStringLiteral("resources/icons/point_cloud.png"), QSize(), QIcon::Normal, QIcon::Off);
 	addPCAction->setIcon(icon5);
-	addPCAction->setText(tr("Point Cloud"));
+	addPCAction->setText(tr("Point Cloud22"));
 	addPCAction->setToolTip(tr("Load an Point Cloud model"));
 
 	menu->addAction(addPCAction);
@@ -55,7 +55,7 @@ void  AddPointCloud::setupUi(QToolBar *toolBar, QMenu *menu)
 
 void  AddPointCloud::setupStyleTab()
 {
-  auto  pcStyleTab = new QWidget();
+  /*auto  pcStyleTab = new QWidget();
 
 	pcStyleTab->setObjectName(QStringLiteral("pcStyleTab"));
   auto  verticalLayout = new QVBoxLayout(pcStyleTab);
@@ -132,7 +132,7 @@ void  AddPointCloud::setupStyleTab()
 	connect(pcSizeSpinBox, SIGNAL(valueChanged(int)), pcSizeSlider, SLOT(setValue(int)));
 	connect(pcSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setPointSize(int)));
 
-	tabWidget->addTab(pcStyleTab, tr("Point Cloud"));
+	tabWidget->addTab(pcStyleTab, tr("Point Cloud"));*/
 }
 
 void  AddPointCloud::addPointCloud()

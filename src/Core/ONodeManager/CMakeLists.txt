@@ -37,6 +37,8 @@ SET(TARGET_LIBRARIES
 	Qt5::Widgets
 	Qt5::OpenGL 
 	DC
+	OsgWidget
+	DCScene
 	debug osgEarth${CMAKE_DEBUG_POSTFIX}						optimized osgEarth
     debug osgEarthAnnotation${CMAKE_DEBUG_POSTFIX}			optimized osgEarthAnnotation
 	debug osgEarthFeatures${CMAKE_DEBUG_POSTFIX}				optimized osgEarthFeatures

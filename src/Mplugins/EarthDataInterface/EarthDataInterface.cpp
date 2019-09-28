@@ -173,6 +173,7 @@ QToolButton * EarthDataInterface::getOrAddToolButton(LayerType dataType, QMenu *
     button->setPopupMode(QToolButton::InstantPopup);
     button->setCheckable(true);
     button->setMenu(menu);
+	button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     dataToolBar->addWidget(button);
 
     return button;

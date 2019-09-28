@@ -20,6 +20,7 @@
 //DCScene
 #include "DCScene/scene/SceneView.h"
 #include "DCScene/scene/SceneModel.h"
+#include <DC/MapController.h>
 
 struct PluginEntry
 {
@@ -64,10 +65,10 @@ void  MPluginManager::registerPlugin(MPluginInterface *plugin)
 	//! 为插件类传出信号
 	connect(plugin, SIGNAL(resetCamera()), _dataManager, SIGNAL(resetCamera()));
 
-    //osg::ref_ptr<MapController> controller = 
-    //    dynamic_cast<MapController*>(_viewerWidget->getMainView()->getCameraManipulator());
-    //if (controller.valid())
-    //    connect(plugin, &MPluginInterface::setViewPoint, controller, &MapController::setViewPoint);
+    osg::ref_ptr<MapController> controller = 
+        dynamic_cast<MapController*>(_viewerWidget->getMainView()->getCameraManipulator());
+    if (controller.valid())
+        connect(plugin, &MPluginInterface::setViewPoint, controller, &MapController::setViewPoint);
 
 	_loadedPlugins.push_back(plugin);
 }

@@ -113,7 +113,6 @@ INCLUDE(QtSupport)
 # ------------------------------------------------------------------------------
 find_package (osg REQUIRED)
 link_directories( ${OSG_ROOT}/lib ) 
-message("444444444444444444","${OSG_ROOT}/lib")
 
 # 自定义宏函数引入
 INCLUDE(OpenVizMacroUtils)
