@@ -42,7 +42,7 @@ void  AddPointCloud::setupUi(QToolBar *toolBar, QMenu *menu)
   QIcon  icon5;
 	icon5.addFile(QStringLiteral("resources/icons/point_cloud.png"), QSize(), QIcon::Normal, QIcon::Off);
 	addPCAction->setIcon(icon5);
-	addPCAction->setText(tr("Point Cloud22"));
+	addPCAction->setText(tr("Point Cloud"));
 	addPCAction->setToolTip(tr("Load an Point Cloud model"));
 
 	menu->addAction(addPCAction);
@@ -190,44 +190,44 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 				ptLine = data.readLine();
 
 				if (ptLine.isEmpty())
-        {
-          break;
-        }
+			{
+			  break;
+			}
 
-        if (!ptLine.contains(","))
+			if (!ptLine.contains(","))
+			{
+				ptLine.remove('\n');
+				ptCount = ptLine.toUInt();
+				continue;
+			}
+			else
+			{
+				if (ptLine.section(",", 0, 0) == "X")
 				{
-					ptLine.remove('\n');
-					ptCount = ptLine.toUInt();
 					continue;
 				}
 				else
 				{
-					if (ptLine.section(",", 0, 0) == "X")
-          {
-            continue;
-          }
-          else
-					{
-            float  pt_x = ptLine.section(",", 0, 0).toFloat();
-            float  pt_y = ptLine.section(",", 1, 1).toFloat();
-            float  pt_z = ptLine.section(",", 2, 2).toFloat();
-            float  pt_r = ptLine.section(",", 7, 7).toFloat();
-            float  pt_g = ptLine.section(",", 8, 8).toFloat();
-            float  pt_b = ptLine.section(",", 9, 9).toFloat();
+					float  pt_x = ptLine.section(",", 0, 0).toFloat();
+					float  pt_y = ptLine.section(",", 1, 1).toFloat();
+					float  pt_z = ptLine.section(",", 2, 2).toFloat();
+					float  pt_r = ptLine.section(",", 7, 7).toFloat();
+					float  pt_g = ptLine.section(",", 8, 8).toFloat();
+					float  pt_b = ptLine.section(",", 9, 9).toFloat();
 
-						pcCoords->push_back(osg::Vec3(pt_x, pt_y, pt_z));
-						pcColors->push_back(osg::Vec4(pt_r / 255, pt_g / 255, pt_b / 255, 1.0f));
+					pcCoords->push_back(osg::Vec3(pt_x, pt_y, pt_z));
+					//pcColors->push_back(osg::Vec4(pt_r / 255, pt_g / 255, pt_b / 255, 1.0f));
 
-						i++;
-						pbValue = 100 * i / ptCount;
-            emit  loadingProgress(pbValue);
-					}
+					i++;
+					//pbValue = 100 * i / ptCount;
+					emit  loadingProgress(pbValue);
 				}
+			}
 			}
 		}
 
 		pcGeom->setVertexArray(pcCoords);
-		pcGeom->setColorArray(pcColors, osg::Array::BIND_PER_VERTEX);
+		//pcGeom->setColorArray(pcColors, osg::Array::BIND_PER_VERTEX);
 		pcGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, pcCoords->size()));
 
 		osg::Vec3Array *normals = new osg::Vec3Array;
