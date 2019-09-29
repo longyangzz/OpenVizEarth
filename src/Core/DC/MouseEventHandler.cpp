@@ -158,6 +158,7 @@ void  MouseEventHandler::getPos(osgViewer::View              *view,
 
 void  MouseEventHandler::setupUi(QStatusBar *statusBar)
 {
+	//! 安装状态栏提示信息
 	QSizePolicy  siePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_labelWorldCoord = new QLabel();

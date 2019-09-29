@@ -18,6 +18,8 @@ using namespace std;
 #include <QMenuBar>
 #include <QTreeWidgetItem>
 #include <QToolBar>
+#include <QToolButton>
+
 
 
 #include <osg/Notify>
@@ -187,6 +189,88 @@ void  UIFacade::initAll()
 
 void UIFacade::initUiStyles()
 {
+	QList<QToolBar *> toolBars = findChildren<QToolBar *>(QString(), Qt::FindDirectChildrenOnly);
+
+	//！ 设置toolbar顶部和左右放置效果不同
+	for (QToolBar *toolBar : toolBars)
+	{
+		// Set init style
+		if (toolBar->orientation() == Qt::Vertical)
+		{
+			toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+		}
+		else
+		{
+			toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+		}
+
+		toolBar->setIconSize(QSize(30, 30));
+
+		for (QAction *action : toolBar->actions())
+		{
+			action->setStatusTip(action->toolTip());
+		}
+
+		for (auto *widget : toolBar->children())
+		{
+			QToolButton *button = dynamic_cast<QToolButton *>(widget);
+
+			if (button)
+			{
+				if (toolBar->orientation() == Qt::Vertical)
+				{
+					button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+				}
+				else
+				{
+					button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+				}
+
+				button->setStatusTip(button->toolTip());
+
+				for (QAction *action : button->actions())
+				{
+					action->setStatusTip(action->toolTip());
+				}
+
+				button->setIconSize(QSize(30, 30));
+
+				// QToolButton seems to limit maximum size by default
+				button->setMaximumSize(QSize(1000, 1000));
+			}
+		}
+
+		// When a tool bar is dragged and replaced, change its style accordingly
+		connect(toolBar, &QToolBar::orientationChanged, [toolBar](Qt::Orientation orientation)
+		{
+			if (orientation == Qt::Vertical)
+			{
+				toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+			}
+			else
+			{
+				toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+			}
+
+			for (auto *widget : toolBar->children())
+			{
+				QToolButton *button = dynamic_cast<QToolButton *>(widget);
+
+				if (button)
+				{
+					if (orientation == Qt::Vertical)
+					{
+						button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+					}
+					else
+					{
+						button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+					}
+				}
+			}
+		});
+	}
+
 	for (auto child : children())
 	{
 		NXDockWidget *dock = dynamic_cast<NXDockWidget *>(child);
