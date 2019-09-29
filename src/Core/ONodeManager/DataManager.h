@@ -18,6 +18,7 @@ class QProgressBar;
 class QMenu;
 class QAction;
 class QTreeWidgetItem;
+class QTreeView;
 QT_END_NAMESPACE
 
 namespace osgSim {
@@ -56,7 +57,8 @@ class QMainWindow;
 
 class NXDockWidget;
 class NXDockWidgetTabBar;
-
+class CompleteLineEdit;
+class ToolBoxTreeModel;
 
 class DATAMANAGER_EXPORT DataManager : public DataManagerAction
 {
@@ -134,7 +136,7 @@ signals:
 private:
 	void InitDockWidget();
 	void initDataTree();
-
+	void initToolBox();
 private:
 	// Program structure reference
 	SettingsManager* _settingsManager;
@@ -170,8 +172,11 @@ private:
 	//FontVisitor* _fontvisitor;
 	//IconSymbolVisitor* _iconsymbolvisitor;
 	//FeatureStyleSettingDlg *_featureStyleDlg;
-	
-
+	CompleteLineEdit* m_searchEdit;
+	//QTreeVIew
+	QTreeView* m_toolBoxTreeView;
+	//³¡¾°model
+	ToolBoxTreeModel* m_pToolBoxTreeModel;
 
 };
 

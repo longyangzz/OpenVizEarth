@@ -11,6 +11,8 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QSignalMapper>
+#include <QLineEdit>
+
 
 #include <osgSim/OverlayNode>
 #include <osgEarth/GeoData>
@@ -25,7 +27,10 @@
 //#include "ColorVisitor.h"
 //#include "FontVisitor.h"
 //#include "ModelManipulator.h"
+#include "ToolBoxTreeView.h"
+#include "ToolBoxTreeModel.h"
 
+#include <CompleteLineEdit.h>
 DataManager::DataManager(QObject* parent /*= NULL*/)
 	: DataManagerAction()
 	, _countLoadingData(0)
@@ -53,6 +58,8 @@ void DataManager::InitDockWidget()
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
+	//！ 创建工具箱面板
+	initToolBox();
 	DataManagerAction::InitOrtherDockWidget();
 }
 
@@ -153,6 +160,64 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	//connect(saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 	
+}
+
+void DataManager::initToolBox()
+{
+
+	if (!m_mainWindow)
+	{
+		return;
+	}
+
+
+	// Init dock
+	NXDockWidget* dokwObjects = new NXDockWidget(tr("Tool Box"), m_mainWindow);
+	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
+	dokwObjects->setEnabled(true);
+	dokwObjects->setMinimumSize(QSize(200, 315));
+	dokwObjects->setMaximumSize(QSize(400, 524287));
+	dokwObjects->setLayoutDirection(Qt::LeftToRight);
+	dokwObjects->setStyleSheet(QString::fromUtf8("border-color: rgb(85, 255, 255);\n"
+		"gridline-color: rgb(85, 85, 255);"));
+	dokwObjects->setFloating(false);
+	dokwObjects->setFeatures(QDockWidget::AllDockWidgetFeatures);
+	dokwObjects->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	QWidget* wgtContext = new QWidget();
+	wgtContext->setObjectName(QString::fromUtf8("wgtContext"));
+	//创建布局管理器
+	QGridLayout* layoutObject = new QGridLayout(wgtContext);
+	layoutObject->setSpacing(0);
+	layoutObject->setContentsMargins(0, 0, 0, 0);
+	layoutObject->setObjectName(QString::fromUtf8("layoutObject"));
+
+	//添加qtreeview
+	m_toolBoxTreeView = new ToolBoxTreeView(wgtContext);
+	m_toolBoxTreeView->setObjectName("objTreeView");
+	//! 选取模式支持
+	m_toolBoxTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+	//! 支持右键菜单
+	m_toolBoxTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+	m_toolBoxTreeView->setMinimumSize(QSize(200, 100));
+	//为treeView添加模型
+	m_pToolBoxTreeModel = new ToolBoxTreeModel(m_toolBoxTreeView);
+	m_toolBoxTreeView->setModel(m_pToolBoxTreeModel);
+
+	//自动补全搜索框
+	m_searchEdit = new CompleteLineEdit(wgtContext);
+	m_searchEdit->setObjectName("searchEdit");
+	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(m_searchEdit->sizePolicy().hasHeightForWidth());
+	m_searchEdit->setSizePolicy(sizePolicy);
+
+	layoutObject->addWidget(m_searchEdit, 0, 0);
+	layoutObject->addWidget(m_toolBoxTreeView, 1, 0);
+	dokwObjects->setWidget(wgtContext);
+	AddDockWidget(Qt::RightDockWidgetArea, dokwObjects);
 }
 
 void DataManager::initDataTree()
