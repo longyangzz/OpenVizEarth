@@ -164,26 +164,26 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 {
 	if (fileName.section(".", 1, 1) == "txt")
 	{
-    osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;
-		_currentAnchor->addChild(pcModel);
+		osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;
+			_currentAnchor->addChild(pcModel);
 
-    osg::Geode     *pcGeode  = new osg::Geode();
-    osg::Geometry  *pcGeom   = new osg::Geometry();
+		osg::Geode     *pcGeode  = new osg::Geode();
+		osg::Geometry  *pcGeom   = new osg::Geometry();
 		osg::Vec3Array *pcCoords = new osg::Vec3Array();
 		osg::Vec4Array *pcColors = new osg::Vec4Array();
 
 		/** Formula for the two spirals */
 
-    unsigned int  i       = 0;
-    float         pbValue = 0;
-    emit          loadingProgress(0);
-    unsigned int  ptCount = 0;
-    QString       ptLine;
-    QFile         file(fileName);
+		unsigned int  i       = 0;
+		float         pbValue = 0;
+		emit          loadingProgress(0);
+		unsigned int  ptCount = 0;
+		QString       ptLine;
+		QFile         file(fileName);
 
 		if (file.open(QFile::ReadOnly | QIODevice::Text))
 		{
-      QTextStream  data(&file);
+			QTextStream  data(&file);
 
 			while (!data.atEnd())
 			{
@@ -216,10 +216,10 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 					float  pt_b = ptLine.section(",", 9, 9).toFloat();
 
 					pcCoords->push_back(osg::Vec3(pt_x, pt_y, pt_z));
-					//pcColors->push_back(osg::Vec4(pt_r / 255, pt_g / 255, pt_b / 255, 1.0f));
+					pcColors->push_back(osg::Vec4(1, 1,1, 1.0f));
 
 					i++;
-					//pbValue = 100 * i / ptCount;
+					pbValue = 100 * i / ptCount;
 					emit  loadingProgress(pbValue);
 				}
 			}
@@ -227,7 +227,7 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 		}
 
 		pcGeom->setVertexArray(pcCoords);
-		//pcGeom->setColorArray(pcColors, osg::Array::BIND_PER_VERTEX);
+		pcGeom->setColorArray(pcColors, osg::Array::BIND_PER_VERTEX);
 		pcGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, pcCoords->size()));
 
 		osg::Vec3Array *normals = new osg::Vec3Array;
@@ -255,17 +255,17 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 		pcModel->addChild(pcGeode);
 		pcModel->setStateSet(set);
 
-    emit  loadingDone();
+		emit  loadingDone();
 
 		recordNode(pcModel, fileName.split("/").back().section(".", 0, 0));
 		pcModel->setUserValue("filepath", fileName.toLocal8Bit().toStdString());
 	}
-  else if ((fileName.section(".", 1, 1) == "las") || (fileName.section(".", 1, 1) == "laz"))
+	else if ((fileName.section(".", 1, 1) == "las") || (fileName.section(".", 1, 1) == "laz"))
 	{
-    osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;
-		_currentAnchor->addChild(pcModel);
+		osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;
+			_currentAnchor->addChild(pcModel);
 
-    osg::ref_ptr<osg::Node>  pointCloud = osgDB::readNodeFile(fileName.toLocal8Bit().toStdString());
+		osg::ref_ptr<osg::Node>  pointCloud = osgDB::readNodeFile(fileName.toLocal8Bit().toStdString());
 
 		if (pointCloud.valid())
 		{
