@@ -26,7 +26,9 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
    ![节点树管理](./screenshot/tree-manager.png)
 
 4. 节点选中隐藏显示逻辑，通过node的mask属性控制![编译选项](./screenshot/itemshowhide.png)
-
+ 
+5. 模仿arcgis工具箱
+![工具箱](./screenshot/toolBox.png)
 
 
 
