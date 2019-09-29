@@ -152,7 +152,9 @@ void UIFacade::initDCUIVar()
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
-
+	//! 数据加载进度条管理及视窗重置
+	connect(_dataManager, &DataManager::loadingProgress, this, &UIFacade::loadingProgress);
+	connect(_dataManager, &DataManager::loadingDone, this, &UIFacade::loadingDone);
 	connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);
 }
 
