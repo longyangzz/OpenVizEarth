@@ -42,7 +42,6 @@ public slots:
     void reset();
 
 private:
-	QSettings _globalSettings;
 	const osgEarth::SpatialReference* _globalSRS;
 };
 

@@ -8,35 +8,34 @@
 #include <QMenu>
 
 SettingsManager::SettingsManager(QObject* parent):
-	QSettings(parent),
-  _globalSettings()
+	QSettings(parent)
 {
 }
 
 SettingsManager::~SettingsManager()
 {
-	_globalSettings.sync();
+	sync();
 }
 
 void SettingsManager::setOrAddSetting(const QString& key, const QVariant & value)
 {
   if (value.isValid())
   {
-    _globalSettings.setValue(key, value);
-    _globalSettings.sync();
+     setValue(key, value);
+    sync();
   }
 }
 
 QVariant SettingsManager::getOrAddSetting(const QString& key, const QVariant & defaultValue)
 {
-  auto  found = _globalSettings.value(key);
+  auto  found = value(key);
 
   if (!found.isValid())
   {
     if (defaultValue.isValid())
     {
-      _globalSettings.setValue(key, defaultValue);
-      _globalSettings.sync();
+		setValue(key, defaultValue);
+		sync();
     }
 
     return defaultValue;
@@ -54,33 +53,8 @@ void  SettingsManager::setupUi(QMenu *menu)
   resetAction->setText(tr("Restore Settings"));
   resetAction->setToolTip("Restore all settings to default");
   resetAction->setStatusTip(resetAction->toolTip());
-  connect(resetAction, &QAction::triggered, this, &SettingsManager::reset);
 
-  // Map mode settings
-  QAction* mapModeAction = new QAction(this);
-  mapModeAction->setText(tr("Switch mode"));
-  mapModeAction->setToolTip(mapModeAction->text());
-  mapModeAction->setStatusTip(mapModeAction->text());
-  connect(mapModeAction, &QAction::triggered, [this]() {
-    QString mode = getOrAddSetting("Base mode", "projected").toString();
-    if (mode == "geocentric")
-      setOrAddSetting("Base mode", "projected");
-    else
-      setOrAddSetting("Base mode", "geocentric");
-    qApp->quit();
-    QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
-  });
 
-  for (QAction *action : menu->actions())
-  {
-    if (action->objectName() == "actionExit")
-    {
-      menu->insertAction(action, mapModeAction);
-      menu->insertAction(action, resetAction);
-      menu->insertSeparator(action);
-      break;
-    }
-  }
 }
 
 void  SettingsManager::setGlobalSRS(const osgEarth::SpatialReference *globalSRS)
@@ -102,8 +76,8 @@ void  SettingsManager::reset()
 
   if (result == QMessageBox::Yes)
   {
-    _globalSettings.clear();
-    qApp->quit();
-    QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+		clear();
+		qApp->quit();
+		QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
   }
 }

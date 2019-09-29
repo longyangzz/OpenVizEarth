@@ -42,9 +42,6 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MainWindow();
 
-	void setOrAddSetting(const QString& key, const QVariant& value);
-	QVariant getOrAddSetting(const QString& key, const QVariant& defaultValue);
-
 public:
 
 	//! 解析外部传入的参数

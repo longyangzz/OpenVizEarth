@@ -116,10 +116,6 @@ void  MainWindowAction::loadingProgress(int percent)
 	}
 }
 
-void MainWindowAction::SetSettingManager(SettingsManager* sManager)
-{
-	m_SettingsManager = sManager;
-}
 
 DC::SceneView* MainWindowAction::CurrentSceneView()
 {
@@ -394,6 +390,8 @@ void MainWindowAction::SwitchMode()
 			m_SettingsManager->setOrAddSetting("Base mode", "projected");
 		else
 			m_SettingsManager->setOrAddSetting("Base mode", "geocentric");
+
+		QString mode1 = m_SettingsManager->getOrAddSetting("Base mode", "geocentric").toString();
 		qApp->quit();
 		QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 	}

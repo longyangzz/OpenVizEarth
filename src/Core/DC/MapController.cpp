@@ -211,8 +211,8 @@ void  MapController::fitViewOnNode(const osg::Node *scene, double addHeight)
 	// Calculate world transformation
 	// FIXME: Only the first parent is taken into account here, which may not be the case.
 	osg::Vec3    transCenter = osg::Vec3(0, 0, 0);
-	osg::Matrix  worldMatrix = osg::computeLocalToWorld(scene->getParentalNodePaths()[0]);
-	osg::Vec3    trans       = worldMatrix.getTrans();
+	//osg::Matrix  worldMatrix = osg::computeLocalToWorld(scene->getParentalNodePaths()[0]);
+	osg::Vec3    trans       = osg::Vec3(0, 0, 0);;
 
 	transCenter = bsCenter + trans;
 

@@ -35,7 +35,6 @@ public:
 	MainWindowAction(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MainWindowAction();
 
-	void SetSettingManager(SettingsManager* sManager);
 public:
 	bool LoadFile(const QString &file, QString type);
 
