@@ -6,6 +6,7 @@
 #include "../NameSpace.h"
 
 #include <osg/Object>
+#include <osg/Node>
 #include <osg/BoundingSphere>
 
 class DataManager;
@@ -70,6 +71,7 @@ public slots:
 	// View related slots
   void  resetCamera();
 
+  void HandlingEntitiesChanged(const QVector<osg::Node*>& nodes);
 signals:
 	// For splash screen
   void  sendTotalInitSteps(int);
@@ -80,7 +82,6 @@ private:
   std::ofstream *_log;
 
   DataManager     *_dataManager;
-  SettingsManager *_settingsManager;
   MPluginManager   *_pluginManager;
   osg::ref_ptr<MouseEventHandler>     _mousePicker;
 

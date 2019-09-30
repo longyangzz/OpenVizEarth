@@ -139,9 +139,11 @@ QWidget * OsgQWidget::createViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *s
 
 	view->setSceneData(scene);
 	view->addEventHandler(new osgViewer::StatsHandler);
-	// view->addEventHandler(new osgViewer::ThreadingHandler);
+	view->addEventHandler(new osgViewer::ThreadingHandler);
 	view->addEventHandler(new osgViewer::WindowSizeHandler);
 	view->addEventHandler(new osgViewer::LODScaleHandler);
+	// add the help handler
+	view->addEventHandler(new osgViewer::HelpHandler);
 	// view->addEventHandler(new osgGA::StateSetManipulator(view->getCamera()->getOrCreateStateSet()));
 
 	// Tell the database pager to not modify the unref settings
@@ -259,7 +261,12 @@ QWidget* OsgQWidget::addViewWidget( )
 	//m_view->addEventHandler( new osgViewer::StatsHandler );
 	m_view->setCameraManipulator( new osgGA::TrackballManipulator );
 	//! ×´Ì¬ÇÐ»»
-	m_view->addEventHandler(m_statesetManipulator);
+	m_view->addEventHandler(new osgViewer::StatsHandler);
+	m_view->addEventHandler(new osgViewer::ThreadingHandler);
+	m_view->addEventHandler(new osgViewer::WindowSizeHandler);
+	m_view->addEventHandler(new osgViewer::LODScaleHandler);
+	// add the help handler
+	m_view->addEventHandler(new osgViewer::HelpHandler);
 
 	osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>( m_camera->getGraphicsContext() );
 	m_mainContext = gw;

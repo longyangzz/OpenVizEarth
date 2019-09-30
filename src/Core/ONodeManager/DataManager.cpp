@@ -11,6 +11,8 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QSignalMapper>
+#include <QLineEdit>
+
 
 #include <osgSim/OverlayNode>
 #include <osgEarth/GeoData>
@@ -25,7 +27,10 @@
 //#include "ColorVisitor.h"
 //#include "FontVisitor.h"
 //#include "ModelManipulator.h"
+#include "ToolBoxTreeView.h"
+#include "ToolBoxTreeModel.h"
 
+#include <CompleteLineEdit.h>
 DataManager::DataManager(QObject* parent /*= NULL*/)
 	: DataManagerAction()
 	, _countLoadingData(0)
@@ -53,6 +58,8 @@ void DataManager::InitDockWidget()
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
+	//！ 创建工具箱面板
+	initToolBox();
 	DataManagerAction::InitOrtherDockWidget();
 }
 
@@ -155,6 +162,64 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	
 }
 
+void DataManager::initToolBox()
+{
+
+	if (!m_mainWindow)
+	{
+		return;
+	}
+
+
+	// Init dock
+	NXDockWidget* dokwObjects = new NXDockWidget(tr("Tool Box"), m_mainWindow);
+	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
+	dokwObjects->setEnabled(true);
+	dokwObjects->setMinimumSize(QSize(200, 315));
+	dokwObjects->setMaximumSize(QSize(400, 524287));
+	dokwObjects->setLayoutDirection(Qt::LeftToRight);
+	dokwObjects->setStyleSheet(QString::fromUtf8("border-color: rgb(85, 255, 255);\n"
+		"gridline-color: rgb(85, 85, 255);"));
+	dokwObjects->setFloating(false);
+	dokwObjects->setFeatures(QDockWidget::AllDockWidgetFeatures);
+	dokwObjects->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	QWidget* wgtContext = new QWidget();
+	wgtContext->setObjectName(QString::fromUtf8("wgtContext"));
+	//创建布局管理器
+	QGridLayout* layoutObject = new QGridLayout(wgtContext);
+	layoutObject->setSpacing(0);
+	layoutObject->setContentsMargins(0, 0, 0, 0);
+	layoutObject->setObjectName(QString::fromUtf8("layoutObject"));
+
+	//添加qtreeview
+	m_toolBoxTreeView = new ToolBoxTreeView(wgtContext);
+	m_toolBoxTreeView->setObjectName("objTreeView");
+	//! 选取模式支持
+	m_toolBoxTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+	//! 支持右键菜单
+	m_toolBoxTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+	m_toolBoxTreeView->setMinimumSize(QSize(200, 100));
+	//为treeView添加模型
+	m_pToolBoxTreeModel = new ToolBoxTreeModel(m_toolBoxTreeView);
+	m_toolBoxTreeView->setModel(m_pToolBoxTreeModel);
+
+	//自动补全搜索框
+	m_searchEdit = new CompleteLineEdit(wgtContext);
+	m_searchEdit->setObjectName("searchEdit");
+	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	sizePolicy.setHorizontalStretch(0);
+	sizePolicy.setVerticalStretch(0);
+	sizePolicy.setHeightForWidth(m_searchEdit->sizePolicy().hasHeightForWidth());
+	m_searchEdit->setSizePolicy(sizePolicy);
+
+	layoutObject->addWidget(m_searchEdit, 0, 0);
+	layoutObject->addWidget(m_toolBoxTreeView, 1, 0);
+	dokwObjects->setWidget(wgtContext);
+	AddDockWidget(Qt::RightDockWidgetArea, dokwObjects);
+}
+
 void DataManager::initDataTree()
 {
 	if (!m_mainWindow)
@@ -203,9 +268,59 @@ void DataManager::initDataTree()
 	AddDockWidget(Qt::RightDockWidgetArea, dataPanel);
 
 	// Tree slots
+	//信号槽
+	connect(_nodeTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(ChangeSelection(const QItemSelection&, const QItemSelection&)));
 	connect(_nodeTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), _nodeTree, SLOT(switchDataSlot(QTreeWidgetItem*, int)));
 	connect(_nodeTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(doubleClickTreeSlot(QTreeWidgetItem*, int)));
 	connect(_nodeTree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showDataTreeContextMenu(const QPoint &)));
+}
+
+void DataManager::ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected)
+{
+	//! 取消选择
+	QModelIndexList deselectedItems = deselected.indexes();
+	{
+		for (int i = 0; i < deselectedItems.count(); ++i)
+		{
+			osg::Node* element = static_cast<osg::Node*>(deselectedItems.at(i).internalPointer());
+			if (element)
+			{
+				//element->SetSelected(false);
+			}
+		}
+	}
+
+	//执行选择
+	QModelIndexList selectedItems = selected.indexes();
+	{
+		for (int i = 0; i < selectedItems.count(); ++i)
+		{
+			osg::Node* element = static_cast<osg::Node*>(selectedItems.at(i).internalPointer());
+			if (element)
+			{
+				//element->SetSelected(true);
+				//element->PrepareDisplayForRefresh();
+			}
+		}
+	}
+
+
+	//! 更新属性
+	//UpdateProperty();
+
+	QVector<osg::Node* > selEntities;
+	QItemSelectionModel* qism = _nodeTree->selectionModel();
+	QModelIndexList selectedIndexes = qism->selectedIndexes();
+	int i, selCount = selectedIndexes.size();
+
+	for (i = 0; i < selCount; ++i)
+	{
+		osg::Node* anEntity = static_cast<osg::Node*>(selectedIndexes[i].internalPointer());
+		if (anEntity)
+			selEntities.push_back(anEntity);
+	}
+
+	emit SelectionChanged(selEntities);
 }
 
 void DataManager::recordData(osg::Node* node, const QString& name, const QString& parent, bool hidden)

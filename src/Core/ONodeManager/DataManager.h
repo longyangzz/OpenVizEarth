@@ -5,17 +5,20 @@
 #include "../../NameSpace.h"
 #include "DataFormats.h"
 #include "DataManagerAction.h"
+#include "QVector"
 
 #include <QObject>
 
 #include <osg/Vec3>
 #include <osg/Node>
+#include "QItemSelection"
 
 QT_BEGIN_NAMESPACE
 class QProgressBar;
 class QMenu;
 class QAction;
 class QTreeWidgetItem;
+class QTreeView;
 QT_END_NAMESPACE
 
 namespace osgSim {
@@ -54,7 +57,8 @@ class QMainWindow;
 
 class NXDockWidget;
 class NXDockWidgetTabBar;
-
+class CompleteLineEdit;
+class ToolBoxTreeModel;
 
 class DATAMANAGER_EXPORT DataManager : public DataManagerAction
 {
@@ -112,6 +116,9 @@ public slots:
 
 	//! nodeLayers图层节点管理
 	void CreateLayerContainerNode(QString layersName);
+
+	//! modelSelet发生变化
+	void ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected);
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);
@@ -121,12 +128,15 @@ signals:
 	void loadingDone();
 	void requestContextMenu(QMenu*, QTreeWidgetItem*);
 	void resetCamera();
+	//! 节点选择改变，一层层传出到控制中心
+	void SelectionChanged(const QVector<osg::Node*>& entitys);
+
 	void showDataAttributes(const QString&);
 
 private:
 	void InitDockWidget();
 	void initDataTree();
-
+	void initToolBox();
 private:
 	// Program structure reference
 	SettingsManager* _settingsManager;
@@ -162,8 +172,11 @@ private:
 	//FontVisitor* _fontvisitor;
 	//IconSymbolVisitor* _iconsymbolvisitor;
 	//FeatureStyleSettingDlg *_featureStyleDlg;
-	
-
+	CompleteLineEdit* m_searchEdit;
+	//QTreeVIew
+	QTreeView* m_toolBoxTreeView;
+	//场景model
+	ToolBoxTreeModel* m_pToolBoxTreeModel;
 
 };
 

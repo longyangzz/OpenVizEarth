@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 MainWindow::~MainWindow()
 {
 	ThreadPool::getInstance()->stop();
-	SaveSettings();
+	//SaveSettings();
 	if (m_bgLoader)
 	{
 		delete m_bgLoader;
@@ -132,33 +132,6 @@ void MainWindow::CreateConnection()
 	//connect(ui.actionOnline_Update, SIGNAL(triggered()), this, SLOT(DoOnlineUpdate()));
 	
 	//connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(DoAbout()));
-}
-
-void MainWindow::setOrAddSetting(const QString& key, const QVariant & value)
-{
-	if (value.isValid())
-	{
-		m_globalSettings.setValue(key, value);
-		m_globalSettings.sync();
-	}
-}
-
-QVariant MainWindow::getOrAddSetting(const QString& key, const QVariant & defaultValue)
-{
-	auto  found = m_globalSettings.value(key);
-
-	if (!found.isValid())
-	{
-		if (defaultValue.isValid())
-		{
-			m_globalSettings.setValue(key, defaultValue);
-			m_globalSettings.sync();
-		}
-
-		return defaultValue;
-	}
-
-	return found;
 }
 
 
@@ -244,56 +217,56 @@ void MainWindow::InitManager()
 
 void MainWindow::LoadSettings()
 {
-	SettingsManager settings;
-	settings.clear();
-	//! 主窗口参数
-	settings.beginGroup("MainWindow");
+	//SettingsManager settings;
+	//settings.clear();
+	////! 主窗口参数
+	//settings.beginGroup("MainWindow");
 
-	//! Qmainwindow方法
-	bool aa = restoreState(settings.value("MainWindowState").toByteArray(), 0);
+	////! Qmainwindow方法
+	//bool aa = restoreState(settings.value("MainWindowState").toByteArray(), 0);
 
-	//! qwidget方法
-	resize( settings.value( "size", QSize(800, 600) ).toSize() );
-	move( settings.value( "pos", QPoint(200, 200) ).toPoint() );
+	////! qwidget方法
+	//resize( settings.value( "size", QSize(800, 600) ).toSize() );
+	//move( settings.value( "pos", QPoint(200, 200) ).toPoint() );
 
-	bool fullScreen = settings.value("fullScreen",false).toBool();
+	//bool fullScreen = settings.value("fullScreen",false).toBool();
 
-	if (fullScreen)
-		showFullScreen();
+	//if (fullScreen)
+	//	showFullScreen();
 
-	settings.endGroup();
+	//settings.endGroup();
 
 
-	////////////////////////////Application相关//////////////////////////////////////////////
-	settings.beginGroup("Application");
+	//////////////////////////////Application相关//////////////////////////////////////////////
+	//settings.beginGroup("Application");
 
-	//! 最后记录路径
-	m_lastDirectory = settings.value("lastDirectory","/home").toString();
+	////! 最后记录路径
+	//m_lastDirectory = settings.value("lastDirectory","/home").toString();
 
-	//! 最近打开文件列表
-	m_recentFiles = settings.value( "recentlyOpenedFiles").toStringList();
-	m_inverseMouseWheel = settings.value("inverseMouseWheel", true).toBool();
-	
-	if (CurrentSceneView())
-	{
-		CurrentSceneView()->setEnabledInverseMouseWheel(m_inverseMouseWheel);
-	}
-	
+	////! 最近打开文件列表
+	//m_recentFiles = settings.value( "recentlyOpenedFiles").toStringList();
+	//m_inverseMouseWheel = settings.value("inverseMouseWheel", true).toBool();
+	//
+	//if (CurrentSceneView())
+	//{
+	//	CurrentSceneView()->setEnabledInverseMouseWheel(m_inverseMouseWheel);
+	//}
+	//
 
-	m_currentLanguage = settings.value("currentLanguage","").toString();
+	//m_currentLanguage = settings.value("currentLanguage","").toString();
 
-	if ( m_currentLanguage.isEmpty() )
-		m_currentLanguage = QLocale::system().name().left(2);
+	//if ( m_currentLanguage.isEmpty() )
+	//	m_currentLanguage = QLocale::system().name().left(2);
 
-	//! 背景色
-	QColor color = settings.value( "bgcolor",QColor(50,50,50) ).value<QColor>();
-	if (CurrentSceneView())
-	{
-		CurrentSceneView()->setBgColor(color);
-	}
-	
+	////! 背景色
+	//QColor color = settings.value( "bgcolor",QColor(50,50,50) ).value<QColor>();
+	//if (CurrentSceneView())
+	//{
+	//	CurrentSceneView()->setBgColor(color);
+	//}
+	//
 
-	settings.endGroup();
+	//settings.endGroup();
 }
 
 void MainWindow::SaveSettings()

@@ -11,7 +11,7 @@ namespace DC
 }
 
 class QMdiArea;
-
+class QProgressBar;
 class SceneModel;
 class ObjectLoader;
 class NodeTreeModel;
@@ -35,7 +35,6 @@ public:
 	MainWindowAction(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MainWindowAction();
 
-	void SetSettingManager(SettingsManager* sManager);
 public:
 	bool LoadFile(const QString &file, QString type);
 
@@ -108,8 +107,14 @@ public slots:
 	void on_actionOnline_Update_triggered();
 	void on_actionAbout_triggered();
 
-private slots:
 	void NodeSelected(const QModelIndex &index);
+
+	//进度条
+	// Progress bar loading done
+	void loadingDone();
+
+	// Progress bar loading next
+	void loadingProgress(int percent);
 	
 signals:
 	void NewFileToLoad(const QString &, QString type);
@@ -156,6 +161,9 @@ public:
 	osg::ref_ptr<DC::SceneView>  m_pCurrentNewViewer;
 
 	SettingsManager* m_SettingsManager;
+
+	//! 进度条对象
+	QProgressBar* m_pProgressBar = NULL;
 };
 
 #endif // MainWindowAction

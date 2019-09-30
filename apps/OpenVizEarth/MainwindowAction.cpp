@@ -20,6 +20,9 @@
 #include "QDebug"
 #include "QtGui/QColor"
 #include "QTableWidget"
+#include "QProgressBar"
+#include "QStatusBar"
+
 
 #include <assert.h>
 
@@ -75,6 +78,7 @@ MainWindowAction::MainWindowAction(QWidget *parent , Qt::WindowFlags flags )
 	, m_pMdiArea(new QMdiArea(this))
 	, m_bgLoader(nullptr)
 	, m_pCurrentNewViewer(nullptr)
+	, m_pProgressBar(nullptr)
 {
 	
 }
@@ -85,10 +89,33 @@ MainWindowAction::~MainWindowAction()
 	
 }
 
-void MainWindowAction::SetSettingManager(SettingsManager* sManager)
+
+void  MainWindowAction::loadingDone()
 {
-	m_SettingsManager = sManager;
+	statusBar()->removeWidget(m_pProgressBar);
+	// _mousePicker->updateDrawOffset();
+	delete m_pProgressBar;
+	m_pProgressBar = NULL;
 }
+
+void  MainWindowAction::loadingProgress(int percent)
+{
+	if (m_pProgressBar == NULL)
+	{
+		m_pProgressBar = new QProgressBar;
+		m_pProgressBar->setMaximumWidth(400);
+		m_pProgressBar->setMaximumHeight(22);
+		m_pProgressBar->setRange(0, 100);
+		m_pProgressBar->setValue(0);
+		statusBar()->addPermanentWidget(m_pProgressBar);
+		m_pProgressBar->setValue(percent);
+	}
+	else
+	{
+		m_pProgressBar->setValue(percent);
+	}
+}
+
 
 DC::SceneView* MainWindowAction::CurrentSceneView()
 {
@@ -363,6 +390,8 @@ void MainWindowAction::SwitchMode()
 			m_SettingsManager->setOrAddSetting("Base mode", "projected");
 		else
 			m_SettingsManager->setOrAddSetting("Base mode", "geocentric");
+
+		QString mode1 = m_SettingsManager->getOrAddSetting("Base mode", "geocentric").toString();
 		qApp->quit();
 		QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 	}

@@ -101,8 +101,9 @@ UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
 {
 	// Some global environment settings
-	QCoreApplication::setOrganizationName("DCLW");
+	QCoreApplication::setOrganizationName("WLY");
 	QCoreApplication::setApplicationName("OpenViz");
+	QCoreApplication::setOrganizationDomain("mysoft.com");
 
 	GDALAllRegister();
 	CPLSetConfigOption("GDAL_DATA", ".\\resources\\GDAL_data");
@@ -115,7 +116,7 @@ UIFacade::~UIFacade()
 {
 	delete _pluginManager;
 	delete _dataManager;
-	delete _settingsManager;
+	delete m_SettingsManager;
 
 	osg::setNotifyLevel(osg::FATAL);
 	osg::setNotifyHandler(nullptr);
@@ -143,8 +144,7 @@ void UIFacade::initDCUIVar()
 	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
 
-	_settingsManager = new SettingsManager(this);
-	SetSettingManager(_settingsManager);
+	m_SettingsManager = new SettingsManager(this);
 	_dataManager = new DataManager(this);
 
 
@@ -152,9 +152,88 @@ void UIFacade::initDCUIVar()
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
-
+	//! 数据加载进度条管理及视窗重置
+	connect(_dataManager, &DataManager::loadingProgress, this, &UIFacade::loadingProgress);
+	connect(_dataManager, &DataManager::loadingDone, this, &UIFacade::loadingDone);
 	connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);
+
+	connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
 }
+
+//传入待处理数据
+void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
+{
+	if (_mainMap[0]->isGeocentric())
+	{
+		osg::ref_ptr<osgEarth::Util::EarthManipulator>  manipulator =
+			dynamic_cast<osgEarth::Util::EarthManipulator *>(m_pCurrentNewViewer->getMainView()->getCameraManipulator());
+
+		if (!manipulator.valid())
+		{
+			manipulator = new osgEarth::Util::EarthManipulator;
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
+		}
+		else
+		{
+			if (!entities.isEmpty())
+			{
+				manipulator->home(0);
+			}
+			else
+			{
+				manipulator->home(0);
+			}
+			
+		}
+
+		auto  settings = manipulator->getSettings();
+		settings->setSingleAxisRotation(true);
+		settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
+		settings->setMaxOffset(5000.0, 5000.0);
+		settings->setMinMaxPitch(-90, 90);
+		settings->setTerrainAvoidanceEnabled(true);
+		settings->setThrowingEnabled(false);
+	}
+	else
+	{
+		MapController *manipulator = dynamic_cast<MapController *>(m_pCurrentNewViewer->getMainView()->getCameraManipulator());
+
+		if (!manipulator)
+		{
+			// Init a manipulator if not inited yet
+			manipulator = new MapController(_dataRoot, _mapRoot, _mainMap[0]->getSRS());
+			manipulator->setAutoComputeHomePosition(false);
+
+			if (m_SettingsManager->getOrAddSetting("Camera indicator", false).toBool())
+			{
+				manipulator->setCenterIndicator(m_pCurrentNewViewer->createCameraIndicator());
+			}
+
+			// Nearfar mode and ratio affect scene clipping
+			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
+			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
+
+			connect(_dataManager, &DataManager::moveToNode,
+				manipulator, &MapController::fitViewOnNode);
+			connect(_dataManager, &DataManager::moveToBounding,
+				manipulator, &MapController::fitViewOnBounding);
+
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
+			manipulator->registerWithView(m_pCurrentNewViewer->getMainView(), 0);
+		}
+
+		if (!entities.isEmpty())
+		{
+			manipulator->fitViewOnNode(entities[0]);
+		}
+		else
+		{
+			manipulator->fitViewOnNode(_mapNode[0]);
+		}
+		
+	}
+}
+
 
 void  UIFacade::initAll()
 {
@@ -327,8 +406,8 @@ void  UIFacade::initPlugins()
 {
 	// MouseEventHandler is the shared core of all plugins
 	_mousePicker = new MouseEventHandler();
-	_mousePicker->registerData(this, _dataManager, m_pCurrentNewViewer, _root, _settingsManager->getGlobalSRS());
-	_mousePicker->registerSetting(_settingsManager);
+	_mousePicker->registerData(this, _dataManager, m_pCurrentNewViewer, _root, m_SettingsManager->getGlobalSRS());
+	_mousePicker->registerSetting(m_SettingsManager);
 	_mousePicker->setupUi(statusBar());
 	m_pCurrentNewViewer->getMainView()->addEventHandler(_mousePicker);
 
@@ -356,9 +435,10 @@ void  UIFacade::initDataManagerAndScene()
 	_dataRoot->setName("Data Root");
 
 	// Init osgEarth node using the predefined .earth file
+	qDebug() << "111111111111111";
 	for (int i = 0; i < MAX_SUBVIEW; i++)
 	{
-		QString  mode = getOrAddSetting("Base mode", "geocentric").toString();
+		QString  mode = m_SettingsManager->getOrAddSetting("Base mode", "geocentric").toString();
 		QString  baseMapPath;
 
 		if (mode == "projected")
@@ -372,7 +452,7 @@ void  UIFacade::initDataManagerAndScene()
 		else
 		{
 			QMessageBox::warning(nullptr, "Warning", "Base map settings corrupted, reset to projected");
-			setOrAddSetting("Base mode", "projected");
+			m_SettingsManager->setOrAddSetting("Base mode", "projected");
 			baseMapPath = QStringLiteral("Resources/earth_files/projected.earth");
 		}
 
@@ -395,7 +475,7 @@ void  UIFacade::initDataManagerAndScene()
 		_mapRoot->addChild(_mapNode[i]);
 	}
 
-	_settingsManager->setGlobalSRS(_mainMap[0]->getSRS());
+	m_SettingsManager->setGlobalSRS(_mainMap[0]->getSRS());
 
 	// Init overlayNode with overlayerSubgraph
 	// Everything in overlaySubgraph will be projected to its children
@@ -437,21 +517,21 @@ void  UIFacade::resetCamera()
 
 		if (!manipulator.valid())
 		{
-			manipulator = new osgEarth::Util::EarthManipulator;
-			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
+			/*manipulator = new osgEarth::Util::EarthManipulator;
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);*/
 		}
 		else
 		{
 			manipulator->home(0);
 		}
 
-		auto  settings = manipulator->getSettings();
-		settings->setSingleAxisRotation(true);
-		settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
-		settings->setMaxOffset(5000.0, 5000.0);
-		settings->setMinMaxPitch(-90, 90);
-		settings->setTerrainAvoidanceEnabled(true);
-		settings->setThrowingEnabled(false);
+		//auto  settings = manipulator->getSettings();
+		//settings->setSingleAxisRotation(true);
+		//settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
+		//settings->setMaxOffset(5000.0, 5000.0);
+		//settings->setMinMaxPitch(-90, 90);
+		//settings->setTerrainAvoidanceEnabled(true);
+		//settings->setThrowingEnabled(false);
 	}
 	else
 	{
@@ -463,7 +543,7 @@ void  UIFacade::resetCamera()
 			manipulator = new MapController(_dataRoot, _mapRoot, _mainMap[0]->getSRS());
 			manipulator->setAutoComputeHomePosition(false);
 
-			if (_settingsManager->getOrAddSetting("Camera indicator", false).toBool())
+			if (m_SettingsManager->getOrAddSetting("Camera indicator", false).toBool())
 			{
 				manipulator->setCenterIndicator(m_pCurrentNewViewer->createCameraIndicator());
 			}
