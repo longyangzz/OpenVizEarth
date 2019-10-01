@@ -112,6 +112,7 @@ INCLUDE(QtSupport)
 # 加载引入Osg
 # ------------------------------------------------------------------------------
 find_package (osg REQUIRED)
+
 link_directories( ${OSG_ROOT}/lib ) 
 
 # 自定义宏函数引入
