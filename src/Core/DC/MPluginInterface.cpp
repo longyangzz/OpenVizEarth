@@ -389,7 +389,7 @@ MPluginInterface::StyleConfig  MPluginInterface::getDefaultStyle()
     globalStyle["Fill color"]    = QColor(174, 234, 224);
     globalStyle["Line width"]    = 4.0f;
     globalStyle["Point size"]    = 6.0f;
-    globalStyle["Font path"]     = "resources/fonts/arial.ttf";
+    globalStyle["Font path"]     = "Resources/fonts/arial.ttf";
     globalStyle["Font size"]     = 28.0f;
     globalStyle["Text floating"] = 5.0f;
     QSettings().setValue("Plugin Interface/Draw style", globalStyle);
@@ -415,8 +415,12 @@ MPluginInterface::StyleConfig  MPluginInterface::getDefaultStyle()
   styleConfig.textSize     = localStyle["Font size"].toFloat();
   styleConfig.textFloating = localStyle["Text floating"].toFloat();
   styleConfig.font         = osgText::readFontFile(localStyle["Font path"].toString().toLocal8Bit().toStdString());
-	styleConfig.font->setMinFilterHint(osg::Texture::LINEAR);
-	styleConfig.font->setMagFilterHint(osg::Texture::LINEAR);
+  if (styleConfig.font)
+  {
+	  styleConfig.font->setMinFilterHint(osg::Texture::LINEAR);
+	  styleConfig.font->setMagFilterHint(osg::Texture::LINEAR);
+  }
+	
 
 	return styleConfig;
 }
