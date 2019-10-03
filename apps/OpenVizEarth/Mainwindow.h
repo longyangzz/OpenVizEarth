@@ -11,6 +11,7 @@ namespace DC
 	class SceneView;
 }
 
+class OsgQWidget;
 class QMdiArea;
 
 class SceneModel;
@@ -33,6 +34,7 @@ namespace DC
 {
 	class SceneView;
 }
+class OsgQWidget;
 
 class MainWindow : public MainWindowAction
 {

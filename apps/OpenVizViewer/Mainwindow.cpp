@@ -91,7 +91,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::PraseArgs(QVector<QString > args)
 {
-	DC::SceneView* pNewViewer = CreateNewSceneViewer();
+	OsgQWidget* pNewViewer = CreateNewSceneViewer();
 	
 	if (pNewViewer)
 	{
@@ -102,19 +102,19 @@ void MainWindow::PraseArgs(QVector<QString > args)
 				qDebug(args[i].toStdString().c_str());
 				osg::Node* node1 = osgDB::readNodeFile( args[i].toStdString() );
 				//! 更新场景数据
-				pNewViewer->getModel()->setData( node1 );
+				//pNewViewer->getModel()->setData( node1 );
 			}
 		}
 
-		pNewViewer->resetHome();
+		//pNewViewer->resetHome();
 	}
 	
 }
 
-DC::SceneView* MainWindow::CreateNewSceneViewer()
+OsgQWidget* MainWindow::CreateNewSceneViewer()
 {
-	DC::SceneView* sceneView = new DC::SceneView(this);
-	sceneView->setModel(new SceneModel(this));
+	OsgQWidget* sceneView = new OsgQWidget(this);
+	//sceneView->setModel(new SceneModel(this));
 	QMdiSubWindow* subWindow = m_pMdiArea->addSubWindow( sceneView );
 
 	subWindow->showMaximized();
@@ -131,9 +131,9 @@ QWidget* MainWindow::ActiveMdiChild()
 	return 0;
 }
 
-DC::SceneView* MainWindow::CurrentSceneView()
+OsgQWidget* MainWindow::CurrentSceneView()
 {
-	DC::SceneView* pViewer = static_cast<DC::SceneView* >(ActiveMdiChild());
+	OsgQWidget* pViewer = static_cast<OsgQWidget* >(ActiveMdiChild());
 
 	return pViewer;
 }
@@ -238,10 +238,10 @@ void MainWindow::NodeSelected(const QModelIndex &index)
 
 	if ( index.isValid() )
 	{
-		CurrentSceneView()->highlight( (osg::Node *)index.internalPointer() );
+		//CurrentSceneView()->highlight( (osg::Node *)index.internalPointer() );
 
 		// display stats
-		m_propertyWidget->displayProperties( (osg::Node *)index.internalPointer() );
+		//m_propertyWidget->displayProperties( (osg::Node *)index.internalPointer() );
 	}
 }
 
@@ -284,7 +284,7 @@ void MainWindow::LoadSettings()
 	
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setEnabledInverseMouseWheel(m_inverseMouseWheel);
+		//CurrentSceneView()->setEnabledInverseMouseWheel(m_inverseMouseWheel);
 	}
 	
 
@@ -297,7 +297,7 @@ void MainWindow::LoadSettings()
 	QColor color = settings.value( "bgcolor",QColor(50,50,50) ).value<QColor>();
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setBgColor(color);
+		//CurrentSceneView()->setBgColor(color);
 	}
 	
 
@@ -340,7 +340,7 @@ void MainWindow::SaveSettings()
 	// scene background
 	if (CurrentSceneView())
 	{
-		settings.setValue( "bgcolor", CurrentSceneView()->getBgColor() );
+		//settings.setValue( "bgcolor", CurrentSceneView()->getBgColor() );
 	}
 	
 
@@ -442,7 +442,7 @@ void MainWindow::on_actionLight_triggered(bool val)
 
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setLightingEnabled(val);
+		//CurrentSceneView()->setLightingEnabled(val);
 	}
 	
 }
@@ -470,7 +470,7 @@ void MainWindow::on_actionColorGradient_triggered(bool val)
 {
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setFlatBackgroundColor(!val);
+		//CurrentSceneView()->setFlatBackgroundColor(!val);
 	}
 	
 }
@@ -481,11 +481,11 @@ void MainWindow::on_actionBGColor_triggered()
 	{
 		return;
 	}
-	QColor currColor = CurrentSceneView()->getBgColor();
-	QColor c = QColorDialog::getColor(currColor);
+	//QColor currColor = CurrentSceneView()->getBgColor();
+	//QColor c = QColorDialog::getColor(currColor);
 
-	if ( c.isValid() )
-		CurrentSceneView()->setBgColor(c);
+	//if ( c.isValid() )
+		//CurrentSceneView()->setBgColor(c);
 }
 
 void MainWindow::on_actionOnline_Update_triggered()
@@ -647,24 +647,24 @@ void MainWindow::NewLoadedFile(osg::Node *node, QString type)
 	if(type == "LOAD")
 	{
 		//! 创建一个view，视窗与view共享场景根节点
-		DC::SceneView* pNewViewer = CreateNewSceneViewer();
+		OsgQWidget* pNewViewer = CreateNewSceneViewer();
 		if (pNewViewer)
 		{
 			//! 更新场景数据
-			pNewViewer->getModel()->setData( node );
+			//pNewViewer->getModel()->setData( node );
 
-			pNewViewer->resetHome();
+			//pNewViewer->resetHome();
 		}
 	}
 	else if(type == "ADD")
 	{
-		DC::SceneView* pNewViewer = CurrentSceneView();
+		OsgQWidget* pNewViewer = CurrentSceneView();
 		if (pNewViewer)
 		{
 			//! 更新场景数据
-			pNewViewer->getModel()->setData( node );
+			//pNewViewer->getModel()->setData( node );
 
-			pNewViewer->resetHome();
+			//pNewViewer->resetHome();
 		}
 	}
 	

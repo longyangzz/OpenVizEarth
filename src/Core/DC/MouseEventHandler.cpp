@@ -18,6 +18,7 @@
 #include "DCScene/scene/SceneModel.h"
 
 #include <ONodeManager/FindNode.hpp>
+#include "OsgQWidget/OsgQWidget.h"
 
 osgEarth::GeoPoint                                     MouseEventHandler::_currentGeoPos;
 osg::Vec3d                                             MouseEventHandler::_currentLocalPos;
@@ -34,7 +35,7 @@ osg::ref_ptr<osgEarth::MapNode>                        MouseEventHandler::_mapNo
 osg::ref_ptr<osgEarth::Map>                            MouseEventHandler::_mainMap[MAX_SUBVIEW];
 DataManager                                           *MouseEventHandler::_dataManager     = NULL;
 SettingsManager                                       *MouseEventHandler::_settingsManager = NULL;
-DC::SceneView                                          *MouseEventHandler::_mainViewer      = NULL;
+OsgQWidget                                          *MouseEventHandler::_mainViewer      = NULL;
 QWidget                                               *MouseEventHandler::_mainWindow      = NULL;
 bool                                                   MouseEventHandler::_isValid         = false;
 QLabel                                                *MouseEventHandler::_labelWorldCoord;
@@ -174,7 +175,7 @@ void  MouseEventHandler::setupUi(QStatusBar *statusBar)
 	statusBar->addWidget(_labelGeoCoord);
 }
 
-void  MouseEventHandler::registerData(QWidget *mainWindow, DataManager *dataManager, DC::SceneView *mainViewer,
+void  MouseEventHandler::registerData(QWidget *mainWindow, DataManager *dataManager, OsgQWidget *mainViewer,
                                 osg::Group *root, const osgEarth::SpatialReference *globalSRS)
 {
 	_mainWindow  = mainWindow;

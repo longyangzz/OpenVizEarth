@@ -501,9 +501,9 @@ void  UIFacade::initDataManagerAndScene()
 	{
 		_dataManager->registerDataRoots(_root);
 
-		m_pCurrentNewViewer->getModel()->setData(_root);
+		m_pCurrentNewViewer->setSceneData(_root);
 
-		m_pCurrentNewViewer->resetHome();
+		//m_pCurrentNewViewer->resetHome();
 	}
 	
 }
@@ -517,21 +517,21 @@ void  UIFacade::resetCamera()
 
 		if (!manipulator.valid())
 		{
-			/*manipulator = new osgEarth::Util::EarthManipulator;
-			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);*/
+			manipulator = new osgEarth::Util::EarthManipulator;
+			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
 		}
 		else
 		{
 			manipulator->home(0);
 		}
 
-		//auto  settings = manipulator->getSettings();
-		//settings->setSingleAxisRotation(true);
-		//settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
-		//settings->setMaxOffset(5000.0, 5000.0);
-		//settings->setMinMaxPitch(-90, 90);
-		//settings->setTerrainAvoidanceEnabled(true);
-		//settings->setThrowingEnabled(false);
+		auto  settings = manipulator->getSettings();
+		settings->setSingleAxisRotation(true);
+		settings->setMinMaxDistance(10000.0, settings->getMaxDistance());
+		settings->setMaxOffset(5000.0, 5000.0);
+		settings->setMinMaxPitch(-90, 90);
+		settings->setTerrainAvoidanceEnabled(true);
+		settings->setThrowingEnabled(false);
 	}
 	else
 	{

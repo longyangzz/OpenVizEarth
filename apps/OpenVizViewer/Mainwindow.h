@@ -9,7 +9,7 @@ namespace DC
 {
 	class SceneView;
 }
-
+class OsgQWidget;
 class QMdiArea;
 
 class SceneModel;
@@ -34,13 +34,13 @@ public:
 	bool LoadFile(const QString &file, QString type);
 
 	//! 创建一个窗口
-	DC::SceneView* CreateNewSceneViewer();
+	OsgQWidget* CreateNewSceneViewer();
 
 	//! 返回当前激活的窗口
 	QWidget* ActiveMdiChild();
 
 	//! 获取当前激活窗口
-	DC::SceneView* CurrentSceneView();
+	OsgQWidget* CurrentSceneView();
 
 
 	//! 解析外部传入的参数

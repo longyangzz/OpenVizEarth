@@ -38,6 +38,7 @@ namespace DC
 	class SceneView;
 }
 
+class OsgQWidget;
 class DataManager;
 class SettingsManager;
 class ViewerWidget;
@@ -66,7 +67,7 @@ public:
 	virtual ~MouseEventHandler();
 
 	// Connect action with the main program as well as the associated QAction
-  void          registerData(QWidget *mainWindow, DataManager *dataManager, DC::SceneView *mainViewer, osg::Group *root,
+  void          registerData(QWidget *mainWindow, DataManager *dataManager, OsgQWidget *mainViewer, osg::Group *root,
                              const osgEarth::SpatialReference *globalSRS);
 
   void          registerSetting(SettingsManager *settingsMenager);
@@ -117,7 +118,7 @@ protected:
 	// Access to other components of this program
   static DataManager                                    *_dataManager;
   static SettingsManager                                *_settingsManager;
-  static DC::SceneView                                   *_mainViewer;
+  static OsgQWidget                                   *_mainViewer;
   static QWidget                                        *_mainWindow;
   static osg::ref_ptr<const osgEarth::SpatialReference>  _globalSRS;
   static const char                                     *_globalWKT;

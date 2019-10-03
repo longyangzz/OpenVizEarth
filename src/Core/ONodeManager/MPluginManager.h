@@ -25,6 +25,7 @@ namespace DC
 {
 	class SceneView;
 }
+class OsgQWidget;
 
 class DATAMANAGER_EXPORT MPluginManager : public QObject
 {
@@ -38,7 +39,7 @@ public:
 	};
 
 public:
-	MPluginManager(QObject *parent, DataManager* dataManager, DC::SceneView* viewer);
+	MPluginManager(QObject *parent, DataManager* dataManager, OsgQWidget* viewer);
 	~MPluginManager();
 	void registerPluginGroup(const QString& name, QToolBar* toolBar, QMenu* menu);
 	void registerPluginGroup(const QString& name);
@@ -64,7 +65,7 @@ private:
 	QMap<QString, PluginEntry*> _pluginEntries;
 	QVector<PluginEntry*> _readyToLoad;
 	QVector<MPluginInterface*> _loadedPlugins;
-	DC::SceneView* _viewerWidget;
+	OsgQWidget* _viewerWidget;
 	DataManager* _dataManager;
 };
 

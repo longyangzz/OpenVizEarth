@@ -11,6 +11,8 @@ namespace DC
 	class SceneView;
 }
 
+class OsgQWidget;
+
 class QMdiArea;
 
 class SceneModel;

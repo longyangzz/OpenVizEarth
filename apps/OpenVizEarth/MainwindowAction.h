@@ -9,7 +9,7 @@ namespace DC
 {
 	class SceneView;
 }
-
+class OsgQWidget;
 class QMdiArea;
 class QProgressBar;
 class SceneModel;
@@ -39,13 +39,13 @@ public:
 	bool LoadFile(const QString &file, QString type);
 
 	//! 获取当前激活窗口
-	DC::SceneView* CurrentSceneView();
+	OsgQWidget* CurrentSceneView();
 
 	//! 返回当前激活的窗口
 	QWidget* ActiveMdiChild();
 
 	//! 创建一个窗口
-	DC::SceneView* CreateNewSceneViewer();
+	OsgQWidget* CreateNewSceneViewer();
 
 
 
@@ -76,7 +76,7 @@ public slots:
 
 	void on_menuFile_aboutToShow();
 
-	/*void on_actionAdd_triggered();*/
+	void on_actionAdd_triggered();
 
 	void on_actionSplitFiles_triggered();
 
@@ -158,7 +158,7 @@ public:
 	//setting
 	QSettings m_globalSettings;
 
-	osg::ref_ptr<DC::SceneView>  m_pCurrentNewViewer;
+	osg::ref_ptr<OsgQWidget>  m_pCurrentNewViewer;
 
 	SettingsManager* m_SettingsManager;
 

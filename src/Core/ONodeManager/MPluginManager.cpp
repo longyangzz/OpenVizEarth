@@ -30,7 +30,7 @@ struct PluginEntry
   QSet<QString>  children;
 };
 
-MPluginManager::MPluginManager(QObject *parent, DataManager *dataManager, DC::SceneView* viewer):
+MPluginManager::MPluginManager(QObject *parent, DataManager *dataManager, OsgQWidget* viewer):
   QObject(parent),
   _dataManager(dataManager),
   _viewerWidget(viewer)

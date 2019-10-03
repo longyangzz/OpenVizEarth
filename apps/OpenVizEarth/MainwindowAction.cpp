@@ -117,11 +117,11 @@ void  MainWindowAction::loadingProgress(int percent)
 }
 
 
-DC::SceneView* MainWindowAction::CurrentSceneView()
+OsgQWidget* MainWindowAction::CurrentSceneView()
 {
-	DC::SceneView* pViewer = static_cast<DC::SceneView*>(ActiveMdiChild());
+	OsgQWidget* pViewer = static_cast<OsgQWidget*>(ActiveMdiChild());
 
-	m_pCurrentNewViewer = pViewer;
+	//m_pCurrentNewViewer = pViewer;
 
 	return pViewer;
 }
@@ -163,17 +163,17 @@ void MainWindowAction::NodeSelected(const QModelIndex &index)
 
 	if (index.isValid())
 	{
-		CurrentSceneView()->highlight((osg::Node *)index.internalPointer());
+		//CurrentSceneView()->highlight((osg::Node *)index.internalPointer());
 
 		// display stats
 		m_propertyWidget->displayProperties((osg::Node *)index.internalPointer());
 	}
 }
 
-DC::SceneView* MainWindowAction::CreateNewSceneViewer()
+OsgQWidget* MainWindowAction::CreateNewSceneViewer()
 {
-	DC::SceneView* sceneView = new DC::SceneView(this);
-	sceneView->setModel(new SceneModel(this));
+	OsgQWidget* sceneView = new OsgQWidget(this);
+	//sceneView->setModel(new SceneModel(this));
 	QMdiSubWindow* subWindow = m_pMdiArea->addSubWindow(sceneView);
 
 	subWindow->showMaximized();
@@ -195,24 +195,28 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 	if (type == "LOAD")
 	{
 		//! 创建一个view，视窗与view共享场景根节点
-		DC::SceneView* pNewViewer = CreateNewSceneViewer();
+		OsgQWidget* pNewViewer = CreateNewSceneViewer();
 		if (pNewViewer)
 		{
+			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
+			rootNode->asGroup()->addChild(node);
 			//! 更新场景数据
-			pNewViewer->getModel()->setData(node);
+			//pNewViewer->getModel()->setData(node);
 
-			pNewViewer->resetHome();
+			pNewViewer->getMainView()->getCameraManipulator()->home(0);
 		}
 	}
 	else if (type == "ADD")
 	{
-		DC::SceneView* pNewViewer = CurrentSceneView();
+		OsgQWidget* pNewViewer = CurrentSceneView();
 		if (pNewViewer)
 		{
+			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
+			rootNode->asGroup()->addChild(node);
 			//! 更新场景数据
-			pNewViewer->getModel()->setData(node);
-
-			pNewViewer->resetHome();
+			//pNewViewer->getModel()->setData(node);
+			pNewViewer->getMainView()->getCameraManipulator()->home(0);
+			//pNewViewer->resetHome();
 		}
 	}
 
@@ -342,7 +346,7 @@ void MainWindowAction::on_actionLight_triggered(bool val)
 
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setLightingEnabled(val);
+		//CurrentSceneView()->setLightingEnabled(val);
 	}
 	
 }
@@ -352,7 +356,7 @@ void MainWindowAction::on_actionColorGradient_triggered(bool val)
 {
 	if (CurrentSceneView())
 	{
-		CurrentSceneView()->setFlatBackgroundColor(!val);
+		//CurrentSceneView()->setFlatBackgroundColor(!val);
 	}
 	
 }
@@ -364,11 +368,11 @@ void MainWindowAction::on_actionBGColor_triggered()
 	{
 		return;
 	}
-	QColor currColor = CurrentSceneView()->getBgColor();
-	QColor c = QColorDialog::getColor(currColor);
+	//QColor currColor = CurrentSceneView()->getBgColor();
+	//QColor c = QColorDialog::getColor(currColor);
 
-	if ( c.isValid() )
-		CurrentSceneView()->setBgColor(c);
+	//if ( c.isValid() )
+		//CurrentSceneView()->setBgColor(c);
 }
 
 
@@ -494,18 +498,18 @@ void MainWindowAction::on_actionOpen_triggered()
 
 }
 
-//void MainWindowAction::on_actionAdd_triggered()
-//{
-//	QString filters = "Files (*.ply *.osg *.obj *.txt *.3ds *.stl);;All files (*.*)";
-//
-//	QString file = QFileDialog::getOpenFileName(
-//		this,
-//		"选择打开文件",
-//		m_lastDirectory,
-//		filters);
-//
-//	LoadFile(file, "ADD");
-//}
+void MainWindowAction::on_actionAdd_triggered()
+{
+	QString filters = "Files (*.ply *.osg *.obj *.txt *.3ds *.stl);;All files (*.*)";
+
+	QString file = QFileDialog::getOpenFileName(
+		this,
+		"选择打开文件",
+		m_lastDirectory,
+		filters);
+
+	LoadFile(file, "ADD");
+}
 
 void MainWindowAction::on_actionSplitFiles_triggered()
 {

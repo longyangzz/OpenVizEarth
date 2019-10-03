@@ -31,6 +31,11 @@ QWidget(parent),
 	{
 		m_view->setSceneData(scene);
 	}
+	else
+	{
+		osg::Node* groupRoot = new osg::Group;
+		m_view->setSceneData(groupRoot);
+	}
 
 	m_grid = new QGridLayout;
 

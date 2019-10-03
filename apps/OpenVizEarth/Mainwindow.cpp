@@ -94,7 +94,7 @@ void MainWindow::SetCentralWidget()
 
 void MainWindow::PraseArgs(QVector<QString > args)
 {
-	DC::SceneView* pNewViewer = CreateNewSceneViewer();
+	OsgQWidget* pNewViewer = CreateNewSceneViewer();
 	
 	if (pNewViewer)
 	{
@@ -105,11 +105,11 @@ void MainWindow::PraseArgs(QVector<QString > args)
 				qDebug(args[i].toStdString().c_str());
 				osg::Node* node1 = osgDB::readNodeFile( args[i].toStdString() );
 				//! 更新场景数据
-				pNewViewer->getModel()->setData( node1 );
+				//pNewViewer->getModel()->setData( node1 );
 			}
 		}
 
-		pNewViewer->resetHome();
+		//pNewViewer->resetHome();
 	}
 	
 }
@@ -305,7 +305,7 @@ void MainWindow::SaveSettings()
 	// scene background
 	if (CurrentSceneView())
 	{
-		settings.setValue( "bgcolor", CurrentSceneView()->getBgColor() );
+		//settings.setValue( "bgcolor", CurrentSceneView()->getBgColor() );
 	}
 	
 
