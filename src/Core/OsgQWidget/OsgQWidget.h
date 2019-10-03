@@ -15,7 +15,7 @@ class OSGQWIDGET_EXPORT OsgQWidget : public QWidget, public osgViewer::Composite
 {
 public:
 
-	OsgQWidget(QWidget *parent = NULL);
+	OsgQWidget(QWidget *parent = NULL, osg::Node *scene = nullptr);
 	virtual ~OsgQWidget(void) {}
 
 	// Get the main view of the viewer, by default the viewer at position (0, 0)

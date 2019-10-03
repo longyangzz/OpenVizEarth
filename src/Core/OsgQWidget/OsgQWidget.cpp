@@ -14,15 +14,23 @@ const unsigned int idleRefreshPeriod = 60;
 static const int  DEFAULT_FRAME_RATE = 60;
 //------------------------------------------------------------------------------------------------------------
 
-OsgQWidget::OsgQWidget(QWidget *parent) :
+OsgQWidget::OsgQWidget(QWidget *parent, osg::Node *scene) :
 QWidget(parent),
 	m_refreshPeriod(defaultRefreshPeriod)
 {
+	setMinimumSize(400, 300);
 	setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+	
+	//! 创建一个view
 	m_camera = createCamera(0,0,100,100);
 	m_statesetManipulator = new osgGA::StateSetManipulator( m_camera->getOrCreateStateSet() );
 
 	QWidget* widget1 = addViewWidget( );
+
+	if (scene && m_view)
+	{
+		m_view->setSceneData(scene);
+	}
 
 	m_grid = new QGridLayout;
 
@@ -294,7 +302,7 @@ osg::Camera* OsgQWidget::createCamera( int x, int y, int w, int h )
 	osg::Camera * camera = new osg::Camera;
 	camera->setGraphicsContext(new osgQt::GraphicsWindowQt(traits.get()));
 
-	camera->setClearColor(osg::Vec4(1, 0.1, 0.2, 1.0));
+	camera->setClearColor(osg::Vec4(1, 0, 0, 1.0));
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setProjectionMatrixAsPerspective(
 		30.0f, static_cast<double>(traits->width) / static_cast<double>(traits->height), 1.0f, 10000.0f);
