@@ -3,6 +3,8 @@ qt5 osg3.6 osgearth vs2015
 
 start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
+
+
 依赖库包网盘地址：
 
 转存的别人编译的
