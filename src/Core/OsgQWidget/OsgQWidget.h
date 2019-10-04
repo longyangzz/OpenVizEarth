@@ -21,6 +21,8 @@ public:
 	// Get the main view of the viewer, by default the viewer at position (0, 0)
 	osgViewer::View* getMainView();
 
+	osgQt::GraphicsWindowQt* getMainContext();
+
 	// Add a widget to the viewer layout at specified position
 	void setWidgetInLayout(QWidget* widget, int row, int column, bool visible = true);
 

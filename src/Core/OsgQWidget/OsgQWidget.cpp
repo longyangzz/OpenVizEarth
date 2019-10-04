@@ -288,6 +288,11 @@ QWidget* OsgQWidget::addViewWidget( )
 	return gw ? gw->getGLWidget() : NULL;
 }
 
+osgQt::GraphicsWindowQt * OsgQWidget::getMainContext()
+{
+	return m_mainContext;
+}
+
 osg::Camera* OsgQWidget::createCamera( int x, int y, int w, int h )
 {
 	osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
