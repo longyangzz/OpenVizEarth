@@ -117,9 +117,9 @@ void  MainWindowAction::loadingProgress(int percent)
 }
 
 
-OsgQWidget* MainWindowAction::CurrentSceneView()
+OSGViewWidget* MainWindowAction::CurrentSceneView()
 {
-	OsgQWidget* pViewer = static_cast<OsgQWidget*>(ActiveMdiChild());
+	OSGViewWidget* pViewer = static_cast<OSGViewWidget*>(ActiveMdiChild());
 
 	//m_pCurrentNewViewer = pViewer;
 
@@ -170,9 +170,9 @@ void MainWindowAction::NodeSelected(const QModelIndex &index)
 	}
 }
 
-OsgQWidget* MainWindowAction::CreateNewSceneViewer()
+OSGViewWidget* MainWindowAction::CreateNewSceneViewer()
 {
-	OsgQWidget* sceneView = new OsgQWidget(this);
+	OSGViewWidget* sceneView = new OSGViewWidget(this);
 	//sceneView->setModel(new SceneModel(this));
 	QMdiSubWindow* subWindow = m_pMdiArea->addSubWindow(sceneView);
 
@@ -195,7 +195,7 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 	if (type == "LOAD")
 	{
 		//! 创建一个view，视窗与view共享场景根节点
-		OsgQWidget* pNewViewer = CreateNewSceneViewer();
+		OSGViewWidget* pNewViewer = CreateNewSceneViewer();
 		if (pNewViewer)
 		{
 			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
@@ -208,7 +208,7 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 	}
 	else if (type == "ADD")
 	{
-		OsgQWidget* pNewViewer = CurrentSceneView();
+		OSGViewWidget* pNewViewer = CurrentSceneView();
 		if (pNewViewer)
 		{
 			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
@@ -488,7 +488,7 @@ void MainWindowAction::on_actionOpen_triggered()
 
 	QString file = QFileDialog::getOpenFileName(
 		this,
-		"选择打开文件",
+		tr("选择打开文件"),
 		m_lastDirectory,
 		filters);
 

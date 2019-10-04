@@ -8,6 +8,8 @@
 #include <osgGA/GUIEventHandler>
 #include <osgEarth/GeoData>
 
+#include "DC/DataType.h"
+
 QT_BEGIN_NAMESPACE
 class QStatusBar;
 class QLabel;
@@ -33,15 +35,8 @@ namespace osgViewer
 class View;
 }
 
-namespace DC
-{
-	class SceneView;
-}
 
-class OsgQWidget;
-class DataManager;
 class SettingsManager;
-class ViewerWidget;
 
 /** MouseEventHandler is the public parent of all interactions that happened
  * in the osg scene, eg. various plugins.
@@ -67,7 +62,7 @@ public:
 	virtual ~MouseEventHandler();
 
 	// Connect action with the main program as well as the associated QAction
-  void          registerData(QWidget *mainWindow, DataManager *dataManager, OsgQWidget *mainViewer, osg::Group *root,
+  void          registerData(QWidget *mainWindow, UserDataManager *dataManager, OSGViewWidget *mainViewer, osg::Group *root,
                              const osgEarth::SpatialReference *globalSRS);
 
   void          registerSetting(SettingsManager *settingsMenager);
@@ -116,9 +111,9 @@ protected:
   static osg::ref_ptr<osgEarth::Map>                   _mainMap[MAX_SUBVIEW];
 
 	// Access to other components of this program
-  static DataManager                                    *_dataManager;
+  static UserDataManager                                    *_dataManager;
   static SettingsManager                                *_settingsManager;
-  static OsgQWidget                                   *_mainViewer;
+  static OSGViewWidget                                   *_mainViewer;
   static QWidget                                        *_mainWindow;
   static osg::ref_ptr<const osgEarth::SpatialReference>  _globalSRS;
   static const char                                     *_globalWKT;

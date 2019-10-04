@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "DataTree.h"
 
 #include <QMessageBox>
@@ -19,7 +20,7 @@ DataTree::DataTree(QWidget *parent):
 	QTreeWidget(parent)
 {
 	// Init tree
-	_rootTreeItem = new DataRecord(tr("Scene"), NULL);
+	_rootTreeItem = new DataRecord(tr("Í¼²ã"), NULL);
 	addTopLevelItem(_rootTreeItem);
 	_rootTreeItem->setExpanded(true);
 }

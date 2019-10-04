@@ -34,6 +34,7 @@ namespace DC
 		SceneView( QWidget * parent = NULL );
 		virtual ~SceneView(void);
 
+		void setSceneData(osg::Node *);
 		void  setModel(SceneModel *);
 		SceneModel* getModel();
 		osgGA::TrackballManipulator *getTrackballManipulator(){return m_atm.get(); }

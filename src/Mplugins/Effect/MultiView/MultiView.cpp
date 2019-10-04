@@ -12,8 +12,7 @@
 
 #include <osgEarth/SpatialReference>
 
-#include <DCScene/scene/SceneView.h>
-#include <ONodeManager/DataManager.h>
+#include "DC/DataType.h"
 #include <DC/MapController.h>
 
 MultiView::MultiView():

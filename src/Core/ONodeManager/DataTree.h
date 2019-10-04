@@ -4,6 +4,7 @@
 #include <QTreeWidget>
 
 #include "DataRecord.h"
+#include "DC/DataType.h"
 
 namespace osg {
 	class Node;
@@ -19,8 +20,6 @@ namespace osgEarth {
 	class Map;
 	class Layer;
 }
-
-class DataManager;
 
 typedef QMap<QString, DataRecord*> RecordDict;
 
@@ -83,7 +82,7 @@ private:
 	osgEarth::Map* _mainMap[MAX_SUBVIEW];
     osgSim::OverlayNode* _overlayNode;
 
-	friend DataManager;
+	friend UserDataManager;
 };
 
 #endif // DATATREE_H

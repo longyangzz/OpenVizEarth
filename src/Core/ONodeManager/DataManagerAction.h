@@ -6,12 +6,6 @@
 #include "DCGui/iwindow.h"
 
 #include "DataManager_global.h"
-namespace DC
-{
-	class SceneView;
-}
-
-class OsgQWidget;
 
 class QMdiArea;
 

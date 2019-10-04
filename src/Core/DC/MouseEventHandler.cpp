@@ -15,12 +15,9 @@
 #include <osgSim/OverlayNode>
 #include <osgViewer/View>
 
-//DCScene
-#include "DCScene/scene/SceneView.h"
-#include "DCScene/scene/SceneModel.h"
+#include "DC/DataType.h"
 
 #include <ONodeManager/FindNode.hpp>
-#include "OsgQWidget/OsgQWidget.h"
 
 osgEarth::GeoPoint                                     MouseEventHandler::_currentGeoPos;
 osg::Vec3d                                             MouseEventHandler::_currentLocalPos;
@@ -35,9 +32,9 @@ osg::ref_ptr<osg::Group>                               MouseEventHandler::_mapRo
 osg::ref_ptr<osg::Group>                               MouseEventHandler::_dataRoot    = NULL;
 osg::ref_ptr<osgEarth::MapNode>                        MouseEventHandler::_mapNode[MAX_SUBVIEW];
 osg::ref_ptr<osgEarth::Map>                            MouseEventHandler::_mainMap[MAX_SUBVIEW];
-DataManager                                           *MouseEventHandler::_dataManager     = NULL;
+UserDataManager                                           *MouseEventHandler::_dataManager     = NULL;
 SettingsManager                                       *MouseEventHandler::_settingsManager = NULL;
-OsgQWidget                                          *MouseEventHandler::_mainViewer      = NULL;
+OSGViewWidget                                          *MouseEventHandler::_mainViewer      = NULL;
 QWidget                                               *MouseEventHandler::_mainWindow      = NULL;
 bool                                                   MouseEventHandler::_isValid         = false;
 QLabel                                                *MouseEventHandler::_labelWorldCoord;
@@ -177,7 +174,7 @@ void  MouseEventHandler::setupUi(QStatusBar *statusBar)
 	statusBar->addWidget(_labelGeoCoord);
 }
 
-void  MouseEventHandler::registerData(QWidget *mainWindow, DataManager *dataManager, OsgQWidget *mainViewer,
+void  MouseEventHandler::registerData(QWidget *mainWindow, UserDataManager *dataManager, OSGViewWidget *mainViewer,
                                 osg::Group *root, const osgEarth::SpatialReference *globalSRS)
 {
 	_mainWindow  = mainWindow;

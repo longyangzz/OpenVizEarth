@@ -16,7 +16,7 @@
 #include "openvreventhandler.h"
 #include <osgViewer/GraphicsWindow>
 
-#include <OsgQWidget/OsgQWidget.h>
+#include "DC/DataType.h"
 #include <DC/MapController.h>
 
 

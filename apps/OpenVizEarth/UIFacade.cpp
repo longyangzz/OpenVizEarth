@@ -46,11 +46,7 @@ using namespace std;
 
 #include <gdal_priv.h>
 
-#include <ONodeManager/DataManager.h>
-
-//DCScene
-#include "DCScene/scene/SceneView.h"
-#include "DCScene/scene/SceneModel.h"
+#include "DC/DataType.h"
 
 
 #include "ONodeManager/NXDockWidget.h"
@@ -147,7 +143,7 @@ void UIFacade::initDCUIVar()
 	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
 
 	m_SettingsManager = new SettingsManager(this);
-	_dataManager = new DataManager(this);
+	_dataManager = new UserDataManager(this);
 
 
 	// thread-safe initialization of the OSG wrapper manager. Calling this here
@@ -503,9 +499,9 @@ void  UIFacade::initDataManagerAndScene()
 	{
 		_dataManager->registerDataRoots(_root);
 
+		auto isSceneView = m_pCurrentNewViewer->metaObject()->className() == QStringLiteral("DC::SceneView");
 		m_pCurrentNewViewer->setSceneData(_root);
 
-		//m_pCurrentNewViewer->resetHome();
 	}
 	
 }

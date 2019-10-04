@@ -212,11 +212,17 @@ SceneView::SceneView( QWidget * parent) :
     setLightingEnabled(true);
     setTextureEnabled(true);
 
+	setModel(new SceneModel());
 	setMinimumSize( 400, 300 );
 }
 
 SceneView::~SceneView(void)
 {}
+
+void SceneView::setSceneData(osg::Node *node)
+{
+	getModel()->setData(node);
+}
 
 void SceneView::createSceneEnvironnement()
 {
@@ -257,7 +263,7 @@ void SceneView::createSceneEnvironnement()
 
     createPivotManipulator();
 
-    setSceneData(m_scene);
+	OsgQWidget::setSceneData(m_scene);
 }
 
 void SceneView::createPivotManipulator()

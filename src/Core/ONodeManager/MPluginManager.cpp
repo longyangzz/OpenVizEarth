@@ -16,11 +16,9 @@
 #include <osgViewer/View>
 
 #include <DC/MPluginInterface.h>
-#include <ONodeManager/DataManager.h>
+#include "DC/DataType.h"
 
 //DCScene
-#include "DCScene/scene/SceneView.h"
-#include "DCScene/scene/SceneModel.h"
 #include <DC/MapController.h>
 
 struct PluginEntry
@@ -31,7 +29,7 @@ struct PluginEntry
   QSet<QString>  children;
 };
 
-MPluginManager::MPluginManager(QObject *parent, DataManager *dataManager, OsgQWidget* viewer):
+MPluginManager::MPluginManager(QObject *parent, UserDataManager *dataManager, OSGViewWidget* viewer):
   QObject(parent),
   _dataManager(dataManager),
   _viewerWidget(viewer)

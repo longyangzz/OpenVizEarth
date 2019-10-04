@@ -91,7 +91,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::PraseArgs(QVector<QString > args)
 {
-	OsgQWidget* pNewViewer = CreateNewSceneViewer();
+	OSGViewWidget* pNewViewer = CreateNewSceneViewer();
 	
 	if (pNewViewer)
 	{
@@ -111,9 +111,9 @@ void MainWindow::PraseArgs(QVector<QString > args)
 	
 }
 
-OsgQWidget* MainWindow::CreateNewSceneViewer()
+OSGViewWidget* MainWindow::CreateNewSceneViewer()
 {
-	OsgQWidget* sceneView = new OsgQWidget(this);
+	OSGViewWidget* sceneView = new OSGViewWidget(this);
 	//sceneView->setModel(new SceneModel(this));
 	QMdiSubWindow* subWindow = m_pMdiArea->addSubWindow( sceneView );
 
@@ -131,9 +131,9 @@ QWidget* MainWindow::ActiveMdiChild()
 	return 0;
 }
 
-OsgQWidget* MainWindow::CurrentSceneView()
+OSGViewWidget* MainWindow::CurrentSceneView()
 {
-	OsgQWidget* pViewer = static_cast<OsgQWidget* >(ActiveMdiChild());
+	OSGViewWidget* pViewer = static_cast<OSGViewWidget* >(ActiveMdiChild());
 
 	return pViewer;
 }
@@ -647,7 +647,7 @@ void MainWindow::NewLoadedFile(osg::Node *node, QString type)
 	if(type == "LOAD")
 	{
 		//! 创建一个view，视窗与view共享场景根节点
-		OsgQWidget* pNewViewer = CreateNewSceneViewer();
+		OSGViewWidget* pNewViewer = CreateNewSceneViewer();
 		if (pNewViewer)
 		{
 			//! 更新场景数据
@@ -658,7 +658,7 @@ void MainWindow::NewLoadedFile(osg::Node *node, QString type)
 	}
 	else if(type == "ADD")
 	{
-		OsgQWidget* pNewViewer = CurrentSceneView();
+		OSGViewWidget* pNewViewer = CurrentSceneView();
 		if (pNewViewer)
 		{
 			//! 更新场景数据

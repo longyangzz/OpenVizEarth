@@ -10,9 +10,10 @@
 #include <QVector>
 #include <QString>
 
+#include "DC/DataType.h"
+
 class MPluginInterface;
-class ViewerWidget;
-class DataManager;
+
 struct PluginEntry;
 
 QT_BEGIN_NAMESPACE
@@ -21,11 +22,7 @@ class QMenu;
 class QTreeWidgetItem;
 QT_END_NAMESPACE
 
-namespace DC
-{
-	class SceneView;
-}
-class OsgQWidget;
+#include "DC/DataType.h"
 
 class DATAMANAGER_EXPORT MPluginManager : public QObject
 {
@@ -39,7 +36,7 @@ public:
 	};
 
 public:
-	MPluginManager(QObject *parent, DataManager* dataManager, OsgQWidget* viewer);
+	MPluginManager(QObject *parent, UserDataManager* dataManager, OSGViewWidget* viewer);
 	~MPluginManager();
 	void registerPluginGroup(const QString& name, QToolBar* toolBar, QMenu* menu);
 	void registerPluginGroup(const QString& name);
@@ -65,8 +62,8 @@ private:
 	QMap<QString, PluginEntry*> _pluginEntries;
 	QVector<PluginEntry*> _readyToLoad;
 	QVector<MPluginInterface*> _loadedPlugins;
-	OsgQWidget* _viewerWidget;
-	DataManager* _dataManager;
+	OSGViewWidget* _viewerWidget;
+	UserDataManager* _dataManager;
 };
 
 #endif // PLUGINMANAGER_H

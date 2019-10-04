@@ -5,11 +5,7 @@
 #include <QSettings>
 #include "DCGui/iwindow.h"
 #include <osg/Object>
-namespace DC
-{
-	class SceneView;
-}
-class OsgQWidget;
+#include "DC/DataType.h"
 class QMdiArea;
 class QProgressBar;
 class SceneModel;
@@ -39,13 +35,13 @@ public:
 	bool LoadFile(const QString &file, QString type);
 
 	//! 获取当前激活窗口
-	OsgQWidget* CurrentSceneView();
+	OSGViewWidget* CurrentSceneView();
 
 	//! 返回当前激活的窗口
 	QWidget* ActiveMdiChild();
 
 	//! 创建一个窗口
-	OsgQWidget* CreateNewSceneViewer();
+	OSGViewWidget* CreateNewSceneViewer();
 
 
 
@@ -158,7 +154,7 @@ public:
 	//setting
 	QSettings m_globalSettings;
 
-	osg::ref_ptr<OsgQWidget>  m_pCurrentNewViewer;
+	osg::ref_ptr<OSGViewWidget>  m_pCurrentNewViewer;
 
 	SettingsManager* m_SettingsManager;
 

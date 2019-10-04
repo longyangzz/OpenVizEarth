@@ -4,14 +4,10 @@
 #include "QModelIndex"
 #include <QSettings>
 
+#include "DC/DataType.h"
 #include "MainWindowAction.h"
 
-namespace DC
-{
-	class SceneView;
-}
 
-class OsgQWidget;
 class QMdiArea;
 
 class SceneModel;
@@ -23,18 +19,11 @@ class NodePropertyWidget;
 class NXDockWidget;
 class NXDockWidgetTabBar;
 
-class DataManager;
-
 namespace osg
 {
 	class Node;
 }
 
-namespace DC
-{
-	class SceneView;
-}
-class OsgQWidget;
 
 class MainWindow : public MainWindowAction
 {

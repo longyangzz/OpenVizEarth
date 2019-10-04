@@ -18,7 +18,7 @@
 #include <osgEarth/ImageLayer>
 #include <osgEarth/ElevationLayer>
 
-#include <ONodeManager/DataManager.h>
+#include "DC/DataType.h"
 #include <DC/SettingsManager.h>
 
 #include "ModelLayerManager.h"

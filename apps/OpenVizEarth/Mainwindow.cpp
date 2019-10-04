@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 //qt
 #include "Mainwindow.h"
 #include "QGridLayout"
@@ -63,7 +64,6 @@
 #include "ONodeManager/NXDockWidget.h"
 #include "ONodeManager/NXDockWidgetTabBar.h"
 #include "ONodeManager/NXDockWidgetTabButton.h"
-#include "ONodeManager/DataManager.h"
 #include "DC/SettingsManager.h"
 
 const int maxRecentlyOpenedFileNum = 10;
@@ -94,7 +94,7 @@ void MainWindow::SetCentralWidget()
 
 void MainWindow::PraseArgs(QVector<QString > args)
 {
-	OsgQWidget* pNewViewer = CreateNewSceneViewer();
+	OSGViewWidget* pNewViewer = CreateNewSceneViewer();
 	
 	if (pNewViewer)
 	{
