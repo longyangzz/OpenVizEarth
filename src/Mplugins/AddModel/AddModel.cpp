@@ -1,4 +1,5 @@
-﻿#include "AddModel.h"
+﻿#pragma execution_character_set("utf-8")
+#include "AddModel.h"
 
 #include <QDateTime>
 #include <osgDB/ReadFile>
@@ -19,7 +20,7 @@ using namespace osgEarth::Annotation;
 AddModel::AddModel()
 {
 	_pluginName     = tr("Model");
-	_pluginCategory = "Data";
+	_pluginCategory = tr("添加数据");
 }
 
 AddModel::~AddModel(void)
@@ -49,28 +50,28 @@ void  AddModel::setupUi(QToolBar *toolBar, QMenu *menu)
 	_modelFromFileAction->setObjectName(QStringLiteral("addModFromFileAction"));
 	_modelFromFileAction->setCheckable(false);
 	_modelFromFileAction->setChecked(false);
-	_modelFromFileAction->setText(tr("Load Model From File"));
+	_modelFromFileAction->setText(tr("从文件中加载模型"));
 	QIcon  icon24;
 	icon24.addFile(QStringLiteral("resources/icons/model.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_modelFromFileAction->setIcon(icon24);
 	_modelAction1 = new QAction(_mainWindow);
 	_modelAction1->setObjectName(QStringLiteral("addSampleMod1Action"));
 	_modelAction1->setCheckable(true);
-	_modelAction1->setText(tr("Tree"));
+	_modelAction1->setText(tr("树"));
 	QIcon  icon25;
 	icon25.addFile(QStringLiteral("resources/icons/tree.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_modelAction1->setIcon(icon25);
 	_modelAction2 = new QAction(_mainWindow);
 	_modelAction2->setObjectName(QStringLiteral("addSampleMod2Action"));
 	_modelAction2->setCheckable(true);
-	_modelAction2->setText(tr("Cow"));
+	_modelAction2->setText(tr("牛"));
 	QIcon  icon26;
 	icon26.addFile(QStringLiteral("resources/icons/cow.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_modelAction2->setIcon(icon26);
 	_modelAction3 = new QAction(_mainWindow);
 	_modelAction3->setObjectName(QStringLiteral("addSampleMod3Action"));
 	_modelAction3->setCheckable(true);
-	_modelAction3->setText(tr("Mark"));
+	_modelAction3->setText(tr("标记"));
 	QIcon  icon27;
 	icon27.addFile(QStringLiteral("resources/icons/mark.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_modelAction3->setIcon(icon27);
@@ -92,7 +93,7 @@ void  AddModel::setupUi(QToolBar *toolBar, QMenu *menu)
 	QIcon  iconModelSample;
 	iconModelSample.addFile(QString::fromUtf8("resources/icons/model.png"), QSize(), QIcon::Normal, QIcon::Off);
 	addSampleMenu->setIcon(iconModelSample);
-	addSampleMenu->setTitle(tr("Add Default Models"));
+	addSampleMenu->setTitle(tr("添加默认模型"));
 	addSampleMenu->addAction(_modelAction1);
 	addSampleMenu->addAction(_modelAction2);
 	addSampleMenu->addAction(_modelAction3);
@@ -126,8 +127,8 @@ void  AddModel::toggle(bool checked)
 		else if (actionName == "addModFromFileAction")
 		{
 			filePath = QFileDialog::getOpenFileName(_mainWindow,
-			                                        tr("Load model"), " ",
-			                                        tr("Supported models(*.osgb *.osg *.obj *.3ds *.ive *.dae *.fbx);;Allfile(*.*);"));
+			                                        tr("加载模型"), " ",
+			                                        tr("支持模型格式(*.osgb *.osg *.obj *.3ds *.ive *.dae *.fbx);;Allfile(*.*);"));
 		}
 
 		if (filePath.isEmpty())

@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "VRMode.h"
 
 #include <QToolBar>
@@ -91,7 +92,7 @@ VRMode::VRMode():
 	_openVRDevice(NULL),
 	_VRReady(false)
 {
-	_pluginCategory  = "Effect";
+	_pluginCategory  = tr("渲染");
 	_pluginName      = "VR Mode";
 	_controlCallback = new VRControlCallback(this);
 }
@@ -109,8 +110,8 @@ void  VRMode::setupUi(QToolBar *toolBar, QMenu *menu)
 	QIcon  icon1;
 	icon1.addFile(QStringLiteral("resources/icons/3dglasses.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_action->setIcon(icon1);
-	_action->setText(tr("VR Mode"));
-	_action->setToolTip(tr("Start VR Mode"));
+	_action->setText(tr("VR模式"));
+	_action->setToolTip(tr("开启VR模式"));
 
 	connect(_action, SIGNAL(toggled(bool)), this, SLOT(toggle(bool)));
 

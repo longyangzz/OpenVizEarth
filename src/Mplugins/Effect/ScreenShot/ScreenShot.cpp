@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "ScreenShot.h"
 
 #include <QToolBar>
@@ -10,7 +11,7 @@
 
 ScreenShot::ScreenShot()
 {
-	_pluginCategory = "Effect";
+	_pluginCategory = tr("äÖÈ¾");
 	_pluginName = "Screen Shot";
 }
 
@@ -26,8 +27,8 @@ void ScreenShot::setupUi(QToolBar *toolBar, QMenu *menu)
 	QIcon icon19;
 	icon19.addFile(QStringLiteral("resources/icons/screenshot.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_action->setIcon(icon19);
-	_action->setText(tr("ScreenShot"));
-	_action->setToolTip(tr("Save current scene screen"));
+	_action->setText(tr("½ØÆÁ"));
+	_action->setToolTip(tr("½ØÆÁ"));
 
 	toolBar->addAction(_action);
 	menu->addAction(_action);

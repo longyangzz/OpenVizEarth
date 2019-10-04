@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "MeshMode.h"
 
 #include <QAction>
@@ -12,7 +13,7 @@ MeshMode::MeshMode()
 	: _mode(0)
 {
 	_pluginName = tr("Mesh Mode");
-	_pluginCategory = "Effect";
+	_pluginCategory = tr("渲染");;
 }
 
 MeshMode::~MeshMode()
@@ -27,8 +28,8 @@ void MeshMode::setupUi(QToolBar * toolBar, QMenu * menu)
 	icon8.addFile(QStringLiteral("resources/icons/triangulation.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_action->setIcon(icon8);
 
-	_action->setText(tr("Mesh Mode"));
-	_action->setToolTip(tr("Change Mesh Rendering Mode"));
+	_action->setText(tr("网格模式"));
+	_action->setToolTip(tr("切换网格渲染模式"));
 
 	connect(_action, SIGNAL(triggered()), this, SLOT(trigger()));
 	registerMutexAction(_action);

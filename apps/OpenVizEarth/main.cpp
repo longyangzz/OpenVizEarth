@@ -5,9 +5,15 @@
 #include <QFile>
 #include <QTime>
 #include <QSurfaceFormat>
+#include <QTextCodec>
+
 
 int  main(int argc, char *argv[])
 {
+	QTextCodec *codec = QTextCodec::codecForName("System");    //获取系统编码
+	QTextCodec::setCodecForLocale(codec);
+
+
 	// A trick to get higher fps than 30
 	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 	format.setSwapInterval(0);

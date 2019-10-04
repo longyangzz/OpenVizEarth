@@ -1,3 +1,5 @@
+#pragma execution_character_set("utf-8")
+
 #include "MouseEventHandler.h"
 
 #include <QMap>
@@ -104,19 +106,19 @@ void  MouseEventHandler::pick(osgViewer::View *view, const osgGA::GUIEventAdapte
 	{
 		osgEarth::GeoPoint  latLon;
 		_currentGeoPos.transform(srs_wgs84, latLon);
-		_labelWorldCoord->setText(tr("Coordinate: [%1, %2, %3]")
+		_labelWorldCoord->setText(tr("坐标: [%1, %2, %3]")
 		                          .arg(_currentGeoPos.x(), 0, 'f', 2)
 		                          .arg(_currentGeoPos.y(), 0, 'f', 2)
 		                          .arg(_currentGeoPos.z(), 0, 'f', 2));
-		_labelGeoCoord->setText(tr("Lat Lon: [%1, %2, %3]")
+		_labelGeoCoord->setText(tr("经纬度: [%1, %2, %3]")
 		                        .arg(latLon.x(), 0, 'f', 2)
 		                        .arg(latLon.y(), 0, 'f', 2)
 		                        .arg(latLon.z(), 0, 'f', 2));
 	}
 	else
 	{
-		_labelWorldCoord->setText(tr("World Coordinate: NULL"));
-		_labelGeoCoord->setText(tr("Geographic Coordinate: NULL"));
+		_labelWorldCoord->setText(tr("世界坐标: 空"));
+		_labelGeoCoord->setText(tr("地理坐标: 空"));
 	}
 }
 

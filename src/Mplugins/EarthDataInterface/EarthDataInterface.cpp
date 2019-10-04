@@ -31,36 +31,36 @@ EarthDataInterface::DataGroup  EarthDataInterface::_dataGroups[ALL_TYPE];
 
 EarthDataInterface::EarthDataInterface()
 {
-    _pluginCategory = "Data";
+    _pluginCategory = tr("添加数据");
     _pluginName = tr("osgEarth Data Interface");
 
     _dataGroups[IMAGE_LAYER] = {
-        tr("Image Layers"),
+        tr("影像"),
         QStringLiteral("addImage"),
         QStringLiteral("Resources/icons/image.png"),
-        tr("Image"),
-        tr("Add image maps")
+        tr("影像"),
+        tr("加载影像")
     };
     _dataGroups[TERRAIN_LAYER] = {
-        tr("Terrain Layers"),
+        tr("地形"),
         QStringLiteral("addTerrain"),
         QStringLiteral("Resources/icons/terrain.png"),
-        tr("Terrain"),
-        tr("Add terrain maps")
+        tr("地形"),
+        tr("加载地形")
     };
     _dataGroups[FEATURE_LAYER] = {
-        tr("Feature Layers"),
+        tr("要素"),
         QStringLiteral("addFeature"),
         QStringLiteral("Resources/icons/addshp.png"),
-        tr("Feature"),
-        tr("Add feature maps")
+        tr("要素"),
+        tr("加载要素")
     };
     _dataGroups[MODEL_LAYER] = {
-      tr("Models"),
+      tr("模型"),
       QStringLiteral("addModel"),
       QStringLiteral("Resources/icons/model.png"),
-      tr("Model"),
-      tr("Add models")
+      tr("模型"),
+      tr("加载模型")
     };
 }
 

@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 //qt
 #include "DataManagerAction.h"
 #include "QGridLayout"
@@ -318,7 +319,7 @@ void DataManagerAction::InitOrtherDockWidget()
 
 	// Control panel
 	{
-		NXDockWidget *controlPanel = new NXDockWidget(tr("Control Panel"), m_mainWindow);
+		NXDockWidget *controlPanel = new NXDockWidget(tr("¿ØÖÆÃæ°å"), m_mainWindow);
 		
 		controlPanel->setObjectName(QStringLiteral("controlPanel"));
 		QSizePolicy  sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -358,7 +359,7 @@ void DataManagerAction::InitOrtherDockWidget()
 	}
 
 	{
-		NXDockWidget *attributePanel = new NXDockWidget(tr("Attributes"), m_mainWindow);
+		NXDockWidget *attributePanel = new NXDockWidget(tr("ÊôÐÔ"), m_mainWindow);
 		
 		attributePanel->setObjectName(QStringLiteral("attributePanel"));
 		QSizePolicy  sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Expanding);

@@ -1,3 +1,5 @@
+#pragma execution_character_set("utf-8")
+
 #include "DataManager.h"
 
 #include <QVector>
@@ -172,7 +174,7 @@ void DataManager::initToolBox()
 
 
 	// Init dock
-	NXDockWidget* dokwObjects = new NXDockWidget(tr("Tool Box"), m_mainWindow);
+	NXDockWidget* dokwObjects = new NXDockWidget(tr("工具箱"), m_mainWindow);
 	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
 	dokwObjects->setEnabled(true);
 	dokwObjects->setMinimumSize(QSize(200, 315));
@@ -230,7 +232,7 @@ void DataManager::initDataTree()
 	_treeWidgetMenu = new QMenu(m_mainWindow);
 
 	// Init dock
-	NXDockWidget *dataPanel = new NXDockWidget(tr("Data Panel"), m_mainWindow);
+	NXDockWidget *dataPanel = new NXDockWidget(tr("图层管理"), m_mainWindow);
 	
 	dataPanel->setObjectName(QStringLiteral("dataPanel"));
 	QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);

@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "AddGDALData.h"
 
 #include <ONodeManager/DataFormats.h>
@@ -193,7 +194,7 @@ static QVector<attrib>  getGDALinfo_Vector(const QString& path, QVector<feature>
 
 AddGDALData::AddGDALData()
 {
-  _pluginCategory = "Data";
+  _pluginCategory = tr("添加数据");
   _pluginName     = tr("GDAL Data");
 }
 
@@ -211,8 +212,8 @@ void  AddGDALData::setupUi(QToolBar *toolBar, QMenu *menu)
   QAction *addLocalImgAction = new QAction(_mainWindow);
 	addLocalImgAction->setObjectName(QStringLiteral("addLocalImgAction"));
 	addLocalImgAction->setIcon(icon);
-	addLocalImgAction->setText(tr("GDAL (local file)"));
-	addLocalImgAction->setToolTip(tr("Load local images with GDAL"));
+	addLocalImgAction->setText(tr("GDAL (文件)"));
+	addLocalImgAction->setToolTip(tr("使用GDAL驱动加载影像文件"));
 
 	menu = getOrAddMenu(IMAGE_LAYER);
 	menu->addAction(addLocalImgAction);
@@ -222,8 +223,8 @@ void  AddGDALData::setupUi(QToolBar *toolBar, QMenu *menu)
   QAction *addLocalTerAction = new QAction(_mainWindow);
 	addLocalTerAction->setObjectName(QStringLiteral("addLocalTerAction"));
 	addLocalTerAction->setIcon(icon);
-	addLocalTerAction->setText(tr("GDAL (local file)"));
-	addLocalTerAction->setToolTip(tr("Load local terrain files with GDAL"));
+	addLocalTerAction->setText(tr("GDAL (文件)"));
+	addLocalTerAction->setToolTip(tr("使用GDAL驱动加载地形文件"));
 
 	menu = getOrAddMenu(TERRAIN_LAYER);
 	menu->addAction(addLocalTerAction);
@@ -233,8 +234,8 @@ void  AddGDALData::setupUi(QToolBar *toolBar, QMenu *menu)
   QAction *addLocalShpAction = new QAction(_mainWindow);
 	addLocalShpAction->setObjectName(QStringLiteral("addLocalShpAction"));
 	addLocalShpAction->setIcon(icon);
-	addLocalShpAction->setText(tr("GDAL (local file)"));
-	addLocalShpAction->setToolTip(tr("Load local shapefiles with GDAL"));
+	addLocalShpAction->setText(tr("GDAL (文件)"));
+	addLocalShpAction->setToolTip(tr("使用GDAL驱动加载适量shp文件"));
 
 	menu = getOrAddMenu(FEATURE_LAYER);
 	menu->addAction(addLocalShpAction);
@@ -244,7 +245,7 @@ void  AddGDALData::setupUi(QToolBar *toolBar, QMenu *menu)
 void  AddGDALData::addTerrain()
 {
   QStringList  fileNames =
-    QFileDialog::getOpenFileNames(dynamic_cast<QWidget *>(parent()), tr("Open File"), "", tr("Image File (*.img *.tif *.tiff);;Allfile(*.*)"));
+    QFileDialog::getOpenFileNames(dynamic_cast<QWidget *>(parent()), tr("打开文件"), "", tr("影像格式 (*.img *.tif *.tiff);;Allfile(*.*)"));
 
 	if (fileNames.isEmpty())
   {
@@ -276,7 +277,7 @@ void  AddGDALData::addTerrain()
 
 void  AddGDALData::addFeature()
 {
-  QStringList  fileNames = QFileDialog::getOpenFileNames(dynamic_cast<QWidget *>(parent()), tr("Open File"), "", tr("Tiff File (*.shp);;Allfile(*.*)"));
+  QStringList  fileNames = QFileDialog::getOpenFileNames(dynamic_cast<QWidget *>(parent()), tr("打开文件"), "", tr("Tiff File (*.shp);;Allfile(*.*)"));
 
 	if (fileNames.isEmpty())
   {
@@ -323,7 +324,7 @@ void  AddGDALData::addFeature()
 void  AddGDALData::addImage()
 {
   QStringList  fileNames = QFileDialog::getOpenFileNames(
-    dynamic_cast<QWidget *>(parent()), tr("Open File"), "", tr("Image File (*.img *.tif *.tiff);;Allfile(*.*)"));
+    dynamic_cast<QWidget *>(parent()), tr("打开文件"), "", tr("Image File (*.img *.tif *.tiff);;Allfile(*.*)"));
 
 	if (fileNames.isEmpty())
   {

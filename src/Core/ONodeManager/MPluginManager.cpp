@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "MPluginManager.h"
 
 #include <QDir>
@@ -213,7 +214,7 @@ void  MPluginManager::parseDependency(const QString& fileName, const QDir &plugi
 
 void  MPluginManager::loadPlugin(PluginEntry *pluginEntry)
 {
-	emit  sendNowInitName(tr("Init plugin: ") + pluginEntry->name);
+	emit  sendNowInitName(tr("初始化加载插件: ") + pluginEntry->name);
 
 	// Mark the plugin as parsed
 	_pluginEntries.remove(pluginEntry->name);

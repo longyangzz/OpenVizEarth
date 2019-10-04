@@ -101,7 +101,7 @@ static QVector<attrib>  getArcGISInfo(std::string &path, osgEarth::GeoExtent * &
 
 AddArcGISData::AddArcGISData()
 {
-  _pluginCategory = "Data";
+  _pluginCategory = tr("添加数据");
   _pluginName     = tr("ArcGIS Data");
 }
 
@@ -120,7 +120,7 @@ void  AddArcGISData::setupUi(QToolBar *toolBar, QMenu *menu)
 	addArcGISImgAction->setObjectName(QStringLiteral("addArcGISImgAction"));
 	addArcGISImgAction->setIcon(icon);
 	addArcGISImgAction->setText(tr("ArcGIS"));
-	addArcGISImgAction->setToolTip(tr("Load online images from ArcGIS service"));
+	addArcGISImgAction->setToolTip(tr("加载arcgis在线影像服务"));
 
 	menu = getOrAddMenu(IMAGE_LAYER);
 	menu->addAction(addArcGISImgAction);
@@ -131,7 +131,7 @@ void  AddArcGISData::setupUi(QToolBar *toolBar, QMenu *menu)
 	addArcGISTerAction->setObjectName(QStringLiteral("addArcGISTerAction"));
 	addArcGISTerAction->setIcon(icon);
 	addArcGISTerAction->setText(tr("ArcGIS"));
-	addArcGISTerAction->setToolTip(tr("Load online terrain from ArcGIS service"));
+	addArcGISTerAction->setToolTip(tr("加载arcgis在线地形服务"));
 
 	menu = getOrAddMenu(TERRAIN_LAYER);
 	menu->addAction(addArcGISTerAction);
@@ -142,7 +142,7 @@ void  AddArcGISData::setupUi(QToolBar *toolBar, QMenu *menu)
 	addArcGISShpAction->setObjectName(QStringLiteral("addArcGISShpAction"));
 	addArcGISShpAction->setIcon(icon);
 	addArcGISShpAction->setText(tr("ArcGIS"));
-	addArcGISShpAction->setToolTip(tr("Load online features from ArcGIS service"));
+	addArcGISShpAction->setToolTip(tr("加载arcgis在线要素服务"));
 
 	menu = getOrAddMenu(FEATURE_LAYER);
 	menu->addAction(addArcGISShpAction);

@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "AddPointCloud.h"
 
 #include <QToolBar>
@@ -26,7 +27,7 @@
 AddPointCloud::AddPointCloud():
   _pointSize(3.0)
 {
-  _pluginCategory = "Data";
+  _pluginCategory = tr("添加数据");
   _pluginName     = tr("Point Cloud Model");
 }
 
@@ -42,8 +43,8 @@ void  AddPointCloud::setupUi(QToolBar *toolBar, QMenu *menu)
   QIcon  icon5;
 	icon5.addFile(QStringLiteral("resources/icons/point_cloud.png"), QSize(), QIcon::Normal, QIcon::Off);
 	addPCAction->setIcon(icon5);
-	addPCAction->setText(tr("Point Cloud"));
-	addPCAction->setToolTip(tr("Load an Point Cloud model"));
+	addPCAction->setText(tr("点云"));
+	addPCAction->setToolTip(tr("添加点云数据"));
 
 	menu->addAction(addPCAction);
 	toolBar->addAction(addPCAction);
@@ -139,7 +140,7 @@ void  AddPointCloud::addPointCloud()
 {
   QStringList  PCFileNames;
 
-	PCFileNames = QFileDialog::getOpenFileNames(nullptr, tr("Open File"), " ", tr("LAS File(*.las);;Text file(*.txt);;Allfile(*.*)"));
+	PCFileNames = QFileDialog::getOpenFileNames(nullptr, tr("打开文件"), " ", tr("LAS File(*.las);;Text file(*.txt);;Allfile(*.*)"));
 
 	if (PCFileNames.isEmpty())
   {

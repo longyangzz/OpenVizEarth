@@ -1,4 +1,6 @@
-﻿#include "UIFacade.h"
+﻿#pragma execution_character_set("utf-8")
+
+#include "UIFacade.h"
 
 #include <iostream>
 #include <string>
@@ -129,7 +131,7 @@ UIFacade::~UIFacade()
 
 void UIFacade::initDCUIVar()
 {
-	emit  sendNowInitName(tr("Initializing DCCore"));
+	emit  sendNowInitName(tr("初始化 DCCore"));
 
 	_root = new osg::Group;
 	_root->setName("Root");
@@ -239,13 +241,13 @@ void  UIFacade::initAll()
 {
 	collectInitInfo();
 
-	emit  sendNowInitName(tr("Initializing log"));
+	emit  sendNowInitName(tr("初始化日志文件 log"));
 	initLog();
 
 	//! 初始化dc库中的基础base变量
 	initDCUIVar();
 
-	emit  sendNowInitName(tr("Initializing UI"));
+	emit  sendNowInitName(tr("初始化界面 UI"));
 
 	//! 生成界面，创建datamanager
 	setupUi();
@@ -257,12 +259,12 @@ void  UIFacade::initAll()
 	//！ 初始化加载一个场景数据，作为根节点，传递给dataManager
 	initDataManagerAndScene();
 
-	emit  sendNowInitName(tr("Initializing camera"));
+	emit  sendNowInitName(tr("初始化相机 camera"));
 	resetCamera();
 
 	initPlugins();
 
-	emit  sendNowInitName(tr("Stylizing UI"));
+	emit  sendNowInitName(tr("更新界面样式 UI"));
 	initUiStyles();
 }
 
@@ -391,7 +393,7 @@ void  UIFacade::setupUi()
 void  UIFacade::initView()
 {
 	//! 初始化viewWidget
-	emit  sendNowInitName(tr("Initializing ViewWidget"));
+	emit  sendNowInitName(tr("初始化图形视窗 ViewWidget"));
 
 	initViewWidget();
 
@@ -421,7 +423,7 @@ void  UIFacade::initPlugins()
 
 void  UIFacade::initDataManagerAndScene()
 {
-	emit  sendNowInitName(tr("Initializing DataScene"));
+	emit  sendNowInitName(tr("初始化场景树 DataScene"));
 
 	_mapRoot = new osg::Group;
 	_mapRoot->setName("Map Root");

@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "MultiView.h"
 
 #include <QAction>
@@ -19,8 +20,9 @@ MultiView::MultiView():
   _subView(NULL),
   _subViewWidget(NULL)
 {
-  _pluginName     = tr("Multi View");
-	_pluginCategory = "Effect";
+	_pluginCategory = tr("渲染");;
+	 _pluginName     = tr("Multi View");
+
 }
 
 MultiView::~MultiView()
@@ -35,8 +37,8 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
   QIcon  icon;
 	icon.addFile(QStringLiteral("resources/icons/window.png"), QSize(), QIcon::Normal, QIcon::Off);
 	_action->setIcon(icon);
-	_action->setText(tr("Multi View"));
-	_action->setToolTip(tr("Open a Second View"));
+	_action->setText(tr("分屏"));
+	_action->setToolTip(tr("开启分屏模式"));
 	connect(_action, SIGNAL(toggled(bool)), this, SLOT(toggle(bool)));
 
 	QAction* resetViewAction = new QAction(_mainWindow);
@@ -44,8 +46,8 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
 	QIcon icon6;
 	icon6.addFile(QStringLiteral("resources/icons/show_all.png"), QSize(), QIcon::Normal, QIcon::Off);
 	resetViewAction->setIcon(icon6);
-	resetViewAction->setText(tr("View"));
-	resetViewAction->setToolTip(tr("Reset to full view"));
+	resetViewAction->setText(tr("重置视窗"));
+	resetViewAction->setToolTip(tr("重置视窗"));
 
 	toolBar->addAction(resetViewAction);
 	menu->addAction(resetViewAction);
@@ -56,14 +58,14 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
 	showInWindow1Action = new QAction(_mainWindow);
 	showInWindow1Action->setObjectName(QStringLiteral("showInWindow1Action"));
 	showInWindow1Action->setCheckable(true);
-	showInWindow1Action->setText(tr("Window 1"));
-	showInWindow1Action->setToolTip(tr("Show in window 1"));
+	showInWindow1Action->setText(tr("视窗1"));
+	showInWindow1Action->setToolTip(tr("视窗1中显示"));
 
 	showInWindow2Action = new QAction(_mainWindow);
 	showInWindow2Action->setObjectName(QStringLiteral("showInWindow2Action"));
 	showInWindow2Action->setCheckable(true);
-	showInWindow2Action->setText(tr("Window 2"));
-	showInWindow2Action->setToolTip(tr("Show in window 2"));
+	showInWindow2Action->setText(tr("视窗2"));
+	showInWindow2Action->setToolTip(tr("视窗2中显示"));
 
 	connect(resetViewAction, SIGNAL(triggered()), this, SIGNAL(resetCamera()));
 

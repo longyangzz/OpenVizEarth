@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "AddObliqueModel.h"
 
 #include <QCoreApplication>
@@ -51,7 +52,7 @@ static inline void  getFolderFile(QString &path, QFileInfoList &file_to_use)
 
 AddObliqueModel::AddObliqueModel()
 {
-  _pluginCategory = "Data";
+  _pluginCategory = tr("添加数据");
   _pluginName     = tr("Oblique Imagery Model");
 }
 
@@ -68,8 +69,8 @@ void  AddObliqueModel::setupUi(QToolBar *toolBar, QMenu *menu)
   QIcon  icon2;
 	icon2.addFile(QStringLiteral("resources/icons/oblique_model.png"), QSize(), QIcon::Normal, QIcon::Off);
 	openOpAction->setIcon(icon2);
-	openOpAction->setText(tr("Oblique"));
-	openOpAction->setToolTip(tr("Load an Oblique Imagery model"));
+	openOpAction->setText(tr("倾斜摄影"));
+	openOpAction->setToolTip(tr("添加倾斜摄影模型"));
 
 	menu->addAction(openOpAction);
 	toolBar->addAction(openOpAction);
