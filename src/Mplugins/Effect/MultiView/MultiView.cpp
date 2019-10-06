@@ -74,10 +74,10 @@ void  MultiView::setupUi(QToolBar *toolBar, QMenu *menu)
 
 void  MultiView::loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selectedItem)
 {
-  int  mask = _dataManager->getMask(selectedItem->text(0));
+ // int  mask = _dataManager->getMask(selectedItem->text(0));
 
-	showInWindow1Action->setChecked((mask & SHOW_IN_WINDOW_1) != 0x00000000);
-	showInWindow2Action->setChecked((mask & SHOW_IN_WINDOW_1 << 1) != 0x00000000);
+	//showInWindow1Action->setChecked((mask & SHOW_IN_WINDOW_1) != 0x00000000);
+	//showInWindow2Action->setChecked((mask & SHOW_IN_WINDOW_1 << 1) != 0x00000000);
 	contextMenu->addAction(showInWindow1Action);
 	contextMenu->addAction(showInWindow2Action);
 }
@@ -165,7 +165,7 @@ void  MultiView::initSubView()
 
 void  MultiView::moveToWindow()
 {
-  QList<QTreeWidgetItem *>  itemList = _dataManager->getSelectedItems();
+ /* QList<QTreeWidgetItem *>  itemList = _dataManager->getSelectedItems();
   int mask = (showInWindow1Action->isChecked() ? SHOW_IN_WINDOW_1 : 0)
               | (showInWindow2Action->isChecked() ? SHOW_IN_WINDOW_1 << 1 : 0);
 
@@ -175,5 +175,5 @@ void  MultiView::moveToWindow()
     auto             nodeName = item->text(0);
 
 		_dataManager->setWindowMask(nodeName, mask);
-	}
+	}*/
 }

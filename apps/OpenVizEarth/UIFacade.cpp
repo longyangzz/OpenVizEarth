@@ -56,7 +56,7 @@ using namespace std;
 #include <DC/MouseEventHandler.h>
 #include <DC/SettingsManager.h>
 #include <DC/MapController.h>
-#include <ONodeManager/MPluginManager.h>
+#include <DC/MPluginManager.h>
 
 
 class LogFileHandler : public osg::NotifyHandler
@@ -151,9 +151,9 @@ void UIFacade::initDCUIVar()
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
 
 	//! 数据加载进度条管理及视窗重置
-	connect(_dataManager, &DataManager::loadingProgress, this, &UIFacade::loadingProgress);
-	connect(_dataManager, &DataManager::loadingDone, this, &UIFacade::loadingDone);
-	connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);
+	connect(_dataManager, &UserDataManager::loadingProgress, this, &UIFacade::loadingProgress);
+	connect(_dataManager, &UserDataManager::loadingDone, this, &UIFacade::loadingDone);
+	connect(_dataManager, &UserDataManager::resetCamera, this, &UIFacade::resetCamera);
 
 	connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
 }
@@ -211,9 +211,9 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
 			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
 
-			connect(_dataManager, &DataManager::moveToNode,
+			connect(_dataManager, &UserDataManager::moveToNode,
 				manipulator, &MapController::fitViewOnNode);
-			connect(_dataManager, &DataManager::moveToBounding,
+			connect(_dataManager, &UserDataManager::moveToBounding,
 				manipulator, &MapController::fitViewOnBounding);
 
 			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
@@ -354,7 +354,7 @@ void UIFacade::initUiStyles()
 
 		if (dock)
 		{
-			_dataManager->dockWidgetUnpinned(dock);
+			//_dataManager->dockWidgetUnpinned(dock);
 			dock->setFixedWidth(250);
 		}
 	}
@@ -411,7 +411,9 @@ void  UIFacade::initPlugins()
 
 	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
 
-	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
+	//! 插件管理器绑定信号槽
+
+	connect(_dataManager, &UserDataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
 	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 
 	_pluginManager->loadPlugins();
@@ -550,9 +552,9 @@ void  UIFacade::resetCamera()
 			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
 			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
 
-			connect(_dataManager, &DataManager::moveToNode,
+			connect(_dataManager, &UserDataManager::moveToNode,
 			        manipulator, &MapController::fitViewOnNode);
-			connect(_dataManager, &DataManager::moveToBounding,
+			connect(_dataManager, &UserDataManager::moveToBounding,
 			        manipulator, &MapController::fitViewOnBounding);
 
 			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);

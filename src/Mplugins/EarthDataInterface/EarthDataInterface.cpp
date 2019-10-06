@@ -239,8 +239,8 @@ void EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEart
   auto added = _mainMap[0]->getLayerByName(layer->getName());
   if (added && added->getEnabled())
   {
-    emit  recordData(layer, name, _dataGroups[dataType].dataTreeTitle, extent);
-    _dataManager->updateAttributeList(name, attribute);
+	emit  recordData(layer, name, _dataGroups[dataType].dataTreeTitle, extent);
+	_dataManager->updateAttributeList(name, attribute);
   }
   else
   {
