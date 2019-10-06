@@ -12,6 +12,7 @@
 #include "DCScene/scene/SceneModel.h"
 
 #include <ONodeManager/DataManager.h>
+#include <Manager/Manager.h>
 
 namespace DC
 {
@@ -26,4 +27,5 @@ typedef DC::SceneView OSGViewWidget;
 //typedef OsgQWidget OSGViewWidget;
 
 //-------------------确定项目使用的节点管理类manager-------------------------------
-typedef DataManager UserDataManager;
+typedef Manager UserDataManager;
+//typedef DataManager UserDataManager;

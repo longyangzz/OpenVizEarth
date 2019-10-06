@@ -1,6 +1,6 @@
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
-#include "DataManager_global.h"
+#ifndef MPLUGINMANAGER_H
+#define MPLUGINMANAGER_H
+#include "dc_global.h"
 
 #include "../../NameSpace.h"
 #include <QObject>
@@ -24,7 +24,7 @@ QT_END_NAMESPACE
 
 #include "DC/DataType.h"
 
-class DATAMANAGER_EXPORT MPluginManager : public QObject
+class DC_EXPORT MPluginManager : public QObject
 {
 	Q_OBJECT
 

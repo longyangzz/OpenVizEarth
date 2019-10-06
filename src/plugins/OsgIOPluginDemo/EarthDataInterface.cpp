@@ -172,8 +172,8 @@ void  EarthDataInterface::getFeatureAttribute(const QString& path, QVector<attri
     osgEarth::Symbology::Style *style)
 {
     _modelLayerManager->getFeatureAttribute(path, attributeList, featureFieldList, style);
-    _dataManager->updateAttributeList(path, attributeList);
-    _dataManager->updateFeatureFieldList(path, featureFieldList);
+   // _dataManager->updateAttributeList(path, attributeList);
+   // _dataManager->updateFeatureFieldList(path, featureFieldList);
 }
 
 void  EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEarth::ModelLayer> layer, LayerType dataType, const QString& parent)
@@ -229,7 +229,7 @@ void EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEart
   if (added && added->getEnabled())
   {
     emit  recordData(layer, name, _dataGroups[dataType].dataTreeTitle, extent);
-    _dataManager->updateAttributeList(name, attribute);
+   // _dataManager->updateAttributeList(name, attribute);
   }
   else
   {

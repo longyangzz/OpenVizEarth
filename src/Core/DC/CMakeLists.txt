@@ -41,13 +41,15 @@ SET(TARGET_LIBRARIES
     Qt5::Core
 	Qt5::Gui 
 	Qt5::Widgets 
+	
+	OsgQWidget
 	debug osgEarth${CMAKE_DEBUG_POSTFIX}						optimized osgEarth
     debug osgEarthAnnotation${CMAKE_DEBUG_POSTFIX}			optimized osgEarthAnnotation
 	debug osgEarthFeatures${CMAKE_DEBUG_POSTFIX}				optimized osgEarthFeatures
     debug osgEarthUtil${CMAKE_DEBUG_POSTFIX}					optimized osgEarthUtil
 	debug osgEarthSymbology${CMAKE_DEBUG_POSTFIX}			optimized osgEarthSymbology
     debug osgSim${CMAKE_DEBUG_POSTFIX}						optimized osgSim
-
+	
 	debug osg${CMAKE_DEBUG_POSTFIX}			optimized osg
 	debug osgUtil${CMAKE_DEBUG_POSTFIX}		 optimized osgUtil
 	debug osgDB${CMAKE_DEBUG_POSTFIX}		optimized osgDB

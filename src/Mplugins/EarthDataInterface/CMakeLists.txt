@@ -54,6 +54,7 @@ SET(TARGET_COMMON_LIBRARIES
 	OsgQWidget
 	DC
 	ONodeManager
+	Manager
 )
 
 INCLUDE_DIRECTORIES(

@@ -82,7 +82,7 @@ private:
 	osgEarth::Map* _mainMap[MAX_SUBVIEW];
     osgSim::OverlayNode* _overlayNode;
 
-	friend UserDataManager;
+	friend DataManager;
 };
 
 #endif // DATATREE_H
