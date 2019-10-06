@@ -152,6 +152,9 @@ void Manager::initDataTree()
 	m_nodeTreeModel = new NodeTreeModel();
 	objTreeView->setModel(m_nodeTreeModel);
 
+	//! 添加测试数据，测试模型视图结构对节点的展示
+	//m_nodeTreeModel->setNode();
+
 	//信号槽
 	connect(objTreeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(NodeSelected(const QModelIndex &)));
 
@@ -187,6 +190,20 @@ void Manager::initDataTree()
 	dokwProperties->setWidget(wgtProperty);
 	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
 	dokwProperties->setWindowTitle("属性");
+}
+
+void Manager::NodeSelected(const QModelIndex &index)
+{
+
+	if (index.isValid())
+	{
+		//CurrentSceneView()->highlight( (osg::Node *)index.internalPointer() );
+		// display stats
+		//m_propertyWidget->displayProperties( (osg::Node *)index.internalPointer() );
+		//(osg::Node *)index.internalPointer()->getNodeMask() == 0
+		osg::Node* curSelect = (osg::Node *)index.internalPointer();
+		m_nodeTreeModel->setEnableIndex(index, curSelect->getNodeMask() == 0 ? true : false);
+	}
 }
 
 void Manager::ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected)
@@ -288,6 +305,11 @@ int Manager::getMask(const QString& nodeName)
 
 void Manager::registerDataRoots(osg::Group* root)
 {
+	if (m_nodeTreeModel)
+	{
+		m_nodeTreeModel->setNode(root);
+	}
+	
 	/*osg::Group* mapRoot = findNodeInNode("Map Root", root)->asGroup();
   _nodeTree->_overlayNode = static_cast<osgSim::OverlayNode*>(findNodeInNode("Data Overlay", root));
 	for (unsigned i = 0; i < MAX_SUBVIEW; i++)

@@ -122,6 +122,8 @@ public slots:
 	void updateAttributeList(const QString& name, const QVector<attrib>& attribs);
 	void updateFeatureTable(const QString& name, const QVector<feature>& features);
 	void updateFeatureFieldList(const QString& name, const QStringList& featureList);
+
+	void NodeSelected(const QModelIndex &index);
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);
@@ -129,10 +131,12 @@ signals:
 	void loadingDone();
 	void requestContextMenu(QMenu*, QTreeWidgetItem*);
 	void resetCamera();
+
 private:
 	void InitDockWidget();
 	void initDataTree();
 	void initToolBox();
+
 private:
 	// Program structure reference
 	SettingsManager* _settingsManager;
