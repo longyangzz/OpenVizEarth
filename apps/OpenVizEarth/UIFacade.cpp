@@ -97,6 +97,7 @@ protected:
 
 UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
+	, _dataManager(nullptr)
 {
 	// Some global environment settings
 	QCoreApplication::setOrganizationName("WLY");
@@ -129,33 +130,13 @@ void UIFacade::initDCUIVar()
 {
 	emit  sendNowInitName(tr("初始化 DCCore"));
 
-	_root = new osg::Group;
-	_root->setName("Root");
-
-	// Turn off all lights by default
-	osg::StateSet *state = _root->getOrCreateStateSet();
-	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
-	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-
-	osg::ref_ptr<osg::CullFace>  cf = new osg::CullFace;
-	cf->setMode(osg::CullFace::BACK);
-	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
-
 	m_SettingsManager = new SettingsManager(this);
-	_dataManager = new UserDataManager(this);
+	
 
 
 	// thread-safe initialization of the OSG wrapper manager. Calling this here
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
-
-	//! 数据加载进度条管理及视窗重置
-	connect(_dataManager, &UserDataManager::loadingProgress, this, &UIFacade::loadingProgress);
-	connect(_dataManager, &UserDataManager::loadingDone, this, &UIFacade::loadingDone);
-	connect(_dataManager, &UserDataManager::resetCamera, this, &UIFacade::resetCamera);
-
-	connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
 }
 
 //传入待处理数据
@@ -360,6 +341,27 @@ void UIFacade::initUiStyles()
 	}
 }
 
+void UIFacade::InitManager()
+{
+	if (!_dataManager)
+	{
+		_dataManager = new UserDataManager(this);
+	}
+
+	if (_dataManager)
+	{
+		//! 数据加载进度条管理及视窗重置
+		connect(_dataManager, &UserDataManager::loadingProgress, this, &UIFacade::loadingProgress);
+		connect(_dataManager, &UserDataManager::loadingDone, this, &UIFacade::loadingDone);
+		connect(_dataManager, &UserDataManager::resetCamera, this, &UIFacade::resetCamera);
+
+		connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
+
+		//! 初始化node管理面板
+		_dataManager->setupUi(this);
+	}
+}
+
 void  UIFacade::setupUi()
 {
 	bool initState = ConfigInit(this);
@@ -373,12 +375,8 @@ void  UIFacade::setupUi()
 		Init();
 
 		//！ 初始化docketwidget
-		//InitManager();
-		if (_dataManager)
-		{
-			//! 初始化node管理面板
-			_dataManager->setupUi(this);
-		}
+		InitManager();
+		
 
 		LoadSettings();
 	}
@@ -421,6 +419,19 @@ void  UIFacade::initPlugins()
 
 void  UIFacade::initDataManagerAndScene()
 {
+	_root = new osg::Group;
+	_root->setName("Root");
+
+	//_root节点状态设置 Turn off all lights by default
+	osg::StateSet *state = _root->getOrCreateStateSet();
+	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
+	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+	osg::ref_ptr<osg::CullFace>  cf = new osg::CullFace;
+	cf->setMode(osg::CullFace::BACK);
+	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
+
 	emit  sendNowInitName(tr("初始化场景树 DataScene"));
 
 	_mapRoot = new osg::Group;

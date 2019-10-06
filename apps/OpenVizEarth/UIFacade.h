@@ -51,6 +51,8 @@ private:
 
   void initDCUIVar();
 
+  void InitManager();
+
   void  initDataManagerAndScene();
 
   void  initPlugins();

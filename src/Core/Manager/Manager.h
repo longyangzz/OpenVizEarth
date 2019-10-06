@@ -11,6 +11,10 @@
 #include <osg/Node>
 #include "QItemSelection"
 
+#include <QMap>
+#include <QVector>
+#include <QPair>
+
 QT_BEGIN_NAMESPACE
 class QProgressBar;
 class QMenu;
@@ -53,14 +57,11 @@ class IconSymbolVisitor;
 
 class QMainWindow;
 
-class NXDockWidget;
-class NXDockWidgetTabBar;
 class CompleteLineEdit;
 class ToolBoxTreeModel;
 
-#include <QMap>
-#include <QVector>
-#include <QPair>
+class NodeTreeModel;
+class NodePropertyWidget;
 
 typedef QPair<QString, QString> attrib;
 typedef QVector<QString> feature;
@@ -170,6 +171,10 @@ private:
 	ToolBoxTreeModel* m_pToolBoxTreeModel;
 
 	QMainWindow* m_mainWindow;
+
+	//! 节点管理模型视图
+	NodeTreeModel* m_nodeTreeModel;
+	NodePropertyWidget* m_propertyWidget;
 };
 
 #endif

@@ -14,28 +14,23 @@
 #include <QMainWindow>
 #include <QSignalMapper>
 #include <QLineEdit>
-
+#include "QDockWidget"
+#include "QTreeView"
+#include "QTreeWidgetItem"
+#include "QTreeWidget"
 
 #include <osgSim/OverlayNode>
 #include <osgEarth/GeoData>
 #include <osgEarth/MapNode>
 
-
-//#include "FeatureStyleSettingDlg.h"
-//#include "ColorVisitor.h"
-//#include "FontVisitor.h"
-//#include "ModelManipulator.h"
+#include "Manager/NodeTreeModel.h"
+#include "Manager/NodePropertyWidget.h"
 
 Manager::Manager(QObject* parent /*= NULL*/)
 	: QObject()
 	, _countLoadingData(0)
-	
-	//, _featureStyleDlg(NULL)
 {
-	//initDataTree();
 
-	//_colorvisitor = new ColorVisitor;
-	//_fontvisitor = new FontVisitor;
 }
 
 Manager::~Manager()
@@ -125,6 +120,73 @@ void Manager::initDataTree()
 
 	// Init dock
 	
+	//为manager安装treeWidget和属性widget
+	QDockWidget* dokwObjects = new QDockWidget(m_mainWindow);
+	dokwObjects->setWindowTitle("对象");
+	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
+	dokwObjects->setEnabled(true);
+	dokwObjects->setMinimumSize(QSize(200, 315));
+	dokwObjects->setMaximumSize(QSize(400, 524287));
+	dokwObjects->setLayoutDirection(Qt::LeftToRight);
+	dokwObjects->setStyleSheet(QString::fromUtf8("border-color: rgb(85, 255, 255);\n"
+		"gridline-color: rgb(85, 85, 255);"));
+	dokwObjects->setFloating(false);
+	dokwObjects->setFeatures(QDockWidget::AllDockWidgetFeatures);
+	dokwObjects->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+
+	QWidget* wgtContext = new QWidget();
+	wgtContext->setObjectName(QString::fromUtf8("wgtContext"));
+	//创建布局管理器
+	QGridLayout* layoutObject = new QGridLayout(wgtContext);
+	layoutObject->setSpacing(0);
+	layoutObject->setContentsMargins(0, 0, 0, 0);
+	layoutObject->setObjectName(QString::fromUtf8("layoutObject"));
+
+	//添加qtreeview
+	QTreeView* objTreeView = new QTreeView(wgtContext);
+	objTreeView->setObjectName("objTreeView");
+	objTreeView->setMinimumSize(QSize(200, 100));
+
+	//为treeView添加模型
+	m_nodeTreeModel = new NodeTreeModel();
+	objTreeView->setModel(m_nodeTreeModel);
+
+	//信号槽
+	connect(objTreeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(NodeSelected(const QModelIndex &)));
+
+	layoutObject->addWidget(objTreeView, 0, 0, 1, 1);
+	dokwObjects->setWidget(wgtContext);
+	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwObjects);
+
+
+	//属性widget
+	//安装属性widget
+	QDockWidget* dokwProperties = new QDockWidget(m_mainWindow);
+	dokwProperties->setObjectName(QString::fromUtf8("dokwProperties"));
+	dokwProperties->setMinimumSize(QSize(200, 193));
+	dokwProperties->setMaximumSize(QSize(400, 524287));
+	dokwProperties->setBaseSize(QSize(4, 0));
+	dokwProperties->setFloating(false);
+	dokwProperties->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	QWidget* wgtProperty = new QWidget();
+	wgtProperty->setObjectName(QString::fromUtf8("wgtProperty"));
+
+	QGridLayout* layoutProperty = new QGridLayout(wgtProperty);
+	layoutProperty->setSpacing(0);
+	layoutProperty->setContentsMargins(0, 0, 0, 0);
+	layoutProperty->setObjectName(QString::fromUtf8("layoutProperty"));
+
+	m_propertyWidget = new NodePropertyWidget(wgtProperty);
+	m_propertyWidget->setObjectName(QString::fromUtf8("tblwProperties"));
+	m_propertyWidget->setMinimumSize(QSize(200, 100));
+	m_propertyWidget->setMaximumSize(QSize(400, 16777215));
+
+	layoutProperty->addWidget(m_propertyWidget, 0, 0, 1, 1);
+	dokwProperties->setWidget(wgtProperty);
+	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
+	dokwProperties->setWindowTitle("属性");
 }
 
 void Manager::ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected)
