@@ -49,6 +49,7 @@ public:
     Qt::ItemFlags       flags(const QModelIndex &index) const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
+	QModelIndex index(osg::Node* entity);
     QModelIndex parent(const QModelIndex &index) const;
 
     int rowCount(const QModelIndex &parent) const;
@@ -57,6 +58,7 @@ public:
     { return rowCount(parent) > 0; }
 
     QVariant data(const QModelIndex &index, int role) const;
+	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
@@ -65,13 +67,17 @@ public:
     QModelIndex searchForNode( osg::Node *node,const QModelIndex &parent = QModelIndex() );
     QModelIndex searchForName( const QString &name, const QModelIndex &parent = QModelIndex() );
 
+	osg::Node* NodeFromIndex(const QModelIndex &index) const;
+
+	//! ¸üÐÂcheckState
+	void UpdateCheckState(osg::Node* entity, const bool isCheck);
 protected:
 
     inline osg::Node* getPrivateData(const QModelIndex &index) const { return reinterpret_cast<osg::Node*>( index.internalPointer() ); }
 
 private:
 
-    osg::ref_ptr<osg::Node> m_node;
+    osg::ref_ptr<osg::Node> m_rootNode;
     QHash<QString, QIcon> m_hashIcon;
 };
 

@@ -41,21 +41,21 @@ NodeTreeModel::~NodeTreeModel()
 void NodeTreeModel::setNode(osg::Node *node)
 {
     //reset();
-    m_node = node;
+    m_rootNode = node;
 }
 
 //==============================================================================
 
 osg::Node* NodeTreeModel::getNode()
 {
-    return m_node.get();
+    return m_rootNode.get();
 }
 
 //==============================================================================
 
 const osg::Node* NodeTreeModel::getNode() const
 {
-    return m_node.get();
+    return m_rootNode.get();
 }
 
 //==============================================================================
@@ -67,7 +67,7 @@ QModelIndex NodeTreeModel::index(int row, int column,
 
     if ( !parent.isValid() )
     {
-        index = createIndex( row, column, m_node.get() );
+        index = createIndex( row, column, m_rootNode.get() );
     }
     else
     {
@@ -90,7 +90,7 @@ QModelIndex NodeTreeModel::index(int row, int column,
 
 QModelIndex NodeTreeModel::parent(const QModelIndex &index) const
 {
-    if ( !index.isValid() || getPrivateData(index) == m_node.get() )
+    if ( !index.isValid() || getPrivateData(index) == m_rootNode.get() )
         return QModelIndex();
 
     if (getPrivateData(index) == NULL)
@@ -186,6 +186,99 @@ QVariant NodeTreeModel::data(const QModelIndex &index, int role) const
     return d;
 }
 
+QModelIndex NodeTreeModel::index(osg::Node* object)
+{
+	if (object == m_rootNode)
+		return QModelIndex();
+
+	osg::ref_ptr<osg::Group> parent = nullptr;
+	int parentNum = object->getNumParents();
+	if (parentNum)
+	{
+		parent = object->getParent(0);
+		osg::ref_ptr<osg::Group> pp = parent->getParent(0);
+
+		if (parent.valid() && pp.valid())
+			return createIndex(pp->getChildIndex(parent.get()), 0, parent.get());
+	}
+	if (!parent)
+	{
+		return QModelIndex();
+	}
+
+	int pos = parent->getChildIndex(object);
+
+	return createIndex(pos, 0, object);
+}
+
+void NodeTreeModel::UpdateCheckState(osg::Node* entity, const bool isCheck)
+{
+	if (entity)
+	{
+		if (isCheck)
+			entity->setNodeMask(0xffffffff);
+		else
+			entity->setNodeMask(0x0);
+	}
+
+	//! 更新当前实体对应index的check
+	QModelIndex cIndex = index(entity);
+	emit dataChanged(cIndex, cIndex);
+
+	//遍历entity，保证所有的子实体enable属性一致
+	//int count = entity->GetChildrenNumber();
+	//for (int i = 0; i != count; ++i)
+	//{
+	//	UpdateCheckState(entity->GetChild(i), isCheck);
+	//}
+}
+
+bool NodeTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if (index.isValid())
+	{
+		if (role == Qt::EditRole)
+		{
+			if (value.toString().isEmpty())
+				return false;
+
+			osg::Node* entity = NodeFromIndex(index);
+			if (entity)
+			{
+				entity->setName(value.toString().toStdString());
+
+				emit dataChanged(index, index);
+			}
+
+			return true;
+		}
+		else if (role == Qt::CheckStateRole)
+		{
+			osg::Node* entity = NodeFromIndex(index);
+
+			UpdateCheckState(entity, value.toBool());
+
+			//重绘
+			//entity->PrepareDisplayForRefresh();
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+osg::Node* NodeTreeModel::NodeFromIndex(const QModelIndex &index) const
+{
+	if (index.isValid())
+	{
+		return static_cast<osg::Node *>(index.internalPointer());
+	}
+	else
+	{
+		return m_rootNode;
+	}
+}
 //==============================================================================
 
 void NodeTreeModel::setEnableIndex(const QModelIndex &index, bool val)
