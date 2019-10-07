@@ -69,6 +69,7 @@ SET(TARGET_LIBRARIES
 	debug osgText${CMAKE_DEBUG_POSTFIX}		optimized osgText
 	debug osgViewer${CMAKE_DEBUG_POSTFIX}	 optimized osgViewer
     Propertybrowser
+	DCScene
 )
 
 # FIXME: This should work but something with the LINK_WITH_VARIABLES macro is not working

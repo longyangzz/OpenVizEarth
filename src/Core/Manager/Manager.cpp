@@ -148,6 +148,9 @@ void Manager::initDataTree()
 	objTreeView->setObjectName("objTreeView");
 	objTreeView->setMinimumSize(QSize(200, 100));
 
+	//! 选取模式支持
+	objTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
 	//为treeView添加模型
 	m_nodeTreeModel = new NodeTreeModel();
 	objTreeView->setModel(m_nodeTreeModel);
@@ -202,7 +205,10 @@ void Manager::NodeSelected(const QModelIndex &index)
 		//m_propertyWidget->displayProperties( (osg::Node *)index.internalPointer() );
 		//(osg::Node *)index.internalPointer()->getNodeMask() == 0
 		osg::Node* curSelect = (osg::Node *)index.internalPointer();
-		m_nodeTreeModel->setEnableIndex(index, curSelect->getNodeMask() == 0 ? true : false);
+		//m_nodeTreeModel->setEnableIndex(index, curSelect->getNodeMask() == 0 ? true : false);
+		
+		//！ 更新属性
+		m_propertyWidget->displayProperties((osg::Node *)index.internalPointer());
 	}
 }
 
