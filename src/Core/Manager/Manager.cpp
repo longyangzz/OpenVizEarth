@@ -193,6 +193,8 @@ void Manager::initDataTree()
 	dokwProperties->setWidget(wgtProperty);
 	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
 	dokwProperties->setWindowTitle("属性");
+
+	
 }
 
 void Manager::NodeSelected(const QModelIndex &index)
@@ -308,24 +310,16 @@ int Manager::getMask(const QString& nodeName)
 		return 0x00000000;
 }
 
-
+//！绑定根root节点，到管理面板和属性面板
 void Manager::registerDataRoots(osg::Group* root)
 {
 	if (m_nodeTreeModel)
 	{
 		m_nodeTreeModel->setNode(root);
+
+		m_propertyWidget->displayProperties(root);
 	}
-	
-	/*osg::Group* mapRoot = findNodeInNode("Map Root", root)->asGroup();
-  _nodeTree->_overlayNode = static_cast<osgSim::OverlayNode*>(findNodeInNode("Data Overlay", root));
-	for (unsigned i = 0; i < MAX_SUBVIEW; i++)
-	{
-		osg::Node* map = findNodeInNode(QString("Map%1").arg(i).toStdString(), mapRoot);
-		if (map)
-			_nodeTree->_mainMap[i] = dynamic_cast<osgEarth::MapNode*>(map)->getMap();
-		else
-			_nodeTree->_mainMap[i] = NULL;
-	}*/
+
 }
 
 const osgEarth::GeoExtent* Manager::getExtent(const QString& name)
