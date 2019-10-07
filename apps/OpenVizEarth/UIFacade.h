@@ -47,24 +47,27 @@ public:
   void  initAll();
 
 private:
-  void  initView();
+	// 加载语言文件
+	void LoadLanguages();
 
-  void initDCUIVar();
+	void  initView();
 
-  void InitManager();
+	void initDCUIVar();
 
-  void  initDataManagerAndScene();
+	void InitManager();
 
-  void  initPlugins();
+	void  initDataManagerAndScene();
 
-  void  initLog();
+	void  initPlugins();
 
-  void  setupUi();
+	void  initLog();
 
-  void  collectInitInfo();
+	void  setupUi();
 
-  //UI style
-  void initUiStyles();
+	void  collectInitInfo();
+
+	//UI style
+	void initUiStyles();
 
 public slots:
 

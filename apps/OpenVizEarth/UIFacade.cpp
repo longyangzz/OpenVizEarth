@@ -21,8 +21,7 @@ using namespace std;
 #include <QTreeWidgetItem>
 #include <QToolBar>
 #include <QToolButton>
-
-
+#include <QTranslator>
 
 #include <osg/Notify>
 #include <osg/ShapeDrawable>
@@ -98,6 +97,10 @@ protected:
 UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
 	, _dataManager(nullptr)
+	, _pluginManager(nullptr)
+	, _mousePicker(nullptr)
+	
+	
 {
 	// Some global environment settings
 	QCoreApplication::setOrganizationName("WLY");
@@ -109,6 +112,8 @@ UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 
 	osg::DisplaySettings::instance()->setNumOfHttpDatabaseThreadsHint(8);
 	osg::DisplaySettings::instance()->setNumOfDatabaseThreadsHint(2);
+
+	//initAll();
 }
 
 UIFacade::~UIFacade()
@@ -217,6 +222,8 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 void  UIFacade::initAll()
 {
 	collectInitInfo();
+	// 加载语言文件
+	LoadLanguages();
 
 	emit  sendNowInitName(tr("初始化日志文件 log"));
 	initLog();
@@ -244,6 +251,40 @@ void  UIFacade::initAll()
 	emit  sendNowInitName(tr("更新界面样式 UI"));
 	initUiStyles();
 }
+
+//! 加载语言文件
+void UIFacade::LoadLanguages()
+{
+	//语言文件根路径(简体中文)
+	QString strLanguageDir = QDir::toNativeSeparators(QApplication::applicationDirPath())
+		.append("\\Resources\\languages\\zh_cn\\");
+
+	//语言文件路径
+	QDir dir(strLanguageDir);
+
+	//如果路径存在，则加载语言
+	if (dir.exists())
+	{
+		//获取符合语言文件格式的文件
+		QStringList filters = QStringList() << "*.lng";
+		QStringList lstLanguages = dir.entryList(filters);
+
+		//加载所有语言文件
+		for (auto it = lstLanguages.constBegin();
+			it != lstLanguages.constEnd(); ++it)
+		{
+			//创建语言翻译器
+			QTranslator* pTranslator = new QTranslator;
+			//加载语言文件
+			pTranslator->load(strLanguageDir + *it);
+			//记录语言翻译器
+			//m_translators.push_back(pTranslator);
+			//应用程序安装语言翻译器
+			QApplication::installTranslator(pTranslator);
+		}
+	}
+}
+
 
 void UIFacade::initUiStyles()
 {
