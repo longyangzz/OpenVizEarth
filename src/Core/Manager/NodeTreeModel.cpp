@@ -170,6 +170,13 @@ QVariant NodeTreeModel::data(const QModelIndex &index, int role) const
                 description += QString::fromStdString( node->getDescription(i) ) + "\n";
         }
     }
+	else if (role == Qt::EditRole)  //±‡º≠Ω«…´
+	{
+		if (index.column() == 0)
+		{
+			return QString::fromStdString(node->getName());
+		}
+	}
     else if ( role == Qt::DecorationRole && ( index.column( ) == COL_NAME ) ) // icon
     {
         it = m_hashIcon.find( node->className() );
@@ -320,10 +327,14 @@ QVariant NodeTreeModel::headerData(int section, Qt::Orientation orientation,
 
 Qt::ItemFlags NodeTreeModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsUserCheckable |
-           Qt::ItemIsSelectable |
-           Qt::ItemIsEnabled |
-           Qt::ItemIsTristate;
+
+
+	Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+
+	//Õ®”√flags
+	defaultFlags |= (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsTristate);
+
+	return defaultFlags;
 }
 
 //==============================================================================

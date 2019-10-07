@@ -179,6 +179,7 @@ private:
 	//! 节点管理模型视图
 	NodeTreeModel* m_nodeTreeModel;
 	NodePropertyWidget* m_propertyWidget;
+	NodePropertyWidget* m_widgetStats;
 };
 
 #endif

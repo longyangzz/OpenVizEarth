@@ -29,6 +29,8 @@
 Manager::Manager(QObject* parent /*= NULL*/)
 	: QObject()
 	, _countLoadingData(0)
+	, m_widgetStats(nullptr)
+	, m_propertyWidget(nullptr)
 {
 
 }
@@ -120,7 +122,7 @@ void Manager::initDataTree()
 
 	// Init dock
 	
-	//为manager安装treeWidget和属性widget
+	//1为manager安装treeWidget和属性widget
 	QDockWidget* dokwObjects = new QDockWidget(m_mainWindow);
 	dokwObjects->setWindowTitle("对象");
 	dokwObjects->setObjectName(QString::fromUtf8("dokwObjects"));
@@ -166,7 +168,7 @@ void Manager::initDataTree()
 	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwObjects);
 
 
-	//属性widget
+	//22属性widget
 	//安装属性widget
 	QDockWidget* dokwProperties = new QDockWidget(m_mainWindow);
 	dokwProperties->setObjectName(QString::fromUtf8("dokwProperties"));
@@ -193,6 +195,34 @@ void Manager::initDataTree()
 	dokwProperties->setWidget(wgtProperty);
 	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dokwProperties);
 	dokwProperties->setWindowTitle("属性");
+
+	//！ 333安装统计
+	QDockWidget* stateProperties = new QDockWidget(m_mainWindow);
+	stateProperties->setObjectName(QString::fromUtf8("dokwstateProperties"));
+	stateProperties->setMinimumSize(QSize(200, 193));
+	stateProperties->setMaximumSize(QSize(400, 524287));
+	stateProperties->setBaseSize(QSize(4, 0));
+	stateProperties->setFloating(false);
+	stateProperties->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	QWidget* wgtSstateProperty = new QWidget();
+	wgtSstateProperty->setObjectName(QString::fromUtf8("wgtStateProperty"));
+
+	QGridLayout* layoutStateProperty = new QGridLayout(wgtSstateProperty);
+	layoutStateProperty->setSpacing(0);
+	layoutStateProperty->setContentsMargins(0, 0, 0, 0);
+	layoutStateProperty->setObjectName(QString::fromUtf8("layoutStateProperty"));
+
+	m_widgetStats = new NodePropertyWidget(wgtSstateProperty);
+	m_widgetStats->setObjectName(QString::fromUtf8("tblwStateProperties"));
+	m_widgetStats->setMinimumSize(QSize(200, 100));
+	m_widgetStats->setMaximumSize(QSize(400, 16777215));
+
+	layoutStateProperty->addWidget(m_widgetStats, 0, 0, 1, 1);
+	stateProperties->setWidget(wgtSstateProperty);
+	m_mainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), stateProperties);
+	stateProperties->setWindowTitle("统计");
+	
 
 	
 }
@@ -317,7 +347,16 @@ void Manager::registerDataRoots(osg::Group* root)
 	{
 		m_nodeTreeModel->setNode(root);
 
-		m_propertyWidget->displayProperties(root);
+		if (m_propertyWidget)
+		{
+			m_propertyWidget->displayProperties(root);
+		}
+		
+		if (m_widgetStats)
+		{
+			m_widgetStats->displayProperties(root);
+		}
+		
 	}
 
 }
