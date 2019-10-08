@@ -7,45 +7,57 @@ ENDIF()
 SET(LIB_NAME Propertybrowser)
 SET(HEADER_PATH ${OpenVizEarth_SOURCE_DIR}/src/Core/${LIB_NAME})
 
-SET(SOURCES_H
-    ${HEADER_PATH}/qtbuttonpropertybrowser.h
-    ${HEADER_PATH}/qteditorfactory.h
-    ${HEADER_PATH}/qtgroupboxpropertybrowser.h
-    ${HEADER_PATH}/qtpropertybrowser.h
-    ${HEADER_PATH}/qtpropertybrowserutils_p.h
-    ${HEADER_PATH}/qtpropertymanager.h
-    ${HEADER_PATH}/qttreepropertybrowser.h
-    ${HEADER_PATH}/qtvariantproperty.h
-)
 
 #QT5_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} OPTIONS "-f" )
 #qt5_wrap_ui( generated_ui_list ${ui_list} )
 #qt5_add_resources( generated_qrc_list ${qrc_list} )
+FIND_PACKAGE(Qt5LinguistTools)
+file(GLOB ts_list *.ts)
 
-SET(TARGET_H
-    ${HEADER_PATH}/qtbuttonpropertybrowser.h
-    ${HEADER_PATH}/qteditorfactory.h
-    ${HEADER_PATH}/qtgroupboxpropertybrowser.h
-    ${HEADER_PATH}/qtpropertybrowser.h
-    ${HEADER_PATH}/qtpropertybrowserutils_p.h
-    ${HEADER_PATH}/qtpropertymanager.h
-    ${HEADER_PATH}/qttreepropertybrowser.h
-    ${HEADER_PATH}/qtvariantproperty.h
+set(TS_FILES
+    ${OpenVizEarth_SOURCE_DIR}/src/Core/${LIB_NAME}/${LIB_NAME}.ts
 )
+file(GLOB_RECURSE TS_SOURCES "*.cpp" "*.h" "*.ui")
+#add_custom_target(translations)
+foreach(_ts_file ${TS_FILES})
+    # generate a sensible name for this translation file
+    get_filename_component(_ts_name ${_ts_file} NAME_WE)
+    # call lupdate ourselves
+    add_custom_command(
+        OUTPUT "${_ts_file}"
+        DEPENDS ${TS_SOURCES}
+        COMMAND ${Qt5_LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR} -ts ${_ts_file}
+    )
+    # create a target that depends on the generated files
+	add_custom_target(translate_${_ts_name} DEPENDS ${_ts_file})
+    # attach the custom target for this ts file to the parent target
+    #add_dependencies(translations translate_${_ts_name})
+endforeach()
+
+# generate qm files
+QT5_ADD_TRANSLATION(QM_FILES ${TS_FILES})
+message("3333333333333333333333")
+message(${QM_FILES})
+message(${TS_FILES})
+## method 2
+file( GLOB header_list *.h  )
+SET(TARGET_H ${header_list})
 
 
+file( GLOB cpp_list *.cpp *.ts impl/*.cpp impl/*.cxx )
 SET(TARGET_SRC
-    qtbuttonpropertybrowser.cpp
-    qteditorfactory.cpp
-    qtgroupboxpropertybrowser.cpp
-    qtpropertybrowser.cpp
-    qtpropertybrowserutils.cpp
-    qtpropertymanager.cpp
-    qttreepropertybrowser.cpp
-    qtvariantproperty.cpp
+	
+	${cpp_list}
     ${SOURCES_H_MOC}
     ${OpenVIZ_VERSIONINFO_RC}
 )
+
+#FIND_PACKAGE(Qt5LinguistTools)
+#file(GLOB ts_list *.ts)
+# QT5_ADD_TRANSLATION£¨QM_FILES $ {ts_list}£©
+
+#ADD_CUSTOM_TARGET(ts_append COMMAND QT5_CREATE_TRANSLATION(QM_FILES ${CMAKE_SOURCE_DIR}/src/Core/${LIB_NAME}/${ts_list}) )
+
 
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
