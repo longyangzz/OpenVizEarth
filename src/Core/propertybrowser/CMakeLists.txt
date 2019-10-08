@@ -39,12 +39,15 @@ QT5_ADD_TRANSLATION(QM_FILES ${TS_FILES})
 
 ## method 2
 file( GLOB header_list *.h  )
-SET(TARGET_H ${header_list})
+SET(TARGET_H 
+	${header_list}
+	${QM_FILES}
+)
 
 
-file( GLOB cpp_list *.cpp *.ts impl/*.cpp impl/*.cxx )
+file( GLOB cpp_list *.cpp impl/*.cpp impl/*.cxx )
 SET(TARGET_SRC
-	${_ts_file}
+	${TS_FILES}
 	${cpp_list}
     ${SOURCES_H_MOC}
     ${OpenVIZ_VERSIONINFO_RC}

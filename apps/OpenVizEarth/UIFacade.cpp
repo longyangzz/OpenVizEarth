@@ -266,7 +266,7 @@ void UIFacade::LoadLanguages()
 	if (dir.exists())
 	{
 		//获取符合语言文件格式的文件
-		QStringList filters = QStringList() << "*.lng";
+		QStringList filters = QStringList() << "*.lng" << "*.qm";
 		QStringList lstLanguages = dir.entryList(filters);
 
 		//加载所有语言文件
