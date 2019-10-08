@@ -36,9 +36,7 @@ endforeach()
 
 # generate qm files
 QT5_ADD_TRANSLATION(QM_FILES ${TS_FILES})
-message("3333333333333333333333")
-message(${QM_FILES})
-message(${TS_FILES})
+
 ## method 2
 file( GLOB header_list *.h  )
 SET(TARGET_H ${header_list})
