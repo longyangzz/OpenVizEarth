@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>QtBoolEdit</name>
     <message>
@@ -424,12 +424,12 @@
     <message>
         <location filename="qttreepropertybrowser.cpp" line="349"/>
         <source>Property</source>
-        <translation type="unfinished"></translation>
+        <translation>属性</translation>
     </message>
     <message>
         <location filename="qttreepropertybrowser.cpp" line="350"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>值</translation>
     </message>
 </context>
 </TS>
