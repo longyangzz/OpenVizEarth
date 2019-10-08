@@ -26,10 +26,10 @@ foreach(_ts_file ${TS_FILES})
     add_custom_command(
         OUTPUT "${_ts_file}"
         DEPENDS ${TS_SOURCES}
-        COMMAND ${Qt5_LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR} -ts ${_ts_file}
+        COMMAND ${Qt5_LUPDATE_EXECUTABLE} -recursive ${OpenVizEarth_SOURCE_DIR}/src/Core/${LIB_NAME} -ts ${_ts_file}
     )
     # create a target that depends on the generated files
-	add_custom_target(translate_${_ts_name} DEPENDS ${_ts_file})
+	#add_custom_target(translate_${_ts_name} DEPENDS ${_ts_file})
     # attach the custom target for this ts file to the parent target
     #add_dependencies(translations translate_${_ts_name})
 endforeach()
@@ -46,7 +46,7 @@ SET(TARGET_H ${header_list})
 
 file( GLOB cpp_list *.cpp *.ts impl/*.cpp impl/*.cxx )
 SET(TARGET_SRC
-	
+	${_ts_file}
 	${cpp_list}
     ${SOURCES_H_MOC}
     ${OpenVIZ_VERSIONINFO_RC}
