@@ -225,6 +225,8 @@ void  UIFacade::initAll()
 	// 加载语言文件
 	LoadLanguages();
 
+	//！ 初始化控制台
+
 	emit  sendNowInitName(tr("初始化日志文件 log"));
 	initLog();
 

@@ -22,6 +22,8 @@ ENDFOREACH()
 #  selfdefine loader plugins
 #
 ADD_SUBDIRECTORY(OsgIOPluginDemo)
+ADD_SUBDIRECTORY(osgdb_s3c)
+
 
 
 

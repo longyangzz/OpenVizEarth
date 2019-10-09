@@ -18,10 +18,12 @@
 #include "QTreeView"
 #include "QTreeWidgetItem"
 #include "QTreeWidget"
-
+#include "QTextBrowser"
 #include <osgSim/OverlayNode>
 #include <osgEarth/GeoData>
 #include <osgEarth/MapNode>
+
+#include "DC/LogHandler.h"
 
 #include "Manager/NodeTreeModel.h"
 #include "Manager/NodePropertyWidget.h"
@@ -46,12 +48,50 @@ void Manager::reset()
 
 void Manager::InitDockWidget()
 {
+	//！ 初始化控制台
+	initConsole();
 	
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
 	//！ 创建工具箱面板
 	initToolBox();
+}
+
+void Manager::initConsole()
+{
+	//! 建立控制台ui
+	 // create the log handler
+	connect(LogHandler::getInstance(), SIGNAL(newMessage(const QString &)), this, SLOT(printToLogConsole(const QString &)));
+	connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogLogConsole(const QStringList &)));
+	LogHandler::getInstance()->startEmission(true); // start log emission
+
+	QDockWidget* dokConsole = new QDockWidget(m_mainWindow);
+	dokConsole->setObjectName(QString::fromUtf8("dokConsole"));
+	dokConsole->setMinimumSize(QSize(200, 193));
+
+	dokConsole->setBaseSize(QSize(4, 0));
+	dokConsole->setFloating(false);
+
+	QWidget* wgtConsole = new QWidget();
+	wgtConsole->setObjectName(QString::fromUtf8("wgtConsole"));
+
+	QGridLayout* layoutProperty = new QGridLayout(wgtConsole);
+	layoutProperty->setSpacing(0);
+	layoutProperty->setContentsMargins(0, 0, 0, 0);
+	layoutProperty->setObjectName(QString::fromUtf8("layoutProperty"));
+
+	m_textBrowserLog = new QTextBrowser(wgtConsole);
+	m_textBrowserLog->setObjectName(QString::fromUtf8("textBrowserLog"));
+
+	layoutProperty->addWidget(m_textBrowserLog, 0, 0, 1, 1);
+	dokConsole->setWidget(wgtConsole);
+	m_mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dokConsole);
+	dokConsole->setWindowTitle("控制台");
+	// limit log display
+	m_textBrowserLog->document()->setMaximumBlockCount(1000);
+
+	//！ 绑定信号槽链接
 }
 
 //！ 建立成员变量存放所有的菜单action，并初始化

@@ -21,6 +21,7 @@ class QMenu;
 class QAction;
 class QTreeWidgetItem;
 class QTreeView;
+class QTextBrowser;
 QT_END_NAMESPACE
 
 namespace osgSim {
@@ -136,6 +137,7 @@ private:
 	void InitDockWidget();
 	void initDataTree();
 	void initToolBox();
+	void initConsole();
 
 private:
 	// Program structure reference
@@ -180,6 +182,7 @@ private:
 	NodeTreeModel* m_nodeTreeModel;
 	NodePropertyWidget* m_propertyWidget;
 	NodePropertyWidget* m_widgetStats;
+	QTextBrowser* m_textBrowserLog;
 };
 
 #endif
