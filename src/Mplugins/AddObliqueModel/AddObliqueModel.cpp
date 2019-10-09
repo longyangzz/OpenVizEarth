@@ -17,6 +17,13 @@
 #include <osgEarth/ModelLayer>
 #include <osgEarthAnnotation/ModelNode>
 
+#include <osg/BlendFunc>
+#include <osg/Point>
+#include <osg/PointSprite>
+#include <osg/Texture2D>
+
+#include "DC/LogHandler.h"
+
 #include "LoadThread.h"
 
 static const double zOffset = 0.1;
@@ -100,7 +107,7 @@ void AddObliqueModel::onLoadingDone(const QString& nodeName, osg::Node *model, c
   recordNode(model, nodeName);
 }
 
-void  AddObliqueModel::loadObliqueModel(const QString& pathXML)
+void  AddObliqueModel::loadObliqueModelfromXML(const QString& pathXML)
 {
   // Check data validity
   QFile  file(pathXML);
@@ -199,10 +206,57 @@ void  AddObliqueModel::loadObliqueModel(const QString& pathXML)
 
 void  AddObliqueModel::addObliqueModel()
 {
-  QStringList  XMLFileNames = QFileDialog::getOpenFileNames(nullptr, tr("Open File"), " ", tr("XML file(*.xml);;Allfile(*.*)"));
+  QString  fileName = QFileDialog::getOpenFileName(nullptr, tr("Open File"), " ", tr("Model file(*.s3c *.osgb *.xml);;Allfile(*.*)"));
 
-  for (auto path : XMLFileNames)
+  //for (auto path : XMLFileNames)
   {
-    loadObliqueModel(path);
+	  
   }
+  if ((fileName.section(".", 1, 1) == "s3c") || (fileName.section(".", 1, 1) == "osgb"))
+  {
+	  loadObliqueModel(fileName);
+  }
+  else if ((fileName.section(".", 1, 1) == "xml"))
+  {
+	  loadObliqueModelfromXML(fileName);
+  }
+
+  LogHandler::getInstance()->reportInfo(tr("Loading of %1 ...").arg(fileName));
+}
+
+void AddObliqueModel::loadObliqueModel(const QString& fileName)
+{
+	//º”‘ÿs3cƒ£–Õ
+	
+	{
+		osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;
+		_currentAnchor->addChild(pcModel);
+
+		osg::ref_ptr<osg::Node>  pointCloud = osgDB::readNodeFile(fileName.toLocal8Bit().toStdString());
+
+		if (pointCloud.valid())
+		{
+			pcModel->addChild(pointCloud);
+
+			/*osg::StateSet *set = new osg::StateSet();
+
+			set->setMode(GL_BLEND, osg::StateAttribute::ON);
+			osg::BlendFunc *fn = new osg::BlendFunc();
+			fn->setFunction(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::DST_ALPHA);
+			set->setAttributeAndModes(fn, osg::StateAttribute::ON);
+
+			set->setMode(GL_POINT_SMOOTH, osg::StateAttribute::ON);
+
+			set->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+			set->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+			pcModel->setStateSet(set);
+
+			recordNode(pcModel, fileName.split("/").back().section(".", 0, 0));
+
+			pcModel->setUserValue("filepath", fileName.toLocal8Bit().toStdString());*/
+
+		}
+	}
+
 }

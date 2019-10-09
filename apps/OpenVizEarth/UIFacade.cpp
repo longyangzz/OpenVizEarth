@@ -46,6 +46,7 @@ using namespace std;
 #include <gdal_priv.h>
 
 #include "DC/DataType.h"
+#include "DC/LogHandler.h"
 
 
 #include "ONodeManager/NXDockWidget.h"
@@ -402,7 +403,22 @@ void UIFacade::InitManager()
 
 		//! 初始化node管理面板
 		_dataManager->setupUi(this);
+
+		// create the log handler
+		connect(LogHandler::getInstance(), SIGNAL(newMessage(const QString &)), this, SLOT(printToLogConsole(const QString &)));
+		connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogLogConsole(const QStringList &)));
+		LogHandler::getInstance()->startEmission(true); // start log emission
 	}
+}
+
+void UIFacade::printToLogConsole(const QString & mess)
+{
+	//m_textBrowserLog->append(mess);
+}
+
+void UIFacade::printToLogConsole(const QStringList & mess)
+{
+	//m_textBrowserLog->append(mess.join("<br>"));
 }
 
 void  UIFacade::setupUi()

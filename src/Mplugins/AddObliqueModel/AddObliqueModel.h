@@ -25,8 +25,11 @@ protected slots:
 	void addObliqueModel();
 
 protected:
+	void loadObliqueModelfromXML(const QString& pathXML);
+
 	void loadObliqueModel(const QString& pathXML);
-  void onLoadingDone(const QString& nodeName, osg::Node *model, const osgEarth::GeoPoint &geoOrigin);
+
+	 void onLoadingDone(const QString& nodeName, osg::Node *model, const osgEarth::GeoPoint &geoOrigin);
 
 private:
 	QMutex _loadingLock;

@@ -125,6 +125,8 @@ public slots:
 	void updateFeatureFieldList(const QString& name, const QStringList& featureList);
 
 	void NodeSelected(const QModelIndex &index);
+
+	
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);

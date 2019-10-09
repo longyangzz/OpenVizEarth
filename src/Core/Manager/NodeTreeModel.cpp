@@ -3,7 +3,7 @@
 
 // Qt
 #include <QtGui/QIcon>
-
+#include "QTreeView"
 // OSG
 #include <osg/LOD>
 #include <osg/Billboard>
@@ -14,8 +14,9 @@
 
 //==============================================================================
 
-NodeTreeModel::NodeTreeModel(QObject *parent)
-    : QAbstractItemModel(parent)
+NodeTreeModel::NodeTreeModel(QTreeView* treeView)
+    : QAbstractItemModel()
+	, m_treeView(treeView)
 {
     m_hashIcon.insert( "LOD", QIcon(":/treeView/Resources/treeview/lod.png") );
     m_hashIcon.insert( "Switch", QIcon(":/treeView/Resources/treeview/switch.png") );
@@ -29,6 +30,9 @@ NodeTreeModel::NodeTreeModel(QObject *parent)
     m_hashIcon.insert( "Bone", QIcon(":/treeView/Resources/treeview/bone.png") );
     m_hashIcon.insert( "Skeleton", QIcon(":/treeView/Resources/treeview/skeleton.png") );
     m_hashIcon.insert( "Sequence", QIcon(":/treeView/Resources/treeview/sequence.png") );
+
+	m_treeView = (treeView);
+	m_treeView->setModel(this);
 }
 
 //==============================================================================
@@ -390,4 +394,114 @@ QModelIndex NodeTreeModel::searchForName(const QString &name, const QModelIndex 
             return result;
     }
     return QModelIndex();
+}
+
+
+void NodeTreeModel::InsertToModel(osg::Node* childEntity)
+{
+	osg::ref_ptr<osg::Group> parentObj = childEntity->getParent(0);
+
+	//查找插入点索引
+	QModelIndex insertNodeIndex = index(parentObj);
+	int childPos = parentObj->getChildIndex(childEntity);
+
+	//插入行开始
+	beginInsertRows(insertNodeIndex, childPos, childPos);
+
+	//插入行结束
+	endInsertRows();
+	bool autoExpand = true;
+	if (autoExpand)
+	{
+		QModelIndex childIndex = index(childEntity);
+		if (childIndex.isValid())
+			m_treeView->expand(childIndex);
+	}
+	else
+	{
+		m_treeView->expand(insertNodeIndex);
+	}
+}
+
+void  NodeTreeModel::addRecord(osg::Node *node, const QString &name, const QString &parentName, bool hidden)
+{
+	/*QString              nodeName = resolveName(name);
+	osg::BoundingSphere  bs = node->getBound();
+
+	if (!bs.valid())
+	{
+		node->computeBound();
+	}
+
+	node->setName(nodeName.toLocal8Bit().toStdString());
+
+	DataRecord *parent = getParent(parentName);
+	DataRecord *newRecord = new DataRecord(nodeName, node, parent);
+	newRecord->setCheckState(0, (node->getNodeMask() & SHOW_IN_ALL_WINDOW) == 0 ? Qt::Unchecked : Qt::Checked);
+	newRecord->setHidden(hidden);
+	_dataRecords.insert(nodeName, newRecord);
+
+	parent->addChild(newRecord);*/
+
+	//! 获取A的classname，从scene一级子类中找到该type，然后添加A
+	//DcGp::Container childs = scene->GetChildren();
+
+	//for (int i = 0; i != childs.size(); ++i)
+	//{
+	//	auto aa = childs[i]->GetType();
+	//	auto bb = A->GetClassname();
+	//	if (childs[i]->GetType() == A->GetClassname())
+	//	{
+	//		auto cc = A->metaObject()->superClass();
+	//		childs[i]->AddChild(A);
+	//		break;
+	//	}
+	//}
+	//m_rootNode->
+
+	//！ 在这里报错，则说明创建的实体对象没有设置类型值 或者A实体没有重载GetClassName函数
+	InsertToModel(node);
+}
+
+void  NodeTreeModel::removeRecord(const QString &name)
+{
+	//auto  recordItr = _dataRecords.find(name);
+
+	//if (recordItr == _dataRecords.end())
+	//{
+	//	return;
+	//}
+
+	//DataRecord *record = *recordItr;
+
+	//if (record == _rootTreeItem)
+	//{
+	//	return;
+	//}
+
+	//removeRecord(record);
+
+	//// Remove from parent
+	//DataRecord *parent = record->parent();
+	//parent->removeChild(record);
+
+	//if (parent->childCount() == 0)
+	//{
+	//	removeRecord(parent->text(0));
+	//}
+}
+
+void  NodeTreeModel::addRecord(osgEarth::Layer *layer, const QString &name, const QString &parentName, osgEarth::GeoExtent *extent, bool hidden)
+{
+	/*QString  nodeName = resolveName(name);
+
+	layer->setName(nodeName.toLocal8Bit().toStdString());
+
+	DataRecord *parent = getParent(parentName);
+	DataRecord *newRecord = new DataRecord(nodeName, layer, parent, extent);
+	newRecord->setCheckState(0, layer->getEnabled() ? Qt::Checked : Qt::Unchecked);
+	newRecord->setHidden(hidden);
+	_dataRecords.insert(nodeName, newRecord);
+
+	parent->addChild(newRecord);*/
 }

@@ -18,6 +18,23 @@ class Node;
 class Object;
 }
 
+namespace osgSim {
+	class Group;
+	class OverlayNode;
+}
+
+namespace osgEarth {
+	class Layer;
+	class Map;
+	class Layer;
+}
+
+namespace osgEarth {
+	class GeoExtent;
+	class Layer;
+}
+
+class QTreeView;
 //  Class Declaration
 
 class MANAGER_EXPORT NodeTreeModel :
@@ -35,7 +52,7 @@ public:
         NB_COL
     };
 
-    NodeTreeModel(QObject *parent = 0);
+    NodeTreeModel(QTreeView *parent = 0);
     virtual ~NodeTreeModel();
 
     void                setNode(osg::Node *node);
@@ -71,6 +88,14 @@ public:
 
 	//! 更新checkState
 	void UpdateCheckState(osg::Node* entity, const bool isCheck);
+
+	//! 节点管理相关的接口
+	void addRecord(osg::Node* node, const QString& name, const QString& parentName, bool hidden = false);
+	void addRecord(osgEarth::Layer* layer, const QString& name, const QString& parentName, osgEarth::GeoExtent* extent = NULL, bool hidden = false);
+	void removeRecord(const QString& name);
+
+	//! 根据子实体对象(意味着这个传入的实体，必须有父对象)，插入到model中
+	void InsertToModel(osg::Node* childEntity);
 protected:
 
     inline osg::Node* getPrivateData(const QModelIndex &index) const { return reinterpret_cast<osg::Node*>( index.internalPointer() ); }
@@ -79,6 +104,9 @@ private:
 
     osg::ref_ptr<osg::Node> m_rootNode;
     QHash<QString, QIcon> m_hashIcon;
+
+	//视图
+	QTreeView* m_treeView;
 };
 
 #endif // _OSGTREEMODEL_H_

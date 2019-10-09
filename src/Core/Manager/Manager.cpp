@@ -61,10 +61,6 @@ void Manager::InitDockWidget()
 void Manager::initConsole()
 {
 	//! 建立控制台ui
-	 // create the log handler
-	connect(LogHandler::getInstance(), SIGNAL(newMessage(const QString &)), this, SLOT(printToLogConsole(const QString &)));
-	connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogLogConsole(const QStringList &)));
-	LogHandler::getInstance()->startEmission(true); // start log emission
 
 	QDockWidget* dokConsole = new QDockWidget(m_mainWindow);
 	dokConsole->setObjectName(QString::fromUtf8("dokConsole"));
@@ -194,14 +190,23 @@ void Manager::initDataTree()
 	objTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 	//为treeView添加模型
-	m_nodeTreeModel = new NodeTreeModel();
-	objTreeView->setModel(m_nodeTreeModel);
+	m_nodeTreeModel = new NodeTreeModel(objTreeView);
 
 	//! 添加测试数据，测试模型视图结构对节点的展示
 	//m_nodeTreeModel->setNode();
 
 	//信号槽
+	connect(m_nodeTreeModel, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(ChangeSelection(const QItemSelection&, const QItemSelection&)));
+
+	//! 右键菜单信号槽
 	connect(objTreeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(NodeSelected(const QModelIndex &)));
+	connect(objTreeView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showDataTreeContextMenu(const QPoint&)));
+
+	
+	//connect(_nodeTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), _nodeTree, SLOT(switchDataSlot(QTreeWidgetItem*, int)));
+	//connect(_nodeTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(doubleClickTreeSlot(QTreeWidgetItem*, int)));
+
+
 
 	layoutObject->addWidget(objTreeView, 0, 0, 1, 1);
 	dokwObjects->setWidget(wgtContext);
@@ -334,7 +339,8 @@ void Manager::ChangeSelection(const QItemSelection & selected, const QItemSelect
 
 void Manager::recordData(osg::Node* node, const QString& name, const QString& parent, bool hidden)
 {
-	//_nodeTree->addRecord(node, name, parent, hidden);
+	m_nodeTreeModel->addRecord(node, name, parent, hidden);
+	
 }
 
 void Manager::recordData(osgEarth::Layer* layer, const QString& name, const QString& parent, osgEarth::GeoExtent* extent, bool hidden)

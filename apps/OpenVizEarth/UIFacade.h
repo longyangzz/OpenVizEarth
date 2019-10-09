@@ -75,6 +75,9 @@ public slots:
   void  resetCamera();
 
   void HandlingEntitiesChanged(const QVector<osg::Node*>& nodes);
+
+  void printToLogConsole(const QString & mess);
+  void printToLogConsole(const QStringList & mess);
 signals:
 	// For splash screen
   void  sendTotalInitSteps(int);
