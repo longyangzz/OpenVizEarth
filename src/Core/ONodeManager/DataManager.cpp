@@ -59,7 +59,8 @@ void DataManager::reset()
 
 void DataManager::InitDockWidget()
 {
-	
+	initConsole();
+
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
