@@ -406,19 +406,19 @@ void UIFacade::InitManager()
 
 		// create the log handler
 		connect(LogHandler::getInstance(), SIGNAL(newMessage(const QString &)), this, SLOT(printToLogConsole(const QString &)));
-		connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogLogConsole(const QStringList &)));
+		connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogConsole(const QStringList &)));
 		LogHandler::getInstance()->startEmission(true); // start log emission
 	}
 }
 
 void UIFacade::printToLogConsole(const QString & mess)
 {
-	//m_textBrowserLog->append(mess);
+	_dataManager->printToLogConsole(mess);
 }
 
 void UIFacade::printToLogConsole(const QStringList & mess)
 {
-	//m_textBrowserLog->append(mess.join("<br>"));
+	_dataManager->printToLogConsole(mess.join("<br>"));
 }
 
 void  UIFacade::setupUi()

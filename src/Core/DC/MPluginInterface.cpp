@@ -58,22 +58,22 @@ void  MPluginInterface::init()
 	_pluginRoot = new osg::Group;
 	_pluginRoot->setName(_pluginName.toLocal8Bit().toStdString());
 
-	if (_pluginCategory == "Data")
-  {
-    _dataRoot->addChild(_pluginRoot);
-  }
-  else
-  {
-    _drawRoot->addChild(_pluginRoot);
-  }
+	if (_pluginCategory == tr("添加数据") )
+	{
+		_dataRoot->addChild(_pluginRoot);
+	}
+	else
+	{
+		_drawRoot->addChild(_pluginRoot);
+	}
 
 	_style = getDefaultStyle();
 
-  _currentWorldPos = { 0, 0, 0 };
-  updateAnchorPoint();
+	_currentWorldPos = { 0, 0, 0 };
+	updateAnchorPoint();
 
-  auto  clickSetting = _settingsManager->getOrAddSetting("Plugin Interface/Draw click limit", 0.5);
-  clickLimit = clickSetting.toDouble();
+	auto  clickSetting = _settingsManager->getOrAddSetting("Plugin Interface/Draw click limit", 0.5);
+	clickLimit = clickSetting.toDouble();
 }
 
 void  MPluginInterface::loadContextMenu(QMenu *contextMenu, QTreeWidgetItem *selectedItem)

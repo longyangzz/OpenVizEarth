@@ -58,6 +58,16 @@ void Manager::InitDockWidget()
 	initToolBox();
 }
 
+void Manager::printToLogConsole(const QString & mess)
+{
+	m_textBrowserLog->append(mess);
+}
+
+void Manager::printToLogConsole(const QStringList & mess)
+{
+	m_textBrowserLog->append(mess.join("<br>"));
+}
+
 void Manager::initConsole()
 {
 	//! 建立控制台ui

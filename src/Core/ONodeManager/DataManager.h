@@ -19,6 +19,7 @@ class QMenu;
 class QAction;
 class QTreeWidgetItem;
 class QTreeView;
+class QTextBrowser;
 QT_END_NAMESPACE
 
 namespace osgSim {
@@ -87,6 +88,9 @@ public:
 
 	
 	void setupUi(QMainWindow* mw);
+
+	void printToLogConsole(const QString & mess);
+	void printToLogConsole(const QStringList & mess);
 public slots:
 	// Data management
 	void newProject();
@@ -137,6 +141,7 @@ private:
 	void InitDockWidget();
 	void initDataTree();
 	void initToolBox();
+	void initConsole();
 private:
 	// Program structure reference
 	SettingsManager* _settingsManager;
@@ -177,6 +182,8 @@ private:
 	QTreeView* m_toolBoxTreeView;
 	//³¡¾°model
 	ToolBoxTreeModel* m_pToolBoxTreeModel;
+
+	QTextBrowser* m_textBrowserLog;
 
 };
 

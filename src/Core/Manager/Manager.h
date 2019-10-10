@@ -90,6 +90,9 @@ public:
 
 	
 	void setupUi(QMainWindow* mw);
+
+	void printToLogConsole(const QString & mess);
+	void printToLogConsole(const QStringList & mess);
 public slots:
 	// Data management
 	void newProject();
