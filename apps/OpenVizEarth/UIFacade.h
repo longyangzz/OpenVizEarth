@@ -9,9 +9,7 @@
 #include <osg/Node>
 #include <osg/BoundingSphere>
 
-class SettingsManager;
-class MPluginManager;
-class MouseEventHandler;
+
 
 namespace osg
 {
@@ -87,9 +85,7 @@ signals:
 private:
   std::ofstream *_log;
 
-  UserDataManager     *_dataManager;
-  MPluginManager   *_pluginManager;
-  osg::ref_ptr<MouseEventHandler>     _mousePicker;
+
 
 	// Root for all
   osg::ref_ptr<osg::Group>                      _root;

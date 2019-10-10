@@ -33,7 +33,7 @@
 //DC
 #include "DC/ThreadPool.h"
 #include "DC/SettingsManager.h"
-
+#include "DC/LogHandler.h"
 //DCDB
 #include "DCDb/ObjectLoader.h"
 #include <osgDB/ReadFile>
@@ -68,6 +68,11 @@
 #include "ONodeManager/NXDockWidgetTabBar.h"
 #include "ONodeManager/NXDockWidgetTabButton.h"
 
+#include <DC/MouseEventHandler.h>
+#include <DC/SettingsManager.h>
+#include <DC/MapController.h>
+#include <DC/MPluginManager.h>
+
 const int maxRecentlyOpenedFileNum = 10;
 
 MainWindowAction::MainWindowAction(QWidget *parent , Qt::WindowFlags flags )
@@ -79,6 +84,9 @@ MainWindowAction::MainWindowAction(QWidget *parent , Qt::WindowFlags flags )
 	, m_bgLoader(nullptr)
 	, m_pCurrentNewViewer(nullptr)
 	, m_pProgressBar(nullptr)
+	, _dataManager(nullptr)
+	, _pluginManager(nullptr)
+	, _mousePicker(nullptr)
 {
 	
 }
@@ -188,9 +196,11 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 
 	if (!node)
 	{
+		LogHandler::getInstance()->reportInfo(tr("加载文件失败"));
 		return;
 	}
 
+	osg::Node* rootNode;
 	//! 在当前窗口中添加一个实体
 	if (type == "LOAD")
 	{
@@ -198,12 +208,17 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 		OSGViewWidget* pNewViewer = CreateNewSceneViewer();
 		if (pNewViewer)
 		{
-			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
+			rootNode = pNewViewer->getMainView()->getSceneData();
+
 			rootNode->asGroup()->addChild(node);
 			//! 更新场景数据
 			//pNewViewer->getModel()->setData(node);
 
 			pNewViewer->getMainView()->getCameraManipulator()->home(0);
+
+			//! 加载到管理面板
+			_dataManager->getNode()->asGroup()->addChild(rootNode->asGroup());
+			
 		}
 	}
 	else if (type == "ADD")
@@ -211,16 +226,14 @@ void MainWindowAction::NewLoadedFile(osg::Node *node, QString type)
 		OSGViewWidget* pNewViewer = CurrentSceneView();
 		if (pNewViewer)
 		{
-			osg::Node* rootNode = pNewViewer->getMainView()->getSceneData();
+			rootNode = pNewViewer->getMainView()->getSceneData();
 			rootNode->asGroup()->addChild(node);
 			//! 更新场景数据
 			//pNewViewer->getModel()->setData(node);
 			pNewViewer->getMainView()->getCameraManipulator()->home(0);
-			//pNewViewer->resetHome();
+		
 		}
 	}
-
-
 
 
 	//! 更新NodeTreeModel数据,管理的数据结构是 osg::node

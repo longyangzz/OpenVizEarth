@@ -123,6 +123,8 @@ public slots:
 
 	//! modelSelet发生变化
 	void ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected);
+
+	osg::Node*          getNode() { return nullptr; }
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);

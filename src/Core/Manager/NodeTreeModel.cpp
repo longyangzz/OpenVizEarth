@@ -105,6 +105,11 @@ QModelIndex NodeTreeModel::parent(const QModelIndex &index) const
     if (node.valid() && node->getNumParents() > 0)
     {
         osg::ref_ptr<osg::Group> parent = node->getParent(0);
+
+		if (parent->getNumParents() == 0)
+		{
+			return QModelIndex();
+		}
         osg::ref_ptr<osg::Group> pp = parent->getParent(0);
 
         if ( parent.valid() && pp.valid() )
@@ -207,6 +212,11 @@ QModelIndex NodeTreeModel::index(osg::Node* object)
 	if (parentNum)
 	{
 		parent = object->getParent(0);
+
+		if (parent->getNumParents() == 0)
+		{
+			return QModelIndex();
+		}
 		osg::ref_ptr<osg::Group> pp = parent->getParent(0);
 
 		if (parent.valid() && pp.valid())

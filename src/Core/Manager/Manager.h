@@ -93,6 +93,8 @@ public:
 
 	void printToLogConsole(const QString & mess);
 	void printToLogConsole(const QStringList & mess);
+
+	osg::Node*          getNode();
 public slots:
 	// Data management
 	void newProject();

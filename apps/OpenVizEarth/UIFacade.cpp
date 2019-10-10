@@ -97,11 +97,6 @@ protected:
 
 UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 	MainWindow(parent, flags)
-	, _dataManager(nullptr)
-	, _pluginManager(nullptr)
-	, _mousePicker(nullptr)
-	
-	
 {
 	// Some global environment settings
 	QCoreApplication::setOrganizationName("WLY");

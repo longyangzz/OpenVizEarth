@@ -396,6 +396,11 @@ int Manager::getMask(const QString& nodeName)
 		return 0x00000000;
 }
 
+osg::Node* Manager::getNode()
+{
+	return m_nodeTreeModel->getNode();
+}
+
 //！绑定根root节点，到管理面板和属性面板
 void Manager::registerDataRoots(osg::Group* root)
 {
