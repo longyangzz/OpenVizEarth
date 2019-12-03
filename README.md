@@ -50,7 +50,7 @@ ssgqt: osgQt-3.5.7
    View中的场景树
    ![主结构](./screenshot/View中的场景树.png)
 
-2. UIFacade 界面初始化
+2. UIFacade 界面初始化 
 
    ![界面初始化](./screenshot/UIFacade.png)
 
