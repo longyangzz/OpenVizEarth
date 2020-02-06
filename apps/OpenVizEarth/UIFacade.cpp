@@ -42,7 +42,7 @@ using namespace std;
 #include <osgEarthUtil/AutoClipPlaneHandler>
 #include <osgEarthUtil/LogarithmicDepthBuffer>
 #include <osgEarthUtil/ExampleResources>
-
+#include <osgEarth/ViewPoint>
 #include <gdal_priv.h>
 
 #include "DC/DataType.h"
@@ -556,6 +556,27 @@ void  UIFacade::initDataManagerAndScene()
 	_dataOverlay->setOverlaySubgraph(_overlaySubgraph);
 	_dataOverlay->addChild(_dataRoot);
 
+	//！ 坐标转换后添加个osg模型，添加到_drawRoot中
+	const osgEarth::SpatialReference* geoSRS = _mapNode[0]->getMapSRS()->getGeographicSRS();
+
+	//添加模型
+	{
+		osg::Node* model = osgDB::readNodeFile("H:\\osg\\OpenSceneGraph-Data-3.4.0\\OpenSceneGraph-Data\\cow.osg");
+		//osg中光照只会对有法线的模型起作用，而模型经过缩放后法线是不会变得，
+		//所以需要手动设置属性，让法线随着模型大小变化而变化。GL_NORMALIZE 或 GL_RESCALE_NORMAL
+		model->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
+
+		osg::Matrix Lmatrix;
+		geoSRS->getEllipsoid()->computeLocalToWorldTransformFromLatLongHeight(osg::DegreesToRadians(40.0), osg::DegreesToRadians(116.0), 100000.0, Lmatrix);
+		//放大一些，方便看到
+		Lmatrix.preMult(osg::Matrix::scale(osg::Vec3(10000, 10000, 10000)));
+
+		osg::MatrixTransform* mt = new osg::MatrixTransform;
+		mt->setMatrix(Lmatrix);
+		mt->addChild(model);
+		_drawRoot->addChild(mt);
+	}
+
 	_root->addChild(_dataOverlay);
 	_root->addChild(_drawRoot);
 	_root->addChild(_mapRoot);
@@ -588,6 +609,8 @@ void  UIFacade::resetCamera()
 		else
 		{
 			manipulator->home(0);
+			//视点定位北京地区
+			manipulator->setViewpoint(osgEarth::Viewpoint("", 116, 40, 0.0, -2.50, -90.0, 1.5e6));
 		}
 
 		auto  settings = manipulator->getSettings();
@@ -627,6 +650,8 @@ void  UIFacade::resetCamera()
 		}
 
 		manipulator->fitViewOnNode(_mapNode[0]);
+		//视点定位北京地区
+		//manipulator->setViewpoint(osgEarth::ViewPoint("", 116, 40, 0.0, -2.50, -90.0, 1.5e6));
 	}
 }
 
