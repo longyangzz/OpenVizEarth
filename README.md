@@ -64,6 +64,13 @@ ssgqt: osgQt-3.5.7
 
 
 
+## 使用说明
+
+1. 在DataType.h中使用typedef决定使用哪个管理面板类;
+2. 
+
+
+
 
 ## 使用osgearth结合qt制作demo工程
 
