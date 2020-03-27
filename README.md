@@ -9,8 +9,8 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
 转存的别人编译的
 
-链接：https://pan.baidu.com/s/14rN48cyeb1Di31iNdu_Fxg 
-提取码：kq9p 
+链接：https://pan.baidu.com/s/19pZiIGzDLeijmq5pJfu7Iw 
+提取码：pytl 
 
 
 
