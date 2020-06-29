@@ -157,6 +157,7 @@ private:
 	QAction* hideAllChildrenAction;
 	QAction* saveNodeAction;
 	QAction* deleteNodeAction;
+	QAction* locateNodeAction;
 	//QAction* rotateModelAction;
 	//QAction* moveModelAction;
 	//QAction* showMetatDataAction;

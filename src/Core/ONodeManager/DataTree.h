@@ -47,6 +47,8 @@ public:
 	osgEarth::Layer* getLayer(const QString& name);
 
 public slots:
+
+	void LocateNodeSlot();
 	void deleteNodeSlot();
 	void saveNodeSlot();
 	void switchDataSlot(QTreeWidgetItem* item, int column);

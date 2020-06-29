@@ -27,5 +27,5 @@ typedef DC::SceneView OSGViewWidget;
 //typedef OsgQWidget OSGViewWidget;
 
 //-------------------确定项目使用的节点管理类manager-------------------------------
-typedef Manager UserDataManager;
-//typedef DataManager UserDataManager;
+//typedef Manager UserDataManager;
+typedef DataManager UserDataManager;

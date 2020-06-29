@@ -110,6 +110,12 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	deleteNodeAction->setText(tr("Delete"));
 	deleteNodeAction->setToolTip(tr("Delete node"));
 
+	locateNodeAction = new QAction(mainWindow);
+	locateNodeAction->setObjectName(QStringLiteral("locateNodeAction"));
+	locateNodeAction->setText(tr("Locate"));
+	locateNodeAction->setToolTip(tr("Locate node"));
+	
+
 	//showNodeLabelAction = new QAction(mainWindow);
 	//showNodeLabelAction->setObjectName(QStringLiteral("showNodeLabelAction"));
 	//showNodeLabelAction->setText(tr("Show Labels"));
@@ -146,6 +152,8 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	//connect(rotateModelAction, SIGNAL(triggered(bool)), this, SLOT(editModelNodeSlot_spin(bool)));
 	//connect(showNodeLabelAction, SIGNAL(triggered(bool)), this, SLOT(showLayerLabelSlot(bool)));
 
+	
+	connect(locateNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(LocateNodeSlot()));
 	connect(deleteNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(deleteNodeSlot()));
 	connect(saveNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(saveNodeSlot()));
 
@@ -622,6 +630,8 @@ void DataManager::showDataTreeContextMenu(const QPoint &pos)
 	//}
 
 	_treeWidgetMenu->addSeparator();
+	
+	_treeWidgetMenu->addAction(locateNodeAction);
 	_treeWidgetMenu->addAction(deleteNodeAction);
 	_treeWidgetMenu->addAction(saveNodeAction);
 

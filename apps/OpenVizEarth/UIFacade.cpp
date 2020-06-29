@@ -158,6 +158,7 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 			if (!entities.isEmpty())
 			{
 				manipulator->home(0);
+				manipulator->setViewpoint(osgEarth::Viewpoint("Home", 101.870, 23.093, 1000, 30.0, -60, 45000), 3);
 			}
 			else
 			{
@@ -500,7 +501,6 @@ void  UIFacade::initDataManagerAndScene()
 	_dataRoot->setName("Data Root");
 
 	// Init osgEarth node using the predefined .earth file
-	qDebug() << "111111111111111";
 	for (int i = 0; i < MAX_SUBVIEW; i++)
 	{
 		QString  mode = m_SettingsManager->getOrAddSetting("Base mode", "geocentric").toString();
@@ -560,22 +560,22 @@ void  UIFacade::initDataManagerAndScene()
 	const osgEarth::SpatialReference* geoSRS = _mapNode[0]->getMapSRS()->getGeographicSRS();
 
 	//添加模型
-	{
-		osg::Node* model = osgDB::readNodeFile("H:\\osg\\OpenSceneGraph-Data-3.4.0\\OpenSceneGraph-Data\\cow.osg");
-		//osg中光照只会对有法线的模型起作用，而模型经过缩放后法线是不会变得，
-		//所以需要手动设置属性，让法线随着模型大小变化而变化。GL_NORMALIZE 或 GL_RESCALE_NORMAL
-		model->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
+	//{
+	//	osg::Node* model = osgDB::readNodeFile("H:\\osg\\OpenSceneGraph-Data-3.4.0\\OpenSceneGraph-Data\\cow.osg");
+	//	//osg中光照只会对有法线的模型起作用，而模型经过缩放后法线是不会变得，
+	//	//所以需要手动设置属性，让法线随着模型大小变化而变化。GL_NORMALIZE 或 GL_RESCALE_NORMAL
+	//	model->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
 
-		osg::Matrix Lmatrix;
-		geoSRS->getEllipsoid()->computeLocalToWorldTransformFromLatLongHeight(osg::DegreesToRadians(40.0), osg::DegreesToRadians(116.0), 100000.0, Lmatrix);
-		//放大一些，方便看到
-		Lmatrix.preMult(osg::Matrix::scale(osg::Vec3(10000, 10000, 10000)));
+	//	osg::Matrix Lmatrix;
+	//	geoSRS->getEllipsoid()->computeLocalToWorldTransformFromLatLongHeight(osg::DegreesToRadians(40.0), osg::DegreesToRadians(116.0), 100000.0, Lmatrix);
+	//	//放大一些，方便看到
+	//	Lmatrix.preMult(osg::Matrix::scale(osg::Vec3(10000, 10000, 10000)));
 
-		osg::MatrixTransform* mt = new osg::MatrixTransform;
-		mt->setMatrix(Lmatrix);
-		mt->addChild(model);
-		_drawRoot->addChild(mt);
-	}
+	//	osg::MatrixTransform* mt = new osg::MatrixTransform;
+	//	mt->setMatrix(Lmatrix);
+	//	mt->addChild(model);
+	//	_drawRoot->addChild(mt);
+	//}
 
 	_root->addChild(_dataOverlay);
 	_root->addChild(_drawRoot);
