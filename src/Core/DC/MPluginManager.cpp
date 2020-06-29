@@ -51,11 +51,11 @@ void  MPluginManager::registerPlugin(MPluginInterface *plugin)
 	connect(plugin, SIGNAL(recordData(osgEarth::Layer*, QString, QString, osgEarth::GeoExtent*, bool)),
 		_dataManager, SLOT(recordData(osgEarth::Layer*, QString, QString, osgEarth::GeoExtent*, bool)));
 
-	connect(plugin, &MPluginInterface::removeData, _dataManager, &DataManager::removeData);
-  connect(plugin, &MPluginInterface::switchData, _dataManager, &DataManager::switchData);
+	connect(plugin, SIGNAL(removeData(const QString&)), _dataManager,SLOT(removeData(const QString& )) );
+	connect(plugin, SIGNAL(switchData(const QString&, bool)), _dataManager, SLOT(switchData(const QString& , bool )));
 
-	connect(plugin, &MPluginInterface::loadingProgress, _dataManager, &DataManager::loadingProgress);
-	connect(plugin, &MPluginInterface::loadingDone, _dataManager, &DataManager::loadingDone);
+	connect(plugin, SIGNAL(loadingProgress(int)), _dataManager, SIGNAL(loadingProgress(int )) );
+	connect(plugin, SIGNAL(loadingDone()), _dataManager, SIGNAL(loadingDone()) );
 
 	//! 为插件类创建一个图层容器节点
 	connect(plugin, SIGNAL(addLayersNode(QString)),

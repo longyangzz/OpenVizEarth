@@ -47,6 +47,8 @@ public:
 	osgEarth::Layer* getLayer(const QString& name);
 
 public slots:
+
+	void LocateNodeSlot();
 	void deleteNodeSlot();
 	void saveNodeSlot();
 	void switchDataSlot(QTreeWidgetItem* item, int column);
@@ -82,7 +84,7 @@ private:
 	osgEarth::Map* _mainMap[MAX_SUBVIEW];
     osgSim::OverlayNode* _overlayNode;
 
-	friend UserDataManager;
+	friend DataManager;
 };
 
 #endif // DATATREE_H

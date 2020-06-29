@@ -1,0 +1,222 @@
+QWidget { 
+ background-color: white;
+ /*color: #006ed2;*/
+}
+
+
+QToolTip {
+ border: 1px solid #008ee0;
+ /*border-radius: 10px; */
+ background-color: white;
+ color: #008ee0; 
+}
+
+QTextEdit, QLineEdit {
+ color: black;
+ background-color: white;
+ border: 1px solid #008ee0;
+ /*border-radius: 12px;*/
+ /*padding: 4px;*/
+}
+
+QComboBox {
+ /*color: #006ed2;*/
+ border: 1px solid #008ee0;
+ /*border-radius: 12px;*/
+ padding: 4px;
+}
+ 
+QComboBox::drop-down {
+ /*color: #008ee0;*/
+ background-color: transparent;
+ padding: 0px;
+}
+ 
+QComboBox::down-arrow {
+ image: url(:/arrow.png);
+ subcontrol-origin: margin;
+ subcontrol-position: right;
+ margin-right: 4px;
+ height: 15px;
+ width: 15px;
+ /*repeat: no-repeat;*/
+}
+ 
+QListView {
+ /*color: #006ed2;*/
+ border: 1px solid #008ee0;
+ /*border-radius: 10px;*/
+ padding: 4px;
+}
+
+QMenu {
+	border: 1px solid #008ee0;
+}
+
+QMenu::selected {
+ color: white;
+ background-color: #008ee0;   
+} 
+
+QMenu::separator {
+ background-color: #008ee0;
+ height: 1px;
+ margin: 4px;
+}
+ 
+QMainWindow::separator {
+ background-color: #008ee0;
+ height: 1px;
+ margin: 4px;
+}
+ 
+QScrollBar:horizontal {
+ border: 1px solid #008ee0;
+ background-color: white;
+ height: 15px;
+ margin: 0px 15px 0px 15px;
+}
+
+QScrollBar::handle:horizontal {
+ background-color: #008ee0;
+ min-width: 20px;
+}
+
+QScrollBar::add-line:horizontal {
+ border: 1px solid #008ee0;
+ background-color: transparent;
+ image: url(:/rightarrow.png);
+ width: 15px;
+ /*border-top-left-radius: 1px;
+ border-bottom-left-radius: 1px;
+ border-top-right-radius: 6px;
+ border-bottom-right-radius: 6px;*/
+ subcontrol-position: right;
+ subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+ border: 1px solid #008ee0;
+ image: url(:/leftarrow.png);
+ background-color: transparent;
+ width: 15px;
+ /*border-top-left-radius: 6px;
+ border-bottom-left-radius: 6px;
+ border-top-right-radius: 1px;
+ border-bottom-right-radius: 1px;*/
+ subcontrol-position: left;
+ subcontrol-origin: margin;
+}
+ 
+QScrollBar:vertical {
+ border: 1px solid #008ee0;
+ background-color: white;
+ width: 15px;
+ margin: 15px 0px 15px 0px;
+}
+
+QScrollBar::handle:vertical {
+ background-color: #008ee0;
+ min-height: 20px;
+}
+
+QScrollBar::add-line:vertical {
+ border: 1px solid #008ee0;
+ background-color: transparent;
+ image: url(:/bottomarrow.png);
+ height: 15px;
+ /*border-top-left-radius: 1px;
+ border-bottom-left-radius: 6px;
+ border-top-right-radius: 1px;
+ border-bottom-right-radius: 6px;*/
+ subcontrol-position: bottom;
+ subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+ border: 1px solid #008ee0;
+ image: url(:/toparrow.png);
+ background-color: transparent;
+ height: 15px;
+ /*border-top-left-radius: 6px;
+ border-bottom-left-radius: 1px;
+ border-top-right-radius: 6px;
+ border-bottom-right-radius: 1px;*/
+ subcontrol-position: top;
+ subcontrol-origin: margin;
+}
+ 
+QDialog {
+ background-color: white;
+ color: black;
+} 
+ 
+QPushButton { 
+ background-color: #008ee0;
+ color: white;
+ padding: 4px;
+ padding-left: 12px;
+ padding-right: 12px;
+ border-radius: 2px;
+}
+
+QPushButton:pressed {
+ background-color: white;
+ color: #008ee0;
+}
+
+QPushButton:disabled {
+ background-color: gray;
+ color: white;
+}
+
+QPushButton:flat {
+ border: none; /* no border for a flat push button */
+}
+ 
+QMenuBar {
+ background-color: #008ee0;
+ color: white;
+ spacing: 10 px
+}
+ 
+QMenuBar::item {
+ background-color: #008ee0;
+ color: white;
+}
+
+QMenuBar::item::selected {
+ background-color: white;
+ color: black;
+}
+ 
+QToolButton { 
+ alignment:left;
+ background-color: transparent;
+ height: 30%;
+ width: 30%;
+ border: 0px solid white;
+}
+  
+QToolBar {
+ background-image: url(:/Qss/Resources/qss/toolbar.png);
+ background-attachment: fixed;
+ spacing: 5px; /* spacing between items in the tool bar */ 
+ border: 0px;
+ alignment: right;
+ icon-size: 150px;
+}
+
+QToolBar::handle {
+ background-color: transparent;
+}
+ 
+QWidget#renderToolBarSpacer {
+ min-width: 60px;
+ background-color: transparent;
+}
+
+QWidget#overlayToolBarSpacer {
+ min-width: 60px;
+ background-color: transparent;
+}

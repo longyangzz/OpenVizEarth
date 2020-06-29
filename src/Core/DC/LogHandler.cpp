@@ -48,7 +48,7 @@ LogHandler::LogHandler(  ) :
     m_timer(NULL),
     m_saveToLog(false)
 {
-    loadSettings();
+    //loadSettings();
     m_timer = new QTimer(this);
     m_timer->setInterval(sendMessageInterval);
     connect( m_timer,SIGNAL( timeout() ),this,SLOT( unqueueWaitingMessages() ) );

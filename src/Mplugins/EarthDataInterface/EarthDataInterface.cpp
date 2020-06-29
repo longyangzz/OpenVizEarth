@@ -207,7 +207,7 @@ void  EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEar
       switch (dataType)
       {
       case(FEATURE_LAYER):
-        emit recordData(layer, name, tr("Feature Layers"));
+        emit recordData(layer, name, tr("ÒªËØ"));
         layer->setUserValue("gemtype", _modelLayerManager->getGemType().toStdString());
         layer->setUserValue("layerheight", 0);
         break;
@@ -239,8 +239,8 @@ void EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEart
   auto added = _mainMap[0]->getLayerByName(layer->getName());
   if (added && added->getEnabled())
   {
-    emit  recordData(layer, name, _dataGroups[dataType].dataTreeTitle, extent);
-    _dataManager->updateAttributeList(name, attribute);
+	emit  recordData(layer, name, _dataGroups[dataType].dataTreeTitle, extent);
+	_dataManager->updateAttributeList(name, attribute);
   }
   else
   {

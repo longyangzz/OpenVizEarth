@@ -358,6 +358,19 @@ void  DataTree::removeRecord(DataRecord *record)
 	_dataRecords.erase(_dataRecords.find(record->text(0)));
 }
 
+void DataTree::LocateNodeSlot()
+{
+	//! 找到当前选中的条目定位
+	QList<QTreeWidgetItem *>  itemList = selectedItems();
+
+	if (itemList.size())
+	{
+		auto aa = 9;
+
+		
+	}
+}
+
 void  DataTree::deleteNodeSlot()
 {
 	QList<QTreeWidgetItem *>  itemList = selectedItems();

@@ -46,8 +46,11 @@ ssgqt: osgQt-3.5.7
 1. 主结构
 
    ![主结构](./screenshot/structure.png)
+   
+   View中的场景树
+   ![主结构](./screenshot/View中的场景树.png)
 
-2. UIFacade 界面初始化
+2. UIFacade 界面初始化 
 
    ![界面初始化](./screenshot/UIFacade.png)
 
@@ -58,6 +61,13 @@ ssgqt: osgQt-3.5.7
 
 5. 模仿arcgis工具箱
 ![工具箱](./screenshot/toolBox.png)
+
+
+
+## 使用说明
+
+1. 在DataType.h中使用typedef决定使用哪个管理面板类;
+2. 
 
 
 

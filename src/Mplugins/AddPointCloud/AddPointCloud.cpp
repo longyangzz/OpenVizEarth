@@ -24,6 +24,8 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
 
+#include "DC/LogHandler.h"
+
 AddPointCloud::AddPointCloud():
   _pointSize(3.0)
 {
@@ -163,6 +165,7 @@ void  AddPointCloud::setPointSize(int size)
 
 void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 {
+	LogHandler::getInstance()->reportInfo(tr("Loading of %1 ...").arg(fileName));
 	if (fileName.section(".", 1, 1) == "txt")
 	{
 		osg::ref_ptr<osg::PositionAttitudeTransform>  pcModel = new osg::PositionAttitudeTransform;

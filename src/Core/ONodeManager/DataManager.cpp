@@ -14,6 +14,8 @@
 #include <QMainWindow>
 #include <QSignalMapper>
 #include <QLineEdit>
+#include <QTextBrowser>
+
 
 
 #include <osgSim/OverlayNode>
@@ -36,6 +38,7 @@
 DataManager::DataManager(QObject* parent /*= NULL*/)
 	: DataManagerAction()
 	, _countLoadingData(0)
+	, m_textBrowserLog(nullptr)
 	
 	//, _featureStyleDlg(NULL)
 {
@@ -56,7 +59,8 @@ void DataManager::reset()
 
 void DataManager::InitDockWidget()
 {
-	
+	initConsole();
+
 	//！ 创建tree dock节点管理面板
 	initDataTree();
 
@@ -106,6 +110,12 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	deleteNodeAction->setText(tr("Delete"));
 	deleteNodeAction->setToolTip(tr("Delete node"));
 
+	locateNodeAction = new QAction(mainWindow);
+	locateNodeAction->setObjectName(QStringLiteral("locateNodeAction"));
+	locateNodeAction->setText(tr("Locate"));
+	locateNodeAction->setToolTip(tr("Locate node"));
+	
+
 	//showNodeLabelAction = new QAction(mainWindow);
 	//showNodeLabelAction->setObjectName(QStringLiteral("showNodeLabelAction"));
 	//showNodeLabelAction->setText(tr("Show Labels"));
@@ -142,6 +152,8 @@ void DataManager::setupUi(QMainWindow* mainWindow)
 	//connect(rotateModelAction, SIGNAL(triggered(bool)), this, SLOT(editModelNodeSlot_spin(bool)));
 	//connect(showNodeLabelAction, SIGNAL(triggered(bool)), this, SLOT(showLayerLabelSlot(bool)));
 
+	
+	connect(locateNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(LocateNodeSlot()));
 	connect(deleteNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(deleteNodeSlot()));
 	connect(saveNodeAction, SIGNAL(triggered()), _nodeTree, SLOT(saveNodeSlot()));
 
@@ -222,6 +234,38 @@ void DataManager::initToolBox()
 	AddDockWidget(Qt::RightDockWidgetArea, dokwObjects);
 }
 
+void DataManager::initConsole()
+{
+	//! 建立控制台ui
+
+	QDockWidget* dokConsole = new QDockWidget(m_mainWindow);
+	dokConsole->setObjectName(QString::fromUtf8("dokConsole"));
+	dokConsole->setMinimumSize(QSize(200, 193));
+
+	dokConsole->setBaseSize(QSize(4, 0));
+	dokConsole->setFloating(false);
+
+	QWidget* wgtConsole = new QWidget();
+	wgtConsole->setObjectName(QString::fromUtf8("wgtConsole"));
+
+	QGridLayout* layoutProperty = new QGridLayout(wgtConsole);
+	layoutProperty->setSpacing(0);
+	layoutProperty->setContentsMargins(0, 0, 0, 0);
+	layoutProperty->setObjectName(QString::fromUtf8("layoutProperty"));
+
+	m_textBrowserLog = new QTextBrowser(wgtConsole);
+	m_textBrowserLog->setObjectName(QString::fromUtf8("textBrowserLog"));
+
+	layoutProperty->addWidget(m_textBrowserLog, 0, 0, 1, 1);
+	dokConsole->setWidget(wgtConsole);
+	m_mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dokConsole);
+	dokConsole->setWindowTitle("控制台");
+	// limit log display
+	m_textBrowserLog->document()->setMaximumBlockCount(1000);
+
+	//！ 绑定信号槽链接
+}
+
 void DataManager::initDataTree()
 {
 	if (!m_mainWindow)
@@ -275,6 +319,16 @@ void DataManager::initDataTree()
 	connect(_nodeTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), _nodeTree, SLOT(switchDataSlot(QTreeWidgetItem*, int)));
 	connect(_nodeTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(doubleClickTreeSlot(QTreeWidgetItem*, int)));
 	connect(_nodeTree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showDataTreeContextMenu(const QPoint &)));
+}
+
+void DataManager::printToLogConsole(const QString & mess)
+{
+	m_textBrowserLog->append(mess);
+}
+
+void DataManager::printToLogConsole(const QStringList & mess)
+{
+	m_textBrowserLog->append(mess.join("<br>"));
 }
 
 void DataManager::ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected)
@@ -576,6 +630,8 @@ void DataManager::showDataTreeContextMenu(const QPoint &pos)
 	//}
 
 	_treeWidgetMenu->addSeparator();
+	
+	_treeWidgetMenu->addAction(locateNodeAction);
 	_treeWidgetMenu->addAction(deleteNodeAction);
 	_treeWidgetMenu->addAction(saveNodeAction);
 

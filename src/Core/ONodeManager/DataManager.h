@@ -19,6 +19,7 @@ class QMenu;
 class QAction;
 class QTreeWidgetItem;
 class QTreeView;
+class QTextBrowser;
 QT_END_NAMESPACE
 
 namespace osgSim {
@@ -87,6 +88,9 @@ public:
 
 	
 	void setupUi(QMainWindow* mw);
+
+	void printToLogConsole(const QString & mess);
+	void printToLogConsole(const QStringList & mess);
 public slots:
 	// Data management
 	void newProject();
@@ -119,6 +123,8 @@ public slots:
 
 	//! modelSelet发生变化
 	void ChangeSelection(const QItemSelection & selected, const QItemSelection & deselected);
+
+	osg::Node*          getNode() { return nullptr; }
 signals:
 	void moveToNode(const osg::Node*, double);
 	void moveToBounding(const osg::BoundingSphere*, double);
@@ -137,6 +143,7 @@ private:
 	void InitDockWidget();
 	void initDataTree();
 	void initToolBox();
+	void initConsole();
 private:
 	// Program structure reference
 	SettingsManager* _settingsManager;
@@ -150,6 +157,7 @@ private:
 	QAction* hideAllChildrenAction;
 	QAction* saveNodeAction;
 	QAction* deleteNodeAction;
+	QAction* locateNodeAction;
 	//QAction* rotateModelAction;
 	//QAction* moveModelAction;
 	//QAction* showMetatDataAction;
@@ -177,6 +185,8 @@ private:
 	QTreeView* m_toolBoxTreeView;
 	//场景model
 	ToolBoxTreeModel* m_pToolBoxTreeModel;
+
+	QTextBrowser* m_textBrowserLog;
 
 };
 

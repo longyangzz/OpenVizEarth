@@ -13,6 +13,9 @@ class ObjectLoader;
 class NodeTreeModel;
 class NodePropertyWidget;
 
+class SettingsManager;
+class MPluginManager;
+class MouseEventHandler;
 
 class NXDockWidget;
 class NXDockWidgetTabBar;
@@ -160,6 +163,10 @@ public:
 
 	//! 进度条对象
 	QProgressBar* m_pProgressBar = NULL;
+
+	UserDataManager     *_dataManager;
+	MPluginManager   *_pluginManager;
+	osg::ref_ptr<MouseEventHandler>     _mousePicker;
 };
 
 #endif // MainWindowAction

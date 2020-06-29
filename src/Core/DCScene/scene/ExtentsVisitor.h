@@ -1,3 +1,5 @@
+#include "dcscene_global.h"
+
 #include <osg/NodeVisitor>
 #include <osg/Geode>
 #include <osg/BoundingBox>
@@ -9,7 +11,7 @@
 /// Visit all nodes and compute bounding box extents.
 //========================================================================
 
-class ExtentsVisitor :
+class DCSCENE_EXPORT ExtentsVisitor :
     public osg::NodeVisitor
 {
 public:

@@ -9,9 +9,7 @@
 #include <osg/Node>
 #include <osg/BoundingSphere>
 
-class SettingsManager;
-class MPluginManager;
-class MouseEventHandler;
+
 
 namespace osg
 {
@@ -47,22 +45,27 @@ public:
   void  initAll();
 
 private:
-  void  initView();
+	// 加载语言文件
+	void LoadLanguages();
 
-  void initDCUIVar();
+	void  initView();
 
-  void  initDataManagerAndScene();
+	void initDCUIVar();
 
-  void  initPlugins();
+	void InitManager();
 
-  void  initLog();
+	void  initDataManagerAndScene();
 
-  void  setupUi();
+	void  initPlugins();
 
-  void  collectInitInfo();
+	void  initLog();
 
-  //UI style
-  void initUiStyles();
+	void  setupUi();
+
+	void  collectInitInfo();
+
+	//UI style
+	void initUiStyles();
 
 public slots:
 
@@ -70,6 +73,9 @@ public slots:
   void  resetCamera();
 
   void HandlingEntitiesChanged(const QVector<osg::Node*>& nodes);
+
+  void printToLogConsole(const QString & mess);
+  void printToLogConsole(const QStringList & mess);
 signals:
 	// For splash screen
   void  sendTotalInitSteps(int);
@@ -79,9 +85,7 @@ signals:
 private:
   std::ofstream *_log;
 
-  UserDataManager     *_dataManager;
-  MPluginManager   *_pluginManager;
-  osg::ref_ptr<MouseEventHandler>     _mousePicker;
+
 
 	// Root for all
   osg::ref_ptr<osg::Group>                      _root;

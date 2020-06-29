@@ -21,8 +21,7 @@ using namespace std;
 #include <QTreeWidgetItem>
 #include <QToolBar>
 #include <QToolButton>
-
-
+#include <QTranslator>
 
 #include <osg/Notify>
 #include <osg/ShapeDrawable>
@@ -43,10 +42,11 @@ using namespace std;
 #include <osgEarthUtil/AutoClipPlaneHandler>
 #include <osgEarthUtil/LogarithmicDepthBuffer>
 #include <osgEarthUtil/ExampleResources>
-
+#include <osgEarth/ViewPoint>
 #include <gdal_priv.h>
 
 #include "DC/DataType.h"
+#include "DC/LogHandler.h"
 
 
 #include "ONodeManager/NXDockWidget.h"
@@ -56,7 +56,7 @@ using namespace std;
 #include <DC/MouseEventHandler.h>
 #include <DC/SettingsManager.h>
 #include <DC/MapController.h>
-#include <ONodeManager/MPluginManager.h>
+#include <DC/MPluginManager.h>
 
 
 class LogFileHandler : public osg::NotifyHandler
@@ -108,6 +108,8 @@ UIFacade::UIFacade(QWidget *parent, Qt::WindowFlags flags):
 
 	osg::DisplaySettings::instance()->setNumOfHttpDatabaseThreadsHint(8);
 	osg::DisplaySettings::instance()->setNumOfDatabaseThreadsHint(2);
+
+	//initAll();
 }
 
 UIFacade::~UIFacade()
@@ -129,33 +131,13 @@ void UIFacade::initDCUIVar()
 {
 	emit  sendNowInitName(tr("初始化 DCCore"));
 
-	_root = new osg::Group;
-	_root->setName("Root");
-
-	// Turn off all lights by default
-	osg::StateSet *state = _root->getOrCreateStateSet();
-	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
-	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-
-	osg::ref_ptr<osg::CullFace>  cf = new osg::CullFace;
-	cf->setMode(osg::CullFace::BACK);
-	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
-
 	m_SettingsManager = new SettingsManager(this);
-	_dataManager = new UserDataManager(this);
+	
 
 
 	// thread-safe initialization of the OSG wrapper manager. Calling this here
 	// prevents the "unsupported wrapper" messages from OSG
 	osgDB::Registry::instance()->getObjectWrapperManager()->findWrapper("osg::Image");
-
-	//! 数据加载进度条管理及视窗重置
-	connect(_dataManager, &DataManager::loadingProgress, this, &UIFacade::loadingProgress);
-	connect(_dataManager, &DataManager::loadingDone, this, &UIFacade::loadingDone);
-	connect(_dataManager, &DataManager::resetCamera, this, &UIFacade::resetCamera);
-
-	connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
 }
 
 //传入待处理数据
@@ -176,6 +158,7 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 			if (!entities.isEmpty())
 			{
 				manipulator->home(0);
+				manipulator->setViewpoint(osgEarth::Viewpoint("Home", 101.870, 23.093, 1000, 30.0, -60, 45000), 3);
 			}
 			else
 			{
@@ -211,9 +194,9 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
 			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
 
-			connect(_dataManager, &DataManager::moveToNode,
+			connect(_dataManager, &UserDataManager::moveToNode,
 				manipulator, &MapController::fitViewOnNode);
-			connect(_dataManager, &DataManager::moveToBounding,
+			connect(_dataManager, &UserDataManager::moveToBounding,
 				manipulator, &MapController::fitViewOnBounding);
 
 			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
@@ -236,6 +219,10 @@ void UIFacade::HandlingEntitiesChanged(const QVector<osg::Node*>& entities)
 void  UIFacade::initAll()
 {
 	collectInitInfo();
+	// 加载语言文件
+	LoadLanguages();
+
+	//！ 初始化控制台
 
 	emit  sendNowInitName(tr("初始化日志文件 log"));
 	initLog();
@@ -263,6 +250,40 @@ void  UIFacade::initAll()
 	emit  sendNowInitName(tr("更新界面样式 UI"));
 	initUiStyles();
 }
+
+//! 加载语言文件
+void UIFacade::LoadLanguages()
+{
+	//语言文件根路径(简体中文)
+	QString strLanguageDir = QDir::toNativeSeparators(QApplication::applicationDirPath())
+		.append("\\Resources\\languages\\zh_cn\\");
+
+	//语言文件路径
+	QDir dir(strLanguageDir);
+
+	//如果路径存在，则加载语言
+	if (dir.exists())
+	{
+		//获取符合语言文件格式的文件
+		QStringList filters = QStringList() << "*.lng" << "*.qm";
+		QStringList lstLanguages = dir.entryList(filters);
+
+		//加载所有语言文件
+		for (auto it = lstLanguages.constBegin();
+			it != lstLanguages.constEnd(); ++it)
+		{
+			//创建语言翻译器
+			QTranslator* pTranslator = new QTranslator;
+			//加载语言文件
+			pTranslator->load(strLanguageDir + *it);
+			//记录语言翻译器
+			//m_translators.push_back(pTranslator);
+			//应用程序安装语言翻译器
+			QApplication::installTranslator(pTranslator);
+		}
+	}
+}
+
 
 void UIFacade::initUiStyles()
 {
@@ -354,10 +375,46 @@ void UIFacade::initUiStyles()
 
 		if (dock)
 		{
-			_dataManager->dockWidgetUnpinned(dock);
+			//_dataManager->dockWidgetUnpinned(dock);
 			dock->setFixedWidth(250);
 		}
 	}
+}
+
+void UIFacade::InitManager()
+{
+	if (!_dataManager)
+	{
+		_dataManager = new UserDataManager(this);
+	}
+
+	if (_dataManager)
+	{
+		//! 数据加载进度条管理及视窗重置
+		connect(_dataManager, &UserDataManager::loadingProgress, this, &UIFacade::loadingProgress);
+		connect(_dataManager, &UserDataManager::loadingDone, this, &UIFacade::loadingDone);
+		connect(_dataManager, &UserDataManager::resetCamera, this, &UIFacade::resetCamera);
+
+		connect(_dataManager, SIGNAL(SelectionChanged(const QVector<osg::Node*>&)), this, SLOT(HandlingEntitiesChanged(const QVector<osg::Node*>&)));
+
+		//! 初始化node管理面板
+		_dataManager->setupUi(this);
+
+		// create the log handler
+		connect(LogHandler::getInstance(), SIGNAL(newMessage(const QString &)), this, SLOT(printToLogConsole(const QString &)));
+		connect(LogHandler::getInstance(), SIGNAL(newMessages(const QStringList &)), this, SLOT(printToLogConsole(const QStringList &)));
+		LogHandler::getInstance()->startEmission(true); // start log emission
+	}
+}
+
+void UIFacade::printToLogConsole(const QString & mess)
+{
+	_dataManager->printToLogConsole(mess);
+}
+
+void UIFacade::printToLogConsole(const QStringList & mess)
+{
+	_dataManager->printToLogConsole(mess.join("<br>"));
 }
 
 void  UIFacade::setupUi()
@@ -373,12 +430,8 @@ void  UIFacade::setupUi()
 		Init();
 
 		//！ 初始化docketwidget
-		//InitManager();
-		if (_dataManager)
-		{
-			//! 初始化node管理面板
-			_dataManager->setupUi(this);
-		}
+		InitManager();
+		
 
 		LoadSettings();
 	}
@@ -411,7 +464,9 @@ void  UIFacade::initPlugins()
 
 	_pluginManager = new MPluginManager(this, _dataManager, m_pCurrentNewViewer);
 
-	connect(_dataManager, &DataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
+	//! 插件管理器绑定信号槽
+
+	connect(_dataManager, &UserDataManager::requestContextMenu, _pluginManager, &MPluginManager::loadContextMenu);
 	connect(_pluginManager, &MPluginManager::sendNowInitName, this, &UIFacade::sendNowInitName);
 
 	_pluginManager->loadPlugins();
@@ -419,6 +474,19 @@ void  UIFacade::initPlugins()
 
 void  UIFacade::initDataManagerAndScene()
 {
+	_root = new osg::Group;
+	_root->setName("Root");
+
+	//_root节点状态设置 Turn off all lights by default
+	osg::StateSet *state = _root->getOrCreateStateSet();
+	state->setMode(GL_LIGHTING, osg::StateAttribute::OFF &osg::StateAttribute::OVERRIDE);
+	state->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+	osg::ref_ptr<osg::CullFace>  cf = new osg::CullFace;
+	cf->setMode(osg::CullFace::BACK);
+	state->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+	state->setAttributeAndModes(cf, osg::StateAttribute::ON);
+
 	emit  sendNowInitName(tr("初始化场景树 DataScene"));
 
 	_mapRoot = new osg::Group;
@@ -433,7 +501,6 @@ void  UIFacade::initDataManagerAndScene()
 	_dataRoot->setName("Data Root");
 
 	// Init osgEarth node using the predefined .earth file
-	qDebug() << "111111111111111";
 	for (int i = 0; i < MAX_SUBVIEW; i++)
 	{
 		QString  mode = m_SettingsManager->getOrAddSetting("Base mode", "geocentric").toString();
@@ -489,6 +556,27 @@ void  UIFacade::initDataManagerAndScene()
 	_dataOverlay->setOverlaySubgraph(_overlaySubgraph);
 	_dataOverlay->addChild(_dataRoot);
 
+	//！ 坐标转换后添加个osg模型，添加到_drawRoot中
+	const osgEarth::SpatialReference* geoSRS = _mapNode[0]->getMapSRS()->getGeographicSRS();
+
+	//添加模型
+	//{
+	//	osg::Node* model = osgDB::readNodeFile("H:\\osg\\OpenSceneGraph-Data-3.4.0\\OpenSceneGraph-Data\\cow.osg");
+	//	//osg中光照只会对有法线的模型起作用，而模型经过缩放后法线是不会变得，
+	//	//所以需要手动设置属性，让法线随着模型大小变化而变化。GL_NORMALIZE 或 GL_RESCALE_NORMAL
+	//	model->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
+
+	//	osg::Matrix Lmatrix;
+	//	geoSRS->getEllipsoid()->computeLocalToWorldTransformFromLatLongHeight(osg::DegreesToRadians(40.0), osg::DegreesToRadians(116.0), 100000.0, Lmatrix);
+	//	//放大一些，方便看到
+	//	Lmatrix.preMult(osg::Matrix::scale(osg::Vec3(10000, 10000, 10000)));
+
+	//	osg::MatrixTransform* mt = new osg::MatrixTransform;
+	//	mt->setMatrix(Lmatrix);
+	//	mt->addChild(model);
+	//	_drawRoot->addChild(mt);
+	//}
+
 	_root->addChild(_dataOverlay);
 	_root->addChild(_drawRoot);
 	_root->addChild(_mapRoot);
@@ -521,6 +609,8 @@ void  UIFacade::resetCamera()
 		else
 		{
 			manipulator->home(0);
+			//视点定位北京地区
+			manipulator->setViewpoint(osgEarth::Viewpoint("", 116, 40, 0.0, -2.50, -90.0, 1.5e6));
 		}
 
 		auto  settings = manipulator->getSettings();
@@ -550,9 +640,9 @@ void  UIFacade::resetCamera()
 			auto  camera = m_pCurrentNewViewer->getMainView()->getCamera();
 			camera->setComputeNearFarMode(osg::Camera::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES);
 
-			connect(_dataManager, &DataManager::moveToNode,
+			connect(_dataManager, &UserDataManager::moveToNode,
 			        manipulator, &MapController::fitViewOnNode);
-			connect(_dataManager, &DataManager::moveToBounding,
+			connect(_dataManager, &UserDataManager::moveToBounding,
 			        manipulator, &MapController::fitViewOnBounding);
 
 			m_pCurrentNewViewer->getMainView()->setCameraManipulator(manipulator);
@@ -560,6 +650,8 @@ void  UIFacade::resetCamera()
 		}
 
 		manipulator->fitViewOnNode(_mapNode[0]);
+		//视点定位北京地区
+		//manipulator->setViewpoint(osgEarth::ViewPoint("", 116, 40, 0.0, -2.50, -90.0, 1.5e6));
 	}
 }
 

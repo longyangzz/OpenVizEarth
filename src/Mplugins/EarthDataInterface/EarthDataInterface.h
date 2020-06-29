@@ -47,7 +47,7 @@ protected:
 		IMAGE_LAYER,
 		TERRAIN_LAYER,
 		FEATURE_LAYER,
-    MODEL_LAYER,
+		MODEL_LAYER,
 		ALL_TYPE
 	};
 

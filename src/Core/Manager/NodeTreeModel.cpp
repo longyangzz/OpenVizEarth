@@ -3,7 +3,7 @@
 
 // Qt
 #include <QtGui/QIcon>
-
+#include "QTreeView"
 // OSG
 #include <osg/LOD>
 #include <osg/Billboard>
@@ -14,8 +14,9 @@
 
 //==============================================================================
 
-NodeTreeModel::NodeTreeModel(QObject *parent)
-    : QAbstractItemModel(parent)
+NodeTreeModel::NodeTreeModel(QTreeView* treeView)
+    : QAbstractItemModel()
+	, m_treeView(treeView)
 {
     m_hashIcon.insert( "LOD", QIcon(":/treeView/Resources/treeview/lod.png") );
     m_hashIcon.insert( "Switch", QIcon(":/treeView/Resources/treeview/switch.png") );
@@ -29,6 +30,9 @@ NodeTreeModel::NodeTreeModel(QObject *parent)
     m_hashIcon.insert( "Bone", QIcon(":/treeView/Resources/treeview/bone.png") );
     m_hashIcon.insert( "Skeleton", QIcon(":/treeView/Resources/treeview/skeleton.png") );
     m_hashIcon.insert( "Sequence", QIcon(":/treeView/Resources/treeview/sequence.png") );
+
+	m_treeView = (treeView);
+	m_treeView->setModel(this);
 }
 
 //==============================================================================
@@ -41,21 +45,21 @@ NodeTreeModel::~NodeTreeModel()
 void NodeTreeModel::setNode(osg::Node *node)
 {
     //reset();
-    m_node = node;
+    m_rootNode = node;
 }
 
 //==============================================================================
 
 osg::Node* NodeTreeModel::getNode()
 {
-    return m_node.get();
+    return m_rootNode.get();
 }
 
 //==============================================================================
 
 const osg::Node* NodeTreeModel::getNode() const
 {
-    return m_node.get();
+    return m_rootNode.get();
 }
 
 //==============================================================================
@@ -67,7 +71,7 @@ QModelIndex NodeTreeModel::index(int row, int column,
 
     if ( !parent.isValid() )
     {
-        index = createIndex( row, column, m_node.get() );
+        index = createIndex( row, column, m_rootNode.get() );
     }
     else
     {
@@ -90,7 +94,7 @@ QModelIndex NodeTreeModel::index(int row, int column,
 
 QModelIndex NodeTreeModel::parent(const QModelIndex &index) const
 {
-    if ( !index.isValid() || getPrivateData(index) == m_node.get() )
+    if ( !index.isValid() || getPrivateData(index) == m_rootNode.get() )
         return QModelIndex();
 
     if (getPrivateData(index) == NULL)
@@ -101,6 +105,11 @@ QModelIndex NodeTreeModel::parent(const QModelIndex &index) const
     if (node.valid() && node->getNumParents() > 0)
     {
         osg::ref_ptr<osg::Group> parent = node->getParent(0);
+
+		if (parent->getNumParents() == 0)
+		{
+			return QModelIndex();
+		}
         osg::ref_ptr<osg::Group> pp = parent->getParent(0);
 
         if ( parent.valid() && pp.valid() )
@@ -170,6 +179,13 @@ QVariant NodeTreeModel::data(const QModelIndex &index, int role) const
                 description += QString::fromStdString( node->getDescription(i) ) + "\n";
         }
     }
+	else if (role == Qt::EditRole)  //编辑角色
+	{
+		if (index.column() == 0)
+		{
+			return QString::fromStdString(node->getName());
+		}
+	}
     else if ( role == Qt::DecorationRole && ( index.column( ) == COL_NAME ) ) // icon
     {
         it = m_hashIcon.find( node->className() );
@@ -186,6 +202,104 @@ QVariant NodeTreeModel::data(const QModelIndex &index, int role) const
     return d;
 }
 
+QModelIndex NodeTreeModel::index(osg::Node* object)
+{
+	if (object == m_rootNode)
+		return QModelIndex();
+
+	osg::ref_ptr<osg::Group> parent = nullptr;
+	int parentNum = object->getNumParents();
+	if (parentNum)
+	{
+		parent = object->getParent(0);
+
+		if (parent->getNumParents() == 0)
+		{
+			return QModelIndex();
+		}
+		osg::ref_ptr<osg::Group> pp = parent->getParent(0);
+
+		if (parent.valid() && pp.valid())
+			return createIndex(pp->getChildIndex(parent.get()), 0, parent.get());
+	}
+	if (!parent)
+	{
+		return QModelIndex();
+	}
+
+	int pos = parent->getChildIndex(object);
+
+	return createIndex(pos, 0, object);
+}
+
+void NodeTreeModel::UpdateCheckState(osg::Node* entity, const bool isCheck)
+{
+	if (entity)
+	{
+		if (isCheck)
+			entity->setNodeMask(0xffffffff);
+		else
+			entity->setNodeMask(0x0);
+	}
+
+	//! 更新当前实体对应index的check
+	QModelIndex cIndex = index(entity);
+	emit dataChanged(cIndex, cIndex);
+
+	//遍历entity，保证所有的子实体enable属性一致
+	//int count = entity->GetChildrenNumber();
+	//for (int i = 0; i != count; ++i)
+	//{
+	//	UpdateCheckState(entity->GetChild(i), isCheck);
+	//}
+}
+
+bool NodeTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if (index.isValid())
+	{
+		if (role == Qt::EditRole)
+		{
+			if (value.toString().isEmpty())
+				return false;
+
+			osg::Node* entity = NodeFromIndex(index);
+			if (entity)
+			{
+				entity->setName(value.toString().toStdString());
+
+				emit dataChanged(index, index);
+			}
+
+			return true;
+		}
+		else if (role == Qt::CheckStateRole)
+		{
+			osg::Node* entity = NodeFromIndex(index);
+
+			UpdateCheckState(entity, value.toBool());
+
+			//重绘
+			//entity->PrepareDisplayForRefresh();
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+osg::Node* NodeTreeModel::NodeFromIndex(const QModelIndex &index) const
+{
+	if (index.isValid())
+	{
+		return static_cast<osg::Node *>(index.internalPointer());
+	}
+	else
+	{
+		return m_rootNode;
+	}
+}
 //==============================================================================
 
 void NodeTreeModel::setEnableIndex(const QModelIndex &index, bool val)
@@ -227,10 +341,14 @@ QVariant NodeTreeModel::headerData(int section, Qt::Orientation orientation,
 
 Qt::ItemFlags NodeTreeModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsUserCheckable |
-           Qt::ItemIsSelectable |
-           Qt::ItemIsEnabled |
-           Qt::ItemIsTristate;
+
+
+	Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+
+	//通用flags
+	defaultFlags |= (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsTristate);
+
+	return defaultFlags;
 }
 
 //==============================================================================
@@ -286,4 +404,114 @@ QModelIndex NodeTreeModel::searchForName(const QString &name, const QModelIndex 
             return result;
     }
     return QModelIndex();
+}
+
+
+void NodeTreeModel::InsertToModel(osg::Node* childEntity)
+{
+	osg::ref_ptr<osg::Group> parentObj = childEntity->getParent(0);
+
+	//查找插入点索引
+	QModelIndex insertNodeIndex = index(parentObj);
+	int childPos = parentObj->getChildIndex(childEntity);
+
+	//插入行开始
+	beginInsertRows(insertNodeIndex, childPos, childPos);
+
+	//插入行结束
+	endInsertRows();
+	bool autoExpand = true;
+	if (autoExpand)
+	{
+		QModelIndex childIndex = index(childEntity);
+		if (childIndex.isValid())
+			m_treeView->expand(childIndex);
+	}
+	else
+	{
+		m_treeView->expand(insertNodeIndex);
+	}
+}
+
+void  NodeTreeModel::addRecord(osg::Node *node, const QString &name, const QString &parentName, bool hidden)
+{
+	/*QString              nodeName = resolveName(name);
+	osg::BoundingSphere  bs = node->getBound();
+
+	if (!bs.valid())
+	{
+		node->computeBound();
+	}
+
+	node->setName(nodeName.toLocal8Bit().toStdString());
+
+	DataRecord *parent = getParent(parentName);
+	DataRecord *newRecord = new DataRecord(nodeName, node, parent);
+	newRecord->setCheckState(0, (node->getNodeMask() & SHOW_IN_ALL_WINDOW) == 0 ? Qt::Unchecked : Qt::Checked);
+	newRecord->setHidden(hidden);
+	_dataRecords.insert(nodeName, newRecord);
+
+	parent->addChild(newRecord);*/
+
+	//! 获取A的classname，从scene一级子类中找到该type，然后添加A
+	//DcGp::Container childs = scene->GetChildren();
+
+	//for (int i = 0; i != childs.size(); ++i)
+	//{
+	//	auto aa = childs[i]->GetType();
+	//	auto bb = A->GetClassname();
+	//	if (childs[i]->GetType() == A->GetClassname())
+	//	{
+	//		auto cc = A->metaObject()->superClass();
+	//		childs[i]->AddChild(A);
+	//		break;
+	//	}
+	//}
+	//m_rootNode->
+
+	//！ 在这里报错，则说明创建的实体对象没有设置类型值 或者A实体没有重载GetClassName函数
+	InsertToModel(node);
+}
+
+void  NodeTreeModel::removeRecord(const QString &name)
+{
+	//auto  recordItr = _dataRecords.find(name);
+
+	//if (recordItr == _dataRecords.end())
+	//{
+	//	return;
+	//}
+
+	//DataRecord *record = *recordItr;
+
+	//if (record == _rootTreeItem)
+	//{
+	//	return;
+	//}
+
+	//removeRecord(record);
+
+	//// Remove from parent
+	//DataRecord *parent = record->parent();
+	//parent->removeChild(record);
+
+	//if (parent->childCount() == 0)
+	//{
+	//	removeRecord(parent->text(0));
+	//}
+}
+
+void  NodeTreeModel::addRecord(osgEarth::Layer *layer, const QString &name, const QString &parentName, osgEarth::GeoExtent *extent, bool hidden)
+{
+	/*QString  nodeName = resolveName(name);
+
+	layer->setName(nodeName.toLocal8Bit().toStdString());
+
+	DataRecord *parent = getParent(parentName);
+	DataRecord *newRecord = new DataRecord(nodeName, layer, parent, extent);
+	newRecord->setCheckState(0, layer->getEnabled() ? Qt::Checked : Qt::Unchecked);
+	newRecord->setHidden(hidden);
+	_dataRecords.insert(nodeName, newRecord);
+
+	parent->addChild(newRecord);*/
 }
