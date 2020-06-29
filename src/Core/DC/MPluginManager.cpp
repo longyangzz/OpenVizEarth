@@ -43,9 +43,9 @@ MPluginManager::~MPluginManager()
 
 void  MPluginManager::registerPlugin(MPluginInterface *plugin)
 {
-	//_viewerWidget->getMainView()->addEventHandler(plugin);
+	_viewerWidget->getMainView()->addEventHandler(plugin);
 
-  connect(plugin, SIGNAL(recordData(osg::Node *,QString,QString,bool)),
+	connect(plugin, SIGNAL(recordData(osg::Node *,QString,QString,bool)),
           _dataManager, SLOT(recordData(osg::Node *,QString,QString,bool)));
 
 	connect(plugin, SIGNAL(recordData(osgEarth::Layer*, QString, QString, osgEarth::GeoExtent*, bool)),
