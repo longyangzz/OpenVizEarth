@@ -142,7 +142,7 @@ void  AddArcGISData::setupUi(QToolBar *toolBar, QMenu *menu)
 	addArcGISShpAction->setObjectName(QStringLiteral("addArcGISShpAction"));
 	addArcGISShpAction->setIcon(icon);
 	addArcGISShpAction->setText(tr("ArcGIS"));
-	addArcGISShpAction->setToolTip(tr("加载arcgis在线要素服务"));
+	addArcGISShpAction->setToolTip(tr("加载arcgis在线矢量服务"));
 
 	menu = getOrAddMenu(FEATURE_LAYER);
 	menu->addAction(addArcGISShpAction);

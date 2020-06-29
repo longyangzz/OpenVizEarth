@@ -49,11 +49,11 @@ EarthDataInterface::EarthDataInterface()
         tr("加载地形")
     };
     _dataGroups[FEATURE_LAYER] = {
-        tr("要素"),
+        tr("矢量"),
         QStringLiteral("addFeature"),
         QStringLiteral("Resources/icons/addshp.png"),
-        tr("要素"),
-        tr("加载要素")
+        tr("矢量"),
+        tr("加载矢量")
     };
     _dataGroups[MODEL_LAYER] = {
       tr("模型"),
@@ -207,7 +207,7 @@ void  EarthDataInterface::addLayerToMap(const QString& name, osg::ref_ptr<osgEar
       switch (dataType)
       {
       case(FEATURE_LAYER):
-        emit recordData(layer, name, tr("要素"));
+        emit recordData(layer, name, tr("矢量"));
         layer->setUserValue("gemtype", _modelLayerManager->getGemType().toStdString());
         layer->setUserValue("layerheight", 0);
         break;
