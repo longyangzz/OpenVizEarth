@@ -194,39 +194,39 @@ void  AddPointCloud::loadPointCloudModel(const QString& fileName)
 				ptLine = data.readLine();
 
 				if (ptLine.isEmpty())
-			{
-			  break;
-			}
-
-			if (!ptLine.contains(","))
-			{
-				ptLine.remove('\n');
-				ptCount = ptLine.toUInt();
-				continue;
-			}
-			else
-			{
-				if (ptLine.section(",", 0, 0) == "X")
 				{
+					break;
+				}
+
+				if (!ptLine.contains(","))
+				{
+					ptLine.remove('\n');
+					ptCount = ptLine.toUInt();
 					continue;
 				}
 				else
 				{
-					float  pt_x = ptLine.section(",", 0, 0).toFloat();
-					float  pt_y = ptLine.section(",", 1, 1).toFloat();
-					float  pt_z = ptLine.section(",", 2, 2).toFloat();
-					float  pt_r = ptLine.section(",", 7, 7).toFloat();
-					float  pt_g = ptLine.section(",", 8, 8).toFloat();
-					float  pt_b = ptLine.section(",", 9, 9).toFloat();
+					if (ptLine.section(",", 0, 0) == "X")
+					{
+						continue;
+					}
+					else
+					{
+						float  pt_x = ptLine.section(",", 0, 0).toFloat();
+						float  pt_y = ptLine.section(",", 1, 1).toFloat();
+						float  pt_z = ptLine.section(",", 2, 2).toFloat();
+						float  pt_r = ptLine.section(",", 7, 7).toFloat();
+						float  pt_g = ptLine.section(",", 8, 8).toFloat();
+						float  pt_b = ptLine.section(",", 9, 9).toFloat();
 
-					pcCoords->push_back(osg::Vec3(pt_x, pt_y, pt_z));
-					pcColors->push_back(osg::Vec4(1, 1,1, 1.0f));
+						pcCoords->push_back(osg::Vec3(pt_x, pt_y, pt_z));
+						pcColors->push_back(osg::Vec4(1, 1,1, 1.0f));
 
-					i++;
-					pbValue = 100 * i / ptCount;
-					emit  loadingProgress(pbValue);
+						i++;
+						pbValue = 100 * i / ptCount;
+						emit  loadingProgress(pbValue);
+					}
 				}
-			}
 			}
 		}
 
