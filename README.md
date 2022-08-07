@@ -6,11 +6,8 @@ start: PATH=H:\osgearthSDK\bin;G:\library\qt\bin
 
 
 依赖库包网盘地址：
-
-转存的别人编译的
-
-链接：https://pan.baidu.com/s/19pZiIGzDLeijmq5pJfu7Iw 
-提取码：pytl 
+链接：https://pan.baidu.com/s/1pKb9Odn9kEoagx8_Jrpksg 
+提取码：gvrd 
 
 
 
